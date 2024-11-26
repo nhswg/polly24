@@ -1,10 +1,7 @@
-# polly23
+# polly24
 
-This template should help get you started developing with Vue 3 in Vite.
+This is skeleton code for building "real-time" quiz and polling tools. The code is intended for quick prototyping and for learning (user) interface programming.
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
 ## Customize configuration
 
@@ -21,6 +18,8 @@ npm install
 ```sh
 npm run dev
 ```
+
+Note that this command starts two servers – a Vite server and a simple data and socket communication server.
 
 ### Compile and Minify for Production
 
