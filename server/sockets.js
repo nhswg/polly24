@@ -11,12 +11,12 @@ function sockets(io, socket, data) {
 
   socket.on('addQuestion', function(d) {
     data.addQuestion(d.pollId, {q: d.q, a: d.a});
-    socket.emit('questionUpdate', data.getQuestion(d.pollId));
+    socket.emit('questionUpdate', data.activateQuestion(d.pollId));
   });
 
   socket.on('joinPoll', function(pollId) {
     socket.join(pollId);
-    socket.emit('questionUpdate', data.getQuestion(pollId))
+    socket.emit('questionUpdate', data.activateQuestion(pollId))
     socket.emit('submittedAnswersUpdate', data.getSubmittedAnswers(pollId));
   });
 
