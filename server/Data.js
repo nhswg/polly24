@@ -81,7 +81,7 @@ Data.prototype.addQuestion = function(pollId, q) {
   }
 }
 
-Data.prototype.getQuestion = function(pollId, qId = null) {
+Data.prototype.activateQuestion = function(pollId, qId = null) {
   if (this.pollExists(pollId)) {
     const poll = this.polls[pollId];
     if (qId !== null) {
