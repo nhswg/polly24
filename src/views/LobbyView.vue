@@ -1,9 +1,29 @@
 <template>
-    <div>
-      <input type="text" v-model="gameCode">
-      <input type="text" v-model="userName">
+
+    <div class="join-game" v-if="!joined">
+      <div>
+        Enter game code:
+        <input type="text" v-model="gameCode">
+      </div>
+
+      <div>
+        Enter your name:
+        <input type="text" v-model="userName">
+      </div>
+
+      <div>
+        <button v-on:click="participateInGame">
+          Join Game
+        </button>
+      </div>
     </div>
-  </template>
+
+
+    <div class="waiting-lobby" v-if="joined">
+        <p>Waiting for host to start game</p>
+    </div>
+
+</template>
 
 <script>
 import io from 'socket.io-client';
@@ -15,21 +35,29 @@ export default {
     return {
       userName: "",
       joined: false,
+      gameCode: "inactive game",
     }
   },
   created: function () {
-    this.pollId = this.$route.params.id;
-    socket.on( "uiLabels", labels => this.uiLabels = labels );
-    socket.on( "participantsUpdate", p => this.participants = p );
-    socket.on( "startPoll", () => this.$router.push("/poll/" + this.pollId) );
-    socket.emit( "joinPoll", this.pollId );
-    socket.emit( "getUILabels", this.lang );
+    this.gameCode = this.$route.params.id;
+    socket.emit( "joinGame", this.gameCode );
+
   },
   methods: {
-    participateInPoll: function () {
-      socket.emit( "participateInPoll", {pollId: this.pollId, name: this.userName} )
+    participateInGame: function () {
+      socket.emit( "participateInGame", {gameCode: this.gameCode, name: this.userName} )
       this.joined = true;
     }
   }
 }
 </script>
+
+<style>
+  .join-game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+</style>
