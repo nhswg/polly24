@@ -1,7 +1,7 @@
 <template>
 
-<h1 id = "header">Create Game</h1>
-
+  <h1 id="header">Create Game</h1>
+  
   <div class="blocks-container">
     <!-- Language -->
     <div class="block">
@@ -12,7 +12,7 @@
         </option>
       </select>
     </div>
-
+  
     <!-- Drawtime -->
     <div class="block">
       <h3>Drawtime</h3>
@@ -22,7 +22,7 @@
         </option>
       </select>
     </div>
-
+  
     <!-- Rounds -->
     <div class="block">
       <h3>Rounds</h3>
@@ -33,48 +33,69 @@
       </select>
     </div>
   
-
-      <!-- Theme -->
-      <div class="block">
+    <!-- Theme -->
+    <div class="block">
       <h3>Theme</h3>
       <select v-model="selectedThemes">
         <option v-for="theme in themes" :key="theme" :value="theme">
-          {{ theme }} 
+          {{ theme }}
         </option>
       </select>
     </div>
-</div>
-
-<div class = "create-game-button">
-    <button v-on:click="createGame">
-        Create Game        
-    </button>
-</div>
-
-    
-
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      languages: [
-        { value: 'english', label: 'English' },
-        { value: 'swedish', label: 'Svenska' },
-      ],
-      drawTimes: [30, 60, 90, 120, 150, 180],
-      rounds: Array.from({ length: 10 }, (_, i) => i + 1),
-      themes: ['Standard', 'Office', 'Animals', 'Food', 'Movies', 'Music', 'Nature', 'Sports', 'Technology'],
-      selectedLanguage: 'english',
-      selectedDrawtime: 30,
-      selectedRounds: 1,
-      selectedThemes: 'Standard'
-    };
-  },
-};
-</script>
-
+  </div>
+  
+  <div class="create-game-button">
+    <router-link to="/adminlobby">
+      <button @click="createGame">
+        Create Game
+      </button>
+    </router-link>
+  </div>
+  </template>
+  
+  <script>
+  import io from 'socket.io-client';
+  const socket = io("http://localhost:3000");
+  
+  export default {
+    name: 'CreateView',
+    data() {
+      return {
+        randomCode: null,
+        languages: [
+          { value: 'English', label: 'English' },
+          { value: 'Swedish', label: 'Svenska' },
+        ],
+        drawTimes: [30, 60, 90, 120, 150, 180],
+        rounds: Array.from({ length: 10 }, (_, i) => i + 1),
+        themes: ['Standard', 'Office', 'Animals', 'Food', 'Movies', 'Music', 'Nature', 'Sports', 'Technology'],
+        selectedLanguage: 'English',
+        selectedDrawtime: 30,
+        selectedRounds: 1,
+        selectedThemes: 'Standard'
+      };
+    },
+    created() {
+      socket.on("gameCreated", (data) => {
+        // Eventuell hantering när spelet har skapats
+      });
+    },
+    methods: {
+      createGame() {
+        this.randomCode = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
+        const gameData = {
+          gameId: this.randomCode,
+          language: this.selectedLanguage,
+          drawTime: this.selectedDrawtime,
+          rounds: this.selectedRounds,
+          theme: this.selectedThemes,
+        };
+        socket.emit("createGame", gameData);
+        localStorage.setItem('gameId', this.randomCode); // Lagra gameId i localStorage
+      },
+    },
+  };
+  </script>
 
 <style>
 
