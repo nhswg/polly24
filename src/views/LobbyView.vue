@@ -1,18 +1,9 @@
 <template>
-  <div>
-    {{pollId}}
-    <div v-if="!joined">
+    <div>
+      <input type="text" v-model="gameCode">
       <input type="text" v-model="userName">
-      <button v-on:click="participateInPoll">
-        {{ this.uiLabels.participateInPoll }}
-      </button>
     </div>
-    <div v-if="joined">
-      <p>Waiting for host to start poll</p>
-      {{ participants }}
-  </div>
-  </div>
-</template>
+  </template>
 
 <script>
 import io from 'socket.io-client';
@@ -23,11 +14,7 @@ export default {
   data: function () {
     return {
       userName: "",
-      pollId: "inactive poll",
-      uiLabels: {},
       joined: false,
-      lang: localStorage.getItem("lang") || "en",
-      participants: []
     }
   },
   created: function () {
