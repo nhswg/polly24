@@ -40,6 +40,11 @@ const router = createRouter({
       path: '/adminlobby',
       name: 'AdminLobbyView',
       component: () => import('../views/AdminLobbyView.vue')
+    },
+    {
+      path: '/about',
+      name: 'About',
+      component: () => import('../views/About.vue')
     }
   ]
 })
