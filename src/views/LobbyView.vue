@@ -15,6 +15,7 @@
         <button v-on:click="participateInGame">
           Join Game
         </button>
+
       </div>
     </div>
 
@@ -45,10 +46,16 @@ export default {
   },
   methods: {
     participateInGame: function () {
-      socket.emit( "participateInGame", {gameCode: this.gameCode, name: this.userName} )
-      this.joined = true;
+      if (this.gameCode && this.userName) {
+        socket.emit("participateInGame", { gameCode: this.gameCode, name: this.userName });
+        this.$router.push(`/playerlobby/${this.gameCode}`);
+        this.joined = true;
+      } else {
+        alert("Please enter both game code and your name.");
+      }
     }
   }
+
 }
 </script>
 
