@@ -1,12 +1,15 @@
 <template>
     <div>
         <section class="header">
+            <router-link to="/about/">
                 <button class="header-button">
                     About
                 </button>
+            </router-link>
+
                 <h1 class="title">Sketchdle </h1>
-                <button class="header-button">
-                    <img src="/img/flag.png" alt="changeLanguagePic" width="30 px">
+                <button class="flag-container">
+                    <img src="/img/flag.png" alt="changeLanguagePic">
                 </button>
 
         </section>
@@ -58,10 +61,23 @@
 .header-button{
     font-size: 1.5rem;
     border: 0.2em solid black;
+    width: 80px; /* Bredd matchar bildens storlek */
+    height: 50px;
 }
 
-.header-button img {
-    width: 100%;
+.flag-container {
+
+    width: 80px; /* Bredd matchar bildens storlek */
+    height: 50px;
+    border: 0.2em solid black;;
+}
+
+.flag-container img {
+
+    width: 100%; /* Bilden fyller hela knappens bredd */
+    height: 100%; /* Bilden fyller hela knappens höjd */
+
+
 }
 
 .game-button {
