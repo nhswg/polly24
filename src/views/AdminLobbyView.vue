@@ -51,6 +51,7 @@
   
   
   <style scoped>
+  
   .admin-lobby {
     text-align: center;
     font-family: Arial, sans-serif;

@@ -43,6 +43,10 @@
       </select>
     </div>
   </div>
+
+  <div class="adminName">
+    <input type="text" v-model="adminName" placeholder="Enter your name">
+  </div>
   
   <div class="create-game-button">
     <router-link to="/adminlobby">
@@ -72,7 +76,8 @@
         selectedLanguage: 'English',
         selectedDrawtime: 30,
         selectedRounds: 1,
-        selectedThemes: 'Standard'
+        selectedThemes: 'Standard',
+        adminName:""
       };
     },
     created() {
@@ -89,6 +94,7 @@
           drawTime: this.selectedDrawtime,
           rounds: this.selectedRounds,
           theme: this.selectedThemes,
+          adminName: this.adminName
         };
         socket.emit("createGame", gameData);
         localStorage.setItem('gameId', this.randomCode); // Lagra gameId i localStorage
@@ -96,6 +102,7 @@
     },
   };
   </script>
+
 
 <style>
 
@@ -113,12 +120,12 @@
   align-items: center; 
   justify-content: center; 
   gap: 20px; 
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 
 .block {
   border: 1px solid #ccc;
-  border-radius: 10px; 
+  border: 0.4rem solid black;
   padding: 15px;
   text-align: center;
   width: 150px;
@@ -128,21 +135,20 @@
 .create-game-button button {
   padding: 20px 40px; 
   font-size: 2rem; 
-  background-color: #007bff; 
-  color: white; 
-  border: none;
-  border-radius: 10px;
+  background-color: white; 
+  color: black; 
+  border: 0.4rem solid black;
   cursor: pointer; 
 }
 .create-game-button button:hover {
-  background-color: cyan; 
-  color: black;
+    background-color: rgb(26, 105, 166);
+    color: white;
+    cursor: pointer;
 }
 .create-game-button {
   text-align: center; 
-  margin-top: 20px; 
+  margin-top: 50px; 
 }
-
 
 select {
   margin-top: 10px;
