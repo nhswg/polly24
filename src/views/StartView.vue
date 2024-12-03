@@ -29,9 +29,6 @@
             
         </section>
 
-    
-
-
     </main>
 
 </template>
