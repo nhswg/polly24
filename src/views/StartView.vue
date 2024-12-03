@@ -1,39 +1,25 @@
 <template>
-    <div>
-        <section class="header">
-            <router-link to="/about/">
-                <button class="header-button">
-                    About
-                </button>
-            </router-link>
+  <div>
+    <header>
+      <router-link to="/about/">
+        <button class="about-button">?</button>
+      </router-link>
+      <h1 class="title">Sketchdle</h1>
+      <button class="flag-container">
+        <img src="/img/flag.png" alt="changeLanguagePic">
+      </button>
+    </header>
 
-                <h1 class="title">Sketchdle </h1>
-                <button class="flag-container">
-                    <img src="/img/flag.png" alt="changeLanguagePic">
-                </button>
+    <section class="game-buttons">
+      <router-link to="/playerlobby/">
+        <button class="game-button">Join Game</button>
+      </router-link>
 
-        </section>
-    </div>
-
-
-        <section >
-
-            <router-link to="/playerlobby/">
-                <button class="game-button">
-                    Join Game
-                </button>
-            </router-link>
-
-            <router-link to="/create/">
-                <button class="game-button">
-                    Create Game
-                </button>
-            </router-link>
-            
-        </section>
-
-
-
+      <router-link to="/create/">
+        <button class="game-button">Create Game</button>
+      </router-link>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -47,7 +33,7 @@
     font-family: pacifico, cursive;
 }
 
-.header {
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -58,47 +44,45 @@
     font-size: 5rem;
 }
 
-.header-button{
+.about-button {
     font-size: 1.5rem;
     border: 0.2em solid black;
-    width: 80px; /* Bredd matchar bildens storlek */
+    width: 50px;
     height: 50px;
+    padding: 0;
 }
 
 .flag-container {
-
-    width: 80px; /* Bredd matchar bildens storlek */
-    height: 50px;
-    border: 0.2em solid black;;
+    border: 0.1em solid black;
+    padding: 0;
 }
 
 .flag-container img {
+    display: block;
+    width: 80px;
+    height: auto;
+}
 
-    width: 100%; /* Bilden fyller hela knappens bredd */
-    height: 100%; /* Bilden fyller hela knappens höjd */
-
-
+.game-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
 }
 
 .game-button {
-
     font-size: 4rem;
-    margin: 2rem;
     width: 400px;
     height: 200px;
     border: 0.5rem solid black;
-
 }
 
-button{
+button {
     background-color: white;
 }
 
 button:hover {
     background-color: rgb(26, 105, 166);
     color: white;
-    cursor:pointer
+    cursor: pointer;
 }
-
-
 </style>
