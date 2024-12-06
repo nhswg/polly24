@@ -11,7 +11,7 @@
     </header>
     </div>
 
-  <div class="join-game" v-if="!joined">
+  <div class="join-game">
     <div class="join-game-form">
       <div>
       Enter game code:
@@ -30,15 +30,6 @@
 
   </div>
 
-
-  <div class="waiting-lobby" v-if="joined" >
-      <p>Waiting for host to start game</p>
-  </div>
-
-  <div class="participants-joining">
-
-  </div>
-
 </template>
 
 <script>
@@ -50,7 +41,6 @@ name: 'LobbyView',
 data: function () {
   return {
     userName: "",
-    joined: false,
     gameCode: "inactive game",
   }
 },
@@ -64,7 +54,6 @@ methods: {
     if (this.gameCode && this.userName) {
       socket.emit("participateInGame", { gameCode: this.gameCode, name: this.userName });
       this.$router.push(`/playerlobby/${this.gameCode}`);
-      this.joined = true;
     } else {
       alert("Please enter both game code and your name.");
     }
@@ -108,10 +97,5 @@ methods: {
   }
   .join-game-button:hover {
     background-color: #218838;
-  }
-
-  .waiting-lobby {
-    margin-top: 50px;
-    font-size: 2rem;
   }
 </style>
