@@ -54,6 +54,9 @@ methods: {
     if (this.gameCode && this.userName) {
       socket.emit("participateInGame", { gameCode: this.gameCode, name: this.userName });
       this.$router.push(`/playerlobby/${this.gameCode}`);
+      localStorage.setItem('gameId', this.gameCode);
+      localStorage.setItem('isAdmin', 'false');
+      localStorage.setItem('playerName', this.userName);
     } else {
       alert("Please enter both game code and your name.");
     }

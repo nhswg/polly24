@@ -65,7 +65,7 @@
   <div class="create-game-button">
     <router-link :to="'/playerlobby/' + gameCode">
 
-      <button @click="createGame, createNewGame"  >
+      <button @click="createGame"  >
         Create Game
       </button>
     
@@ -109,21 +109,22 @@
     methods: {
       createGame() {
         const gameData = {
-          gameId: this.randomCode,
+          gameId: this.gameCode,
           language: this.selectedLanguage,
           drawTime: this.selectedDrawtime,
           rounds: this.selectedRounds,
           theme: this.selectedThemes,
           adminName: this.adminName,
-          participants: [this.adminName], // Lägg till admin som första deltagare
+          participants: [this.adminName],
         };
         
         socket.emit("createGame", gameData);
-        localStorage.setItem('gameId', gameCode); // Lagra gameId i localStorage
+        localStorage.setItem('gameId', this.gameCode);
+        localStorage.setItem('isAdmin', 'true');
+        localStorage.setItem('playerName', this.adminName);
       
         this.$router.push({
-        path: `/lobby/${this.randomCode}`,
-        query: { joined: true },
+          path: `/playerlobby/${this.gameCode}`,
       });
       },
       updateParticipants(participants) {

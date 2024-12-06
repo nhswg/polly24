@@ -9,13 +9,48 @@
         </span>
       </p>
     </div>
+    <button 
+      v-if="isAdmin" 
+      @click="startGame" 
+      class="start-game-button"
+    >
+      Start Game
+    </button>
   </template>
   
-  <script>
-  export default {
-    name: "WaitingLobby",
-  };
-  </script>
+<script>
+import io from 'socket.io-client';
+const socket = io("http://localhost:3000");
+
+export default {
+  name: 'WaitingRoom',
+  data() {
+    return {
+      gameCode: '',
+      participants: [],
+      isAdmin: false,
+    };
+  },
+  created() {
+    // Hämta sparad information
+    this.gameCode = localStorage.getItem('gameId');
+    this.isAdmin = localStorage.getItem('isAdmin') === 'true';
+    
+    // Lyssna på uppdateringar av deltagarlistan
+    socket.on("participantsUpdated", (participants) => {
+      this.participants = participants;
+    });
+  },
+  methods: {
+    startGame() {
+      if (this.isAdmin) {
+        socket.emit("startGame", this.gameCode);
+        this.$router.push(`/game/${this.gameCode}`);
+      }
+    }
+  }
+};
+</script>
   
   <style scoped>
   .waiting-lobby {
