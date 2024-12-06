@@ -1,6 +1,18 @@
 <template>
 
   <h1 id="header">Create Game</h1>
+
+  <router-link to="/">
+        <button class="header-button">
+            Back
+        </button>
+    </router-link>
+
+    <div class="game-code">
+
+      <h2>Game Code: {{ gameCode }}</h2>
+    </div>
+  
   
   <div class="blocks-container">
     <!-- Language -->
@@ -12,6 +24,8 @@
         </option>
       </select>
     </div>
+
+
   
     <!-- Drawtime -->
     <div class="block">
@@ -44,15 +58,17 @@
     </div>
   </div>
 
-  <div class="adminName">
-    <input type="text" v-model="adminName" placeholder="Enter your name">
+  <div>
+    <input type="text" class="adminName" v-model="adminName" placeholder="Enter your name">
   </div>
   
   <div class="create-game-button">
-    <router-link to="/adminlobby">
-      <button @click="createGame">
+    <router-link :to="'/playerlobby/' + gameCode">
+
+      <button @click="createGame, createNewGame"  >
         Create Game
       </button>
+    
     </router-link>
   </div>
   </template>
@@ -60,12 +76,13 @@
   <script>
   import io from 'socket.io-client';
   const socket = io("http://localhost:3000");
+
   
   export default {
     name: 'CreateView',
     data() {
       return {
-        randomCode: null,
+        gameCode: '',
         languages: [
           { value: 'English', label: 'English' },
           { value: 'Swedish', label: 'Svenska' },
@@ -81,28 +98,40 @@
       };
     },
     created() {
+      this.gameCode = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
       socket.on("gameCreated", (data) => {
-        // Eventuell hantering när spelet har skapats
+        console.log(data);
+      });
+      socket.on("participantsUpdated", (participants) => {
+        this.updateParticipants(participants);
       });
     },
     methods: {
       createGame() {
-        this.randomCode = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
         const gameData = {
           gameId: this.randomCode,
           language: this.selectedLanguage,
           drawTime: this.selectedDrawtime,
           rounds: this.selectedRounds,
           theme: this.selectedThemes,
-          adminName: this.adminName
+          adminName: this.adminName,
+          participants: [this.adminName], // Lägg till admin som första deltagare
         };
+        
         socket.emit("createGame", gameData);
-        localStorage.setItem('gameId', this.randomCode); // Lagra gameId i localStorage
+        localStorage.setItem('gameId', gameCode); // Lagra gameId i localStorage
+      
+        this.$router.push({
+        path: `/lobby/${this.randomCode}`,
+        query: { joined: true },
+      });
+      },
+      updateParticipants(participants) {
+        this.participants = participants;
       },
     },
   };
   </script>
-
 
 <style>
 
@@ -148,12 +177,27 @@
 .create-game-button {
   text-align: center; 
   margin-top: 50px; 
+  margin-bottom: 50px;
+}
+.adminName {
+  font-size: 40px;
+  text-align: center
 }
 
 select {
   margin-top: 10px;
   padding: 5px;
   width: 100%; 
+}
+
+.header-button {
+    font-size: 1.5rem;
+    border: 0.2em solid black;
+    width: 80px;
+    height: 50px;
+    position: absolute; 
+    top: 90px; 
+    left: 120px; 
 }
 
 </style>

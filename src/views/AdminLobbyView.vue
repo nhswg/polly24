@@ -1,4 +1,10 @@
 <template>
+<router-link to="/">
+        <button class="header-button">
+            Back
+        </button>
+    </router-link>
+    
     <div class="admin-lobby">
       <h1>Admin Lobby</h1>
       <h2>Game Code: {{ gameData.gameId }}</h2>
@@ -49,7 +55,6 @@
   };
   </script>
   
-  
   <style scoped>
   
   .admin-lobby {
@@ -62,7 +67,7 @@
   }
   .settings-list li {
     margin: 10px 0;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
   }
   .participants-list {
     list-style: none;
@@ -71,7 +76,7 @@
   }
   .participants-list li {
     margin: 5px 0;
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
   .start-game-button {
     padding: 15px 30px;
@@ -85,6 +90,16 @@
   }
   .start-game-button:hover {
     background-color: #218838;
+  }
+
+  .header-button {
+    font-size: 1.5rem;
+    border: 0.2em solid black;
+    width: 80px;
+    height: 50px;
+    position: absolute; 
+    top: 90px; 
+    left: 120px; 
   }
   </style>
   
