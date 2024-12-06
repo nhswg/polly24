@@ -15,21 +15,19 @@ const router = createRouter({
       component: () => import('../views/PollView.vue')
     },
     {
-      path: '/playerlobby/',
+      path: '/join/',
       name: 'PlayerLobby',
       component: () => import('../views/JoinGameView.vue')
     },
-
-    {
-      path: '/playerlobby/:id',
-      name: 'PlayerLobbyID',
-      component: () => import('../views/WaitingRoom.vue')
-    },
-
     {
       path: '/create/',
       name: 'CreateView',
       component: () => import('../views/CreateView.vue')
+    },
+    {
+      path: '/lobby/:id',
+      name: 'PlayerLobbyID',
+      component: () => import('../views/WaitingRoom.vue')
     },
     {
       path: '/result/:id',
@@ -37,20 +35,10 @@ const router = createRouter({
       component: () => import('../views/ResultView.vue')
     },
     {
-      path: '/adminlobby/',
-      name: 'AdminLobbyView',
-      component: () => import('../views/AdminLobbyView.vue')
-    },
-    {
       path: '/about',
       name: 'About',
       component: () => import('../views/About.vue')
     },
-    {
-      path: '/about',
-      name: 'About',
-      component: () => import('../views/About.vue')
-    }    
   ]
 })
 
