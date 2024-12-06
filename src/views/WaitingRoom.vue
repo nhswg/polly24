@@ -9,6 +9,8 @@
         </span>
       </p>
     </div>
+    <p class="participants-title">Participants:</p>
+      <div class="participants-square"></div>
     <button 
       v-if="isAdmin" 
       @click="startGame" 
@@ -80,6 +82,41 @@ export default {
   .dot:nth-child(3) {
     animation-delay: 0.4s;
   }
+  .participants-title {
+  font-size: 1.5rem;
+  margin-top: 30px;
+  margin-bottom: 5px; 
+  color: black;
+}
+
+.participants-square {
+  width: 600px;
+  height: 300px;
+  margin: 0 auto;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+
+.start-game-button {
+    width: 150px;
+    height: 50px;
+    font-size: 1.5rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+
+    margin-top: 20px;
+}
+.start-game-button:hover {
+    background-color: #218838;
+}
+
+
+
+
   
   /* Keyframes för "hoppa upp och ner"-effekt */
   @keyframes bounce {
@@ -92,3 +129,4 @@ export default {
   }
   </style>
   
+
