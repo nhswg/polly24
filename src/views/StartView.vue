@@ -37,7 +37,8 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
 .title {
@@ -67,13 +68,15 @@ header {
     display: flex;
     justify-content: center;
     gap: 2rem;
+    margin-top: 4rem;
 }
 
 .game-button {
-    font-size: 4rem;
+    font-size: 3.5rem;
     width: 400px;
     height: 200px;
     border: 0.5rem solid black;
+    border-radius: 1rem;
 }
 
 button {
