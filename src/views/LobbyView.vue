@@ -1,27 +1,31 @@
 <template>
 
   <div class="join-game" v-if="!joined">
-    <div>
+    <div class="join-game-form">
+      <div>
       Enter game code:
-      <input type="text" v-model="gameCode">
-    </div>
+      <input type="text" v-model="gameCode" class="text-square">
 
-    <div>
+      </div>
+      <div>
       Enter your name:
-      <input type="text" v-model="userName">
+      <input type="text" v-model="userName" class="text-square">
+      </div>
     </div>
 
-    <div>
-      <button v-on:click="participateInGame">
+      <button v-on:click="participateInGame" class="join-game-button">
         Join Game
       </button>
 
-    </div>
   </div>
 
 
-  <div class="waiting-lobby" v-if="joined">
+  <div class="waiting-lobby" v-if="joined" >
       <p>Waiting for host to start game</p>
+  </div>
+
+  <div class="participants-joining">
+
   </div>
 
 </template>
@@ -67,4 +71,36 @@ methods: {
   justify-content: center;
   height: 100vh;
 }
+
+.join-game-form {
+  font-size: 2rem;
+}
+.text-square {
+  width: 200px;
+  height: 30px;
+  font-size: 1.5rem;
+  margin: 10px;
+  background-color: white;
+  border: 0.1em solid rgb(142, 142, 142);
+}
+
+.join-game-button{
+    width: 150px;
+    height: 50px;
+    font-size: 1.5rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+
+    margin-top: 20px;
+  }
+  .join-game-button:hover {
+    background-color: #218838;
+  }
+
+  .waiting-lobby {
+    margin-top: 50px;
+    font-size: 2rem;
+  }
 </style>
