@@ -23,7 +23,7 @@ const router = createRouter({
     {
       path: '/playerlobby/:id',
       name: 'PlayerLobbyID',
-      component: () => import('../views/LobbyView.vue')
+      component: () => import('../views/WaitingRoom.vue')
     },
 
     {
@@ -45,7 +45,12 @@ const router = createRouter({
       path: '/about',
       name: 'About',
       component: () => import('../views/About.vue')
-    }
+    },
+    {
+      path: '/about',
+      name: 'About',
+      component: () => import('../views/About.vue')
+    }    
   ]
 })
 
