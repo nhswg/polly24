@@ -1,4 +1,15 @@
 <template>
+    <div>
+    <header>
+      <router-link to="/about/">
+        <button class="about-button">?</button>
+      </router-link>
+      <h1 class="title">Sketchdle</h1>
+      <button class="flag-container">
+        <img src="/img/flag.png" alt="changeLanguagePic">
+      </button>
+    </header>
+    </div>
 
   <div class="join-game" v-if="!joined">
     <div class="join-game-form">
@@ -69,7 +80,7 @@ methods: {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 40vh;
 }
 
 .join-game-form {
