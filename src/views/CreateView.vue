@@ -63,7 +63,7 @@
   </div>
   
   <div class="create-game-button">
-    <router-link :to="'/playerlobby/' + gameCode">
+    <router-link :to="'/lobby/' + gameCode">
 
       <button @click="createGame"  >
         Create Game
@@ -124,7 +124,7 @@
         localStorage.setItem('playerName', this.adminName);
       
         this.$router.push({
-          path: `/playerlobby/${this.gameCode}`,
+          path: `/lobby/${this.gameCode}`,
       });
       },
       updateParticipants(participants) {

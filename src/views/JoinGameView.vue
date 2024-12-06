@@ -46,14 +46,14 @@ data: function () {
 },
 created: function () {
   this.gameCode = this.$route.params.id;
-  socket.emit( "joinGame", this.gameCode );
+  socket.emit("joinGame", this.gameCode);
 
 },
 methods: {
   participateInGame: function () {
     if (this.gameCode && this.userName) {
       socket.emit("participateInGame", { gameCode: this.gameCode, name: this.userName });
-      this.$router.push(`/playerlobby/${this.gameCode}`);
+      this.$router.push(`/lobby/${this.gameCode}`);
       localStorage.setItem('gameId', this.gameCode);
       localStorage.setItem('isAdmin', 'false');
       localStorage.setItem('playerName', this.userName);

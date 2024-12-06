@@ -11,7 +11,7 @@
     </header>
 
     <section class="game-buttons">
-      <router-link to="/playerlobby/">
+      <router-link to="/join/">
         <button class="game-button">Join Game</button>
       </router-link>
 
