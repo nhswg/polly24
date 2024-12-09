@@ -5,35 +5,69 @@
         <button class="about-button">?</button>
       </router-link>
       <h1 class="title">Sketchdle</h1>
-      <button class="flag-container">
+      <button class="flag-container" v-on:click="switchLanguage">
         <img src="/img/flag.png" alt="changeLanguagePic">
       </button>
     </header>
 
+    <ResponsiveNav v-bind:hideNav="hideNav">
     <section class="game-buttons">
       <router-link to="/join/">
-        <button class="game-button">Join Game</button>
+        <button class="game-button">{{uiLabels.joinGame}}</button>
       </router-link>
 
       <router-link to="/create/">
-        <button class="game-button">Create Game</button>
+        <button class="game-button">{{uiLabels.createGame}}</button>
       </router-link>
     </section>
+    </ResponsiveNav>
   </div>
 </template>
 
 <script>
+import ResponsiveNav from '@/components/ResponsiveNav.vue';
+import io from 'socket.io-client';
+const socket = io("localhost:3000");
 
+export default {
+  name: 'StartView',
+  components: {
+    ResponsiveNav
+  },
+  data: function () {
+    return {
+      uiLabels: {},
+      lang: localStorage.getItem( "lang") || "en",
+      hideNav: true
+    }
+  },
+  created: function () {
+    socket.on( "uiLabels", labels => this.uiLabels = labels );
+    socket.emit( "getUILabels", this.lang );
+  },
+  methods: {
+    switchLanguage: function() {
+      if (this.lang === "en") {
+        this.lang = "sv"
+      }
+      else {
+        this.lang = "en"
+      }
+      localStorage.setItem( "lang", this.lang );
+      socket.emit( "getUILabels", this.lang );
+    },
+    toggleNav: function () {
+      this.hideNav = ! this.hideNav;
+    }
+  }
+}
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Schoolbell&display=swap');
-body {
-    background-color: rgb(158, 221, 245);
-}
-
 * {
-    font-family: 'Schoolbell', cursive;
+    background-color: rgb(158, 221, 245);
+    font-family: Schoolbell, cursive;
 }
 
 header {
