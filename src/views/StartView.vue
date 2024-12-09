@@ -27,10 +27,13 @@
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-* {
+@import url('https://fonts.googleapis.com/css2?family=Schoolbell&display=swap');
+body {
     background-color: rgb(158, 221, 245);
-    font-family: pacifico, cursive;
+}
+
+* {
+    font-family: 'Schoolbell', regular;
 }
 
 header {
