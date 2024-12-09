@@ -182,7 +182,8 @@
 }
 .adminName {
   font-size: 40px;
-  text-align: center
+  text-align: center;
+  background-color: white; 
 }
 
 select {
