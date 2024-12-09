@@ -2,34 +2,49 @@
 
     <router-link to="/">
         <button class="header-button">
-            Back
+            {{uiLabels.backButton}}
         </button>
     </router-link>
 
     <div class="content">
-      <h1 class="title">Game Rules</h1>
+      <h1 class="title">{{ uiLabels.gameRules }}</h1>
   
       <p class="text">
-        Sketchdle is a drawing and guessing game where players take turns illustrating and guessing words based on a specific theme. The objective is to score the most points by either guessing the correct word quickly or by creating clear drawings that help others guess your word.
+        {{ uiLabels.aboutPart1 }}
       </p>
   
       <p class="text">
-        Before starting the game, one player creates a private room, shares the link with the group, and customizes the settings. Players can select the number of rounds, the time limit for each turn, and a theme for the game, such as "Animals," "Office Items," or any other category. Custom words can also be added to fit the chosen theme.
+        {{ uiLabels.aboutPart2 }}
       </p>
   
       <p class="text">
-        During the game, players take turns drawing words randomly selected from the theme-based word pool. When it’s your turn to draw, you must use only the provided drawing tools to illustrate the word. Writing letters, numbers, or symbols that directly reveal the answer is not allowed. Drawings must adhere to the selected theme and should be relevant to the word chosen.
+        {{ uiLabels.aboutPart3 }}
       </p>
   
       <p class="text">
-        Players guess the word by typing their answers in the chat box, with multiple guesses allowed. However, players may not reveal the word verbally or give hints outside of their drawing. The faster you guess correctly, the more points you earn. At the end of all rounds, the player with the highest score is declared the winner.
-  
-        Sketchdle combines creativity and quick thinking with the added challenge of themed gameplay, making it a fun and engaging experience for everyone!
+        {{ uiLabels.aboutPart4 }}
       </p>
     </div>
   </template>
   
   <script>
+  import io from 'socket.io-client';
+  const socket = io("localhost:3000");
+
+  export default {
+  name: 'About',
+  data: function () {
+    return {
+      uiLabels: {},
+      lang: localStorage.getItem( "lang") || "en",
+    }
+  },
+  created: function () {
+    socket.on( "uiLabels", labels => this.uiLabels = labels );
+    socket.emit( "getUILabels", this.lang );
+  },
+}
+
   </script>
   
   <style>
@@ -53,9 +68,10 @@
   .header-button {
     font-size: 1.5rem;
     border: 0.2em solid black;
-    width: 80px;
+    width: auto;
     height: 50px;
     position: absolute; 
+    display: inline-block;
     top: 120px; 
     left: 120px; 
 }

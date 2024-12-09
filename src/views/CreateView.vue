@@ -1,23 +1,26 @@
 <template>
 
-  <h1 id="header">Create Game</h1>
+  <h1 id="header">{{ uiLabels.createGame }}</h1>
 
   <router-link to="/">
         <button class="header-button">
-            Back
+          {{ uiLabels.backButton }}
         </button>
     </router-link>
 
     <div class="game-code">
+      <h2>{{ uiLabels.gameCode }}: {{ gameCode }}</h2>
+    </div>
 
-      <h2>Game Code: {{ gameCode }}</h2>
+    <div class="game-rules">
+      <h2>{{ uiLabels.gameRules }}:</h2>
     </div>
   
   
   <div class="blocks-container">
     <!-- Language -->
     <div class="block">
-      <h3>Language</h3>
+      <h3>{{ uiLabels.Language }}</h3>
       <select v-model="selectedLanguage">
         <option v-for="language in languages" :key="language.value" :value="language.value">
           {{ language.label }}
@@ -29,17 +32,17 @@
   
     <!-- Drawtime -->
     <div class="block">
-      <h3>Drawtime</h3>
+      <h3>{{ uiLabels.Drawtime }}</h3>
       <select v-model="selectedDrawtime">
         <option v-for="time in drawTimes" :key="time" :value="time">
-          {{ time }} seconds
+          {{ time }} {{uiLabels.Seconds}}
         </option>
       </select>
     </div>
   
     <!-- Rounds -->
     <div class="block">
-      <h3>Rounds</h3>
+      <h3>{{ uiLabels.Rounds }}</h3>
       <select v-model="selectedRounds">
         <option v-for="round in rounds" :key="round" :value="round">
           {{ round }}
@@ -49,7 +52,7 @@
   
     <!-- Theme -->
     <div class="block">
-      <h3>Theme</h3>
+      <h3>{{ uiLabels.Theme }}</h3>
       <select v-model="selectedThemes">
         <option v-for="theme in themes" :key="theme" :value="theme">
           {{ theme }}
@@ -59,14 +62,14 @@
   </div>
 
   <div>
-    <input type="text" class="adminName" v-model="adminName" placeholder="Enter your name">
+    <input type="text" class="adminName" v-model="adminName" :placeholder= "uiLabels.enterName">
   </div>
   
   <div class="create-game-button">
     <router-link :to="'/lobby/' + gameCode">
 
       <button @click="createGame"  >
-        Create Game
+        {{ uiLabels.createGame }}
       </button>
     
     </router-link>
@@ -80,7 +83,7 @@
   
   export default {
     name: 'CreateView',
-    data() {
+    data: function () {
       return {
         gameCode: '',
         languages: [
@@ -89,15 +92,16 @@
         ],
         drawTimes: [30, 60, 90, 120, 150, 180],
         rounds: Array.from({ length: 10 }, (_, i) => i + 1),
-        themes: ['Standard', 'Office', 'Animals', 'Food', 'Movies', 'Music', 'Nature', 'Sports', 'Technology'],
         selectedLanguage: 'English',
         selectedDrawtime: 30,
         selectedRounds: 1,
         selectedThemes: 'Standard',
-        adminName:""
+        adminName:"",
+        uiLabels: {},
+        lang: localStorage.getItem("lang") || "en",
       };
     },
-    created() {
+    created: function () {
       this.gameCode = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
       socket.on("gameCreated", (data) => {
         console.log(data);
@@ -105,6 +109,23 @@
       socket.on("participantsUpdated", (participants) => {
         this.updateParticipants(participants);
       });
+      socket.on("uiLabels", labels => this.uiLabels = labels );
+      socket.emit("getUILabels", this.lang );
+    },
+    computed: {
+      themes() {
+        return [
+          this.uiLabels.Standard,
+          this.uiLabels.Office,
+          this.uiLabels.Animals,
+          this.uiLabels.Food,
+          this.uiLabels.Movies,
+          this.uiLabels.Music,
+          this.uiLabels.Nature,
+          this.uiLabels.Sports,
+          this.uiLabels.Technology
+        ];
+      }
     },
     methods: {
       createGame() {
@@ -140,8 +161,19 @@
   color: black;
   font-size: 75px;
   text-align: center;
-  margin-bottom: 150px;
+  margin-bottom: 50px;
 
+}
+.game-code {
+  text-align: center;
+  font-size: 30px;
+  background-color: white; 
+}
+
+.game-rules {
+  text-align: center;
+  font-size: 20px;
+  background-color: white; 
 }
 
 .blocks-container {
@@ -195,11 +227,12 @@ select {
 .header-button {
     font-size: 1.5rem;
     border: 0.2em solid black;
-    width: 80px;
+    width: auto;
     height: 50px;
     position: absolute; 
     top: 90px; 
     left: 120px; 
+    display: inline-block;
 }
 
 </style>
