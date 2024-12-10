@@ -1,31 +1,32 @@
 <template>
-    <div>
-    <header>
-      <router-link to="/about/">
-        <button class="about-button">?</button>
-      </router-link>
-      <h1 class="title">Sketchdle</h1>
-      <button class="flag-container">
-        <img src="/img/flag.png" alt="changeLanguagePic">
-      </button>
+  <div>
+    <header class="header">
+      <h1 class="title center-text">Sketchdle</h1>
     </header>
-    </div>
+  </div>
+
+  <router-link to="/">
+    <button class="header-button">
+      {{ uiLabels.backButton }}
+    </button>
+  </router-link>
+
 
   <div class="join-game">
     <div class="join-game-form">
       <div>
-      Enter game code:
+      {{uiLabels.enterCode}}:
       <input type="text" v-model="gameCode" class="text-square">
 
       </div>
       <div>
-      Enter your name:
+      {{uiLabels.enterName}}:
       <input type="text" v-model="userName" class="text-square">
       </div>
     </div>
 
       <button v-on:click="participateInGame" class="join-game-button">
-        Join Game
+        {{uiLabels.joinGame}}
       </button>
 
   </div>
@@ -42,11 +43,15 @@ data: function () {
   return {
     userName: "",
     gameCode: "inactive game",
+    uiLabels: {},
+    lang: localStorage.getItem("lang") || "en",
   }
 },
 created: function () {
   this.gameCode = this.$route.params.id;
   socket.emit("joinGame", this.gameCode);
+  socket.on("uiLabels", labels => this.uiLabels = labels );
+  socket.emit("getUILabels", this.lang );
 
 },
 methods: {
@@ -67,6 +72,24 @@ methods: {
 </script>
 
 <style>
+
+.header {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.title {
+  font-size: 5rem;
+}
+
 .join-game {
   display: flex;
   flex-direction: column;
@@ -95,10 +118,21 @@ methods: {
     color: white;
     border: none;
     border-radius: 5px;
-
     margin-top: 20px;
   }
   .join-game-button:hover {
     background-color: #218838;
   }
+
+  .header-button {
+    font-size: 1.5rem;
+    border: 0.2em solid black;
+    width: auto;
+    height: 50px;
+    position: absolute; 
+    top: 90px; 
+    left: 120px; 
+    display: inline-block;
+}
+
 </style>
