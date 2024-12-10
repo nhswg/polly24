@@ -1,4 +1,4 @@
-const games = {};
+
 
   function sockets(io, socket, data) {
     
@@ -16,15 +16,14 @@ const games = {};
       socket.emit('questionUpdate', data.activateQuestion(d.pollId));
     });
 
-    socket.on('joinPoll', function(pollId) {
-      socket.join(pollId);
-      socket.emit('questionUpdate', data.activateQuestion(pollId))
-      socket.emit('submittedAnswersUpdate', data.getSubmittedAnswers(pollId));
+    socket.on('joinGame', function(gameCode) {
+      socket.join(gameCode);
+      socket.emit('participantsUpdate', data.getParticipants(gameCode));
     });
 
-    socket.on('participateInPoll', function(d) {
-      data.participateInPoll(d.pollId, d.name);
-      io.to(d.pollId).emit('participantsUpdate', data.getParticipants(d.pollId));
+    socket.on('participateInGame', function(d) {
+      data.participateInGame(d.gameCode, d.name);
+      io.to(d.gameCode).emit('participantsUpdate', data.getParticipants(d.gameCode));
     });
     socket.on('startPoll', function(pollId) {
       io.to(pollId).emit('startPoll');
@@ -44,16 +43,17 @@ const games = {};
 
     socket.on('createGame', function(gameData) {
       // Lagra gameData
-      games[gameData.gameId] = gameData;
+      data.createGame(gameData);
       // Låt socket ansluta till spelrummet
       socket.join(gameData.gameId);
       // Skicka 'gameCreated' tillbaka till skaparen
       socket.emit('gameCreated', gameData);
+      // MåSTe fixa så man läser in gameData från databasen
     });
   
     socket.on('getGameData', function(data) {
       const gameId = data.gameId;
-      const gameData = games[gameId];
+      const gameData = data.getGameData(gameId);
       if (gameData) {
         socket.join(gameId); // Anslut till rummet
         socket.emit('gameData', gameData);

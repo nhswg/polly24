@@ -106,7 +106,7 @@
       socket.on("gameCreated", (data) => {
         console.log(data);
       });
-      socket.on("participantsUpdated", (participants) => {
+      socket.on("participantsUpdate", (participants) => {
         this.updateParticipants(participants);
       });
       socket.on("uiLabels", labels => this.uiLabels = labels );
@@ -137,9 +137,10 @@
           theme: this.selectedThemes,
           adminName: this.adminName,
           participants: [this.adminName],
-        };
+        }; /* Send game data to server */
         
         socket.emit("createGame", gameData);
+        socket.emit("participateInGame", { gameCode: this.gameCode, name: this.adminName });
         localStorage.setItem('gameId', this.gameCode);
         localStorage.setItem('isAdmin', 'true');
         localStorage.setItem('playerName', this.adminName);

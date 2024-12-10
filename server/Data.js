@@ -38,18 +38,21 @@ Data.prototype.getUILabels = function (lang) {
   return JSON.parse(labels);
 }
 
-Data.prototype.createPoll = function(pollId, lang="en") {
-  if (!this.pollExists(pollId)) {
-    let poll = {};
-    poll.lang = lang;  
-    poll.questions = [];
-    poll.answers = [];
-    poll.participants = [];
-    poll.currentQuestion = 0;              
-    this.polls[pollId] = poll;
-    console.log("poll created", pollId, poll);
+Data.prototype.createGame = function(gameData) {
+  if (!this.pollExists(gameData.gameId)) {
+    let poll = {
+      language: gameData.language,
+      drawTime: gameData.drawTime,
+      rounds: gameData.rounds,
+      theme: gameData.theme,
+      adminName: gameData.adminName,
+      participants: gameData.participants,
+    };
+    poll.participants = [];            
+    this.polls[gameData.gameId] = poll;
+    console.log("poll created", gameData.gameId, poll);
   }
-  return this.polls[pollId];
+  return this.polls[gameData.gameId];
 }
 
 Data.prototype.getPoll = function(pollId) {
@@ -59,10 +62,10 @@ Data.prototype.getPoll = function(pollId) {
   return {};
 }
 
-Data.prototype.participateInPoll = function(pollId, name) {
+Data.prototype.participateInGame = function(pollId, name) {
   console.log("participant will be added to", pollId, name);
   if (this.pollExists(pollId)) {
-    this.polls[pollId].participants.push({name: name, answers: []})
+    this.polls[pollId].participants.push({name: name})
   }
 }
 
@@ -70,7 +73,9 @@ Data.prototype.getParticipants = function(pollId) {
   const poll = this.polls[pollId];
   console.log("participants requested for", pollId);
   if (this.pollExists(pollId)) { 
+    console.log("participants found", poll.participants);
     return this.polls[pollId].participants
+    
   }
   return [];
 }

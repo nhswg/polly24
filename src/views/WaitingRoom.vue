@@ -9,8 +9,17 @@
         </span>
       </p>
     </div>
+    <div class="display-gamecode">
+      Game code: {{ gameCode }}
+    </div>
+  
     <p class="participants-title">Participants:</p>
-      <div class="participants-square"></div>
+      <div class="participants-square">
+        <div class="participants-item" v-for="participant in participants" :key="participant">
+          {{ participant.name }}
+        </div>
+      </div> 
+
     <button 
       v-if="isAdmin" 
       @click="startGame" 
@@ -28,6 +37,7 @@ export default {
   name: 'WaitingRoom',
   data() {
     return {
+      username: '',
       gameCode: '',
       participants: [],
       isAdmin: false,
@@ -38,10 +48,11 @@ export default {
     this.gameCode = localStorage.getItem('gameId');
     this.isAdmin = localStorage.getItem('isAdmin') === 'true';
     
-    // Lyssna på uppdateringar av deltagarlistan
-    socket.on("participantsUpdated", (participants) => {
+    socket.on("participantsUpdate", (participants) => {
       this.participants = participants;
     });
+    socket.emit("joinGame", this.gameCode);
+    
   },
   methods: {
     startGame() {
@@ -97,7 +108,13 @@ export default {
   border: 2px solid black;
   border-radius: 10px;
   margin-bottom: 40px;
+  font-size: 1.5rem;
+
 }
+.participants-item {
+  background-color: white;
+}
+
 
 .start-game-button {
     width: 150px;
@@ -114,6 +131,9 @@ export default {
     background-color: #218838;
 }
 
+.display-gamecode {
+  font-size: 3rem;
+}
 
 
 
