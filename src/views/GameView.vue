@@ -1,7 +1,8 @@
 <template>
     <div class="information-banner">
-      <button class="leave">
-        Leave game
+      <button 
+          class="leave" v-on:click="confirmLeave">
+          Leave game
       </button>
       <div class="current-word">
         Guess the word
@@ -24,7 +25,7 @@
       v-on:mouseup="stopDrawing"
       v-on:mouseleave="stopDrawing"
       >
-        <canvas ref="canvas" width="800" height="600"></canvas>
+        <canvas ref="canvas" width="800" height="500"></canvas>
         <div class="current-color" v-bind:style="{ backgroundColor: penColor }"></div>
         <div class="button-container">
           <button v-on:click="changeStrokeColor('#FF5433')">Red</button>
@@ -41,6 +42,7 @@
           <button v-on:click="changeLineWidth('20')">20</button>
           <button v-on:click="changeLineWidth('50')">50</button>
           <button v-on:click="changeLineWidth('100')">100</button>
+          <button v-on:click="resetCanvas()">Reset</button>
         </div>
       </div>
       <div class="chat">
@@ -91,15 +93,26 @@
   
       changeLineWidth(width) {
         this.lineWidth = width;
+      },
+      confirmLeave() {
+    if (confirm("Är du säker på att du vill lämna spelet?")) {
+      this.$router.push('/'); // Navigerar till startsidan
+      }
+    },
+      resetCanvas() {
+      const canvas = this.$refs.canvas;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     }
-  };
+  }
   </script>
   
   <style scoped>
   .information-banner{
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
+    height: 80px;
   }
   
   .game-area {
@@ -131,6 +144,17 @@
   
   .chat {
     border: 1px solid #000;
+  }
+  .leave{
+    width: 150px;
+    height: 50px;
+    font-size: 1.5rem;
+    background-color: #dc3545;
+    color:black;
+    border: solid 1px black;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-left: 50px;
   }
   
   </style>
