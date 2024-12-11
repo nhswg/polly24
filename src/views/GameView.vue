@@ -85,7 +85,7 @@ export default {
   },
 
   created() {
-  this.gameCode = localStorage.getItem('gameId'); // om du lagrat den på samma sätt
+  this.gameCode = localStorage.getItem('gameId'); 
   socket.emit("joinGame", this.gameCode);
 
   socket.on("participantsUpdate", (participants) => {
@@ -107,18 +107,28 @@ export default {
     },
     
     draw(event) {
-      if (!this.isDrawing) return;
+  if (!this.isDrawing) return;
 
-      const ctx = this.$refs.canvas.getContext('2d');
-      ctx.strokeStyle = this.penColor;
-      ctx.lineWidth = this.lineWidth;
-      ctx.beginPath();
-      ctx.moveTo(this.lastX, this.lastY);
-      ctx.lineTo(event.offsetX, event.offsetY);
-      ctx.stroke();
-      this.lastX = event.offsetX;
-      this.lastY = event.offsetY;
-    },
+  const ctx = this.$refs.canvas.getContext('2d');
+  ctx.strokeStyle = this.penColor;
+  ctx.lineWidth = this.lineWidth;
+  ctx.beginPath();
+  ctx.moveTo(this.lastX, this.lastY);
+  ctx.lineTo(event.offsetX, event.offsetY);
+  ctx.stroke();
+
+  this.currentStroke.push({
+    x1: this.lastX,
+    y1: this.lastY,
+    x2: event.offsetX,
+    y2: event.offsetY,
+    color: this.penColor,
+    width: this.lineWidth
+  });
+
+  this.lastX = event.offsetX;
+  this.lastY = event.offsetY;
+},
   
     stopDrawing() {
       if (this.currentStroke.length > 0) {
@@ -137,7 +147,7 @@ export default {
     },
     confirmLeave() {
   if (confirm("Är du säker på att du vill lämna spelet?")) {
-    this.$router.push('/'); // Navigerar till startsidan
+    this.$router.push('/'); 
     }
   },
   undoLastStroke() {
