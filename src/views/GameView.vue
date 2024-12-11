@@ -153,24 +153,29 @@ export default {
 .information-banner {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
+  gap: 10px;
   height: 80px;
+  border-radius: 10px;
+  background-color: white;
+  margin: 10px;
 }
 
 .game-area {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
+  gap: 10px;
 }
 
 .drawing-area {
   position: relative;
   width: 800px;
   height: 600px;
-  border: 1px solid #000;
 }
 
 canvas {
   display: block;
   background-color: white;
+  border-radius: 10px;
 }
 
 .current-color {
@@ -182,11 +187,15 @@ canvas {
 }
 
 .leaderboard {
-  border: 1px solid #000;
+  border-radius: 10px;
+  background-color: white;
+  margin-left: 10px;
 }
 
 .chat {
-  border: 1px solid #000;
+  border-radius: 10px;
+  background-color: white;
+  margin-right: 10px;
 }
 
 .leave {
