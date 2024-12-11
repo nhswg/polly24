@@ -5,16 +5,20 @@
         Leave game
     </button>
     <div class="current-word">
-      Guess the word...
+      shurdass
     </div>
-    <div class="round">
-      Round
+    <div class="timer-container">
+      <img src="/img/clock.jpg" alt="Clock" class="clock-image">
+      <div class="timer-text">{{ timer }}</div>
+    </div>
+    <div class="round-container">
+      <img src="/img/round.jpg" alt="Clock" class="round-image">
+      <div class="round-text">1</div>
     </div>
   </div>
   <div class="game-area">
     <div class="leaderboard">
       <p>Leaderboard</p><br>
-      <p>List of participants here</p>
       <div class="participant-name" v-for="participant in participants" :key="participant">
       {{ participant.name}}
       </div>
@@ -28,7 +32,7 @@
       <canvas ref="canvas" width="800" height="500"></canvas>
       <div class="current-color" v-bind:style="{ backgroundColor: penColor }"></div>
     
-      
+
         <button class="button-container" v-on:click="changeStrokeColor('#ffffff')"><img src="/img/ffffff.png" alt="White" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#000000')"><img src="/img/Black.png" alt="Black" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#3f48cc')"><img src="/img/3f48cc.png" alt="Blue" /></button>
@@ -49,8 +53,8 @@
         <button class="button-container" v-on:click="changeLineWidth('50')"><img src="/img/5.jpg" alt="White" /></button>
         <button class="button-container" v-on:click="changeLineWidth('100')"><img src="/img/6.jpg" alt="White" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#FFFFFF')"><img src="/img/sudd.png" alt="Eraser" /></button>
-        <button class="button-container" v-on:click="resetCanvas()">Reset</button>
-        <button class="button-container" v-on:click="undoLastStroke()">Undo</button>
+        <button class="button-container" v-on:click="undoLastStroke()"><img src="/img/undo.jpg" alt="White" /></button>
+        <button class="button-container" v-on:click="resetCanvas()"><img src="/img/reset.png" alt="White" /></button>
     </div>
     <div class="chat">
         Chat
@@ -67,6 +71,8 @@
 <script>
 
 import io from 'socket.io-client';
+import wordsEn from '@/assets/words-en.json';
+import wordsSv from '@/assets/words-sv.json';
 const socket = io("http://localhost:3000");
 
 export default {
@@ -80,7 +86,10 @@ export default {
       participants: [],
       gameData: {},
       strokes: [], 
-      currentStroke: [] 
+      currentStroke: [],
+      timer: 0,
+      timerInterval: null,
+      currentWord: ''
     };
   },
 
@@ -93,7 +102,10 @@ export default {
   });
 
   socket.on('gameData', (data) => {
-      this.gameData = data;
+    this.gameData = data;
+    this.timer = data.drawTime;
+    this.startTimer();
+    this.currentWord = this.getRandomWord(); 
     });
     socket.emit("getGameData", { gameId: localStorage.getItem("gameId") });
 },
@@ -129,6 +141,20 @@ export default {
   this.lastX = event.offsetX;
   this.lastY = event.offsetY;
 },
+  getRandomWord() {
+      let words;
+      if (this.gameData.language === "English") {
+        words = wordsEn[this.gameData.theme];
+      } else if (this.gameData.language === "Swedish") {
+        words = wordsSv[this.gameData.theme];
+      }
+      if (words && words.length > 0) {
+        const randomIndex = Math.floor(Math.random() * words.length);
+        return words[randomIndex];
+      } else {
+        return null;
+      }
+    },
   
     stopDrawing() {
       if (this.currentStroke.length > 0) {
@@ -175,6 +201,19 @@ export default {
     const canvas = this.$refs.canvas;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    },
+
+    startTimer() {
+      if (this.timerInterval) clearInterval(this.timerInterval);
+
+      this.timerInterval = setInterval(() => {
+        if (this.timer > 0) {
+          this.timer--;
+        } else {
+          clearInterval(this.timerInterval);
+          this.timerInterval = null;
+        }
+      }, 1000);
     }
   }
 }
@@ -183,8 +222,15 @@ export default {
 <style scoped>
 .information-banner{
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 6fr 1fr 1fr;
   height: 80px;
+}
+
+.current-word {
+  flex: 1;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .game-area {
@@ -237,5 +283,45 @@ canvas {
     width: 30px;
     height: auto;
     background-color: white;
+}
+
+.timer-container {
+  position: relative;
+  width: 100px;
+  height: 100px; 
+}
+
+.clock-image {
+  width: 80%;
+  height: auto;
+}
+
+.timer-text {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;    
+  color: black;   
+  font-weight: bold;
+}
+
+.round-container {
+  position: relative;
+  width: 100px;  
+}
+
+.round-image {
+  width: 80%;
+  height: auto;
+}
+
+.round-text {
+  position: absolute;
+  top: 47%;
+  left: 47%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;    
+  font-weight: bold;
 }
 </style>
