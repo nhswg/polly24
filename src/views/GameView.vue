@@ -14,10 +14,10 @@
     <div class="game-area">
       <div class="leaderboard">
         <p>Leaderboard</p><br>
-        <p>List of participants here</p><br>
-        <p>---</p><br>
-        <p>---</p><br>
-        <p>---</p><br>
+        <p>List of participants here</p>
+        <div class="participant-name" v-for="participant in participants" :key="participant">
+        {{ participant.name}}
+        </div>
       </div>
       <div class="drawing-area"
       v-on:mousedown="startDrawing"
@@ -49,9 +49,19 @@
           Chat
       </div>
     </div>
+    <ul class="settings-list" v-if="gameData && gameData.language">
+  <li><strong>Language:</strong> {{ gameData.language }}</li>
+  <li><strong>Drawtime:</strong> {{ gameData.drawTime }} seconds</li>
+  <li><strong>Rounds:</strong> {{ gameData.rounds }}</li>
+  <li><strong>Theme:</strong> {{ gameData.theme }}</li>
+</ul>
   </template>
   
   <script>
+
+  import io from 'socket.io-client';
+  const socket = io("http://localhost:3000");
+
   export default {
     data() {
       return {
@@ -59,9 +69,26 @@
         lastX: 0,
         lastY: 0,
         penColor: '#000000',
-        lineWidth: 7
+        lineWidth: 7,
+        participants: [],
+        gameData: {}
       };
     },
+
+    created() {
+    this.gameCode = localStorage.getItem('gameId'); // om du lagrat den på samma sätt
+    socket.emit("joinGame", this.gameCode);
+
+    socket.on("participantsUpdate", (participants) => {
+      this.participants = participants;
+    });
+
+    socket.on('gameData', (data) => {
+        this.gameData = data;
+      });
+      socket.emit("getGameData", { gameId: localStorage.getItem("gameId") });
+  },
+
     methods: {
       startDrawing(event) {
         this.isDrawing = true;

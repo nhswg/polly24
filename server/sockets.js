@@ -50,16 +50,21 @@
       socket.emit('gameCreated', gameData);
       // MåSTe fixa så man läser in gameData från databasen
     });
-  
-    socket.on('getGameData', function(data) {
-      const gameId = data.gameId;
-      const gameData = data.getGameData(gameId);
-      if (gameData) {
-        socket.join(gameId); // Anslut till rummet
-        socket.emit('gameData', gameData);
-      } else {
-        socket.emit('error', { message: 'Spelet hittades inte' });
-      }
+
+   socket.on('getGameData', function(payload) {
+    const gameId = payload.gameId;
+    const gameDataObj = data.getPoll(gameId); // eller data.getGameData(gameId) om du har en sådan metod
+    if (gameDataObj) {
+      socket.join(gameId);
+      socket.emit('gameData', gameDataObj);
+    } else {
+      socket.emit('error', { message: 'Spelet hittades inte' });
+    }
+  });
+
+    socket.on('startGame', function(gameCode) {
+      // Sänd till alla i gameCode-rummet att spelet startat
+      io.to(gameCode).emit('gameStarted');
     });
   }
 
