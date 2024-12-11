@@ -28,8 +28,8 @@
       <canvas ref="canvas" width="800" height="500"></canvas>
       <div class="current-color" v-bind:style="{ backgroundColor: penColor }"></div>
     
-        <button class="button-container" v-on:click="changeStrokeColor('#EC1C24')"><img src="/img/ec1c24.png" alt="Red" /> </button>
-
+      
+        <button class="button-container" v-on:click="changeStrokeColor('#ffffff')"><img src="/img/ffffff.png" alt="White" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#000000')"><img src="/img/Black.png" alt="Black" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#3f48cc')"><img src="/img/3f48cc.png" alt="Blue" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#0dae3b')"><img src="/img/0dae3b.png" alt= "Green"></button>
@@ -40,14 +40,14 @@
         <button class="button-container" v-on:click="changeStrokeColor('#ff3d7b')"><img src="/img/ff3d7b.png" alt="Pink" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#ff7f27')"><img src="/img/ff7f27.png" alt= "Orange"></button>
         <button class="button-container" v-on:click="changeStrokeColor('#fff200')"><img src="/img/fff200.png" alt="Yellow" /></button>
-        <button class="button-container" v-on:click="changeStrokeColor('#ffffff')"><img src="/img/ffffff.png" alt="White" /></button>
-    
-        <button class="button-container" v-on:click="changeLineWidth('2')"><img src="/img/ffffff.png" alt="White" /></button>
-        <button class="button-container" v-on:click="changeLineWidth('7')"><img src="/img/ffffff.png" alt="White" /></button>
-        <button class="button-container" v-on:click="changeLineWidth('15')"><img src="/img/ffffff.png" alt="White" /></button>
-        <button class="button-container" v-on:click="changeLineWidth('20')"><img src="/img/ffffff.png" alt="White" /></button>
-        <button class="button-container" v-on:click="changeLineWidth('50')"><img src="/img/ffffff.png" alt="White" /></button>
-        <button class="button-container" v-on:click="changeLineWidth('100')"><img src="/img/ffffff.png" alt="White" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#EC1C24')"><img src="/img/ec1c24.png" alt="Red" /> </button>
+
+        <button class="button-container" v-on:click="changeLineWidth('2')"><img src="/img/1.jpg" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('7')"><img src="/img/2.jpg" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('15')"><img src="/img/3.jpg" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('20')"><img src="/img/4.jpg" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('50')"><img src="/img/5.jpg" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('100')"><img src="/img/6.jpg" alt="White" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#FFFFFF')"><img src="/img/sudd.png" alt="Eraser" /></button>
         <button class="button-container" v-on:click="resetCanvas()">Reset</button>
         <button class="button-container" v-on:click="undoLastStroke()">Undo</button>
