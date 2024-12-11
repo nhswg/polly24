@@ -5,7 +5,7 @@
         Leave game
     </button>
     <div class="current-word">
-      Guess the word
+      Guess the word...
     </div>
     <div class="round">
       Round
