@@ -25,24 +25,30 @@
          v-on:mouseleave="stopDrawing">
       <canvas ref="canvas" width="800" height="500"></canvas>
       <div class="current-color" v-bind:style="{ backgroundColor: penColor }"></div>
-      <div class="button-container">
-        <button v-on:click="changeStrokeColor('#FF5433')">Red</button>
-        <button v-on:click="changeStrokeColor('#000000')">Black</button>
-        <button v-on:click="changeStrokeColor('#FFFFFF')">White</button>
-        <button v-on:click="changeStrokeColor('#33FF57')">Green</button>
-        <button v-on:click="changeStrokeColor('#3357FF')">Blue</button>
-        <button v-on:click="changeStrokeColor('#FFFF33')">Yellow</button>
-        <button v-on:click="changeStrokeColor('#FF33A1')">Pink</button>
-        <button v-on:click="changeStrokeColor('#FFFFFF')">Eraser</button>
-        <button v-on:click="changeLineWidth('2')">2</button>
-        <button v-on:click="changeLineWidth('7')">7</button>
-        <button v-on:click="changeLineWidth('15')">15</button>
-        <button v-on:click="changeLineWidth('20')">20</button>
-        <button v-on:click="changeLineWidth('50')">50</button>
-        <button v-on:click="changeLineWidth('100')">100</button>
-        <button v-on:click="resetCanvas()">Reset</button>
-        <button v-on:click="undoLastStroke()">Undo</button>
-      </div>
+    
+        <button class="button-container" v-on:click="changeStrokeColor('#EC1C24')"><img src="/img/ec1c24.png" alt="Red" /> </button>
+
+        <button class="button-container" v-on:click="changeStrokeColor('#000000')"><img src="/img/Black.png" alt="Black" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#3f48cc')"><img src="/img/3f48cc.png" alt="Blue" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#0dae3b')"><img src="/img/0dae3b.png" alt= "Green"></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#8cfffb')"><img src="/img/8cfffb.png" alt="Lightblue" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#724a33')"><img src="/img/724a33.png" alt="Brown" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#88238a')"><img src="/img/88238a.png" alt="Purple" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#888888')"><img src="/img/888888.png" alt="Grey" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#ff3d7b')"><img src="/img/ff3d7b.png" alt="Pink" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#ff7f27')"><img src="/img/ff7f27.png" alt= "Orange"></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#fff200')"><img src="/img/fff200.png" alt="Yellow" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#ffffff')"><img src="/img/ffffff.png" alt="White" /></button>
+    
+        <button class="button-container" v-on:click="changeLineWidth('2')"><img src="/img/ffffff.png" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('7')"><img src="/img/ffffff.png" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('15')"><img src="/img/ffffff.png" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('20')"><img src="/img/ffffff.png" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('50')"><img src="/img/ffffff.png" alt="White" /></button>
+        <button class="button-container" v-on:click="changeLineWidth('100')"><img src="/img/ffffff.png" alt="White" /></button>
+        <button class="button-container" v-on:click="changeStrokeColor('#FFFFFF')"><img src="/img/sudd.png" alt="Eraser" /></button>
+        <button class="button-container" v-on:click="resetCanvas()">Reset</button>
+        <button class="button-container" v-on:click="undoLastStroke()">Undo</button>
     </div>
     <div class="chat">
       Chat
@@ -199,5 +205,15 @@ canvas {
   border-radius: 5px;
   margin-top: 15px;
   margin-left: 50px;
+}
+.button-container {
+  border: 0.1em solid black;
+  padding: 0;
+}
+.button-container img {
+  display: block;
+    width: 30px;
+    height: auto;
+    background-color: white;
 }
 </style>
