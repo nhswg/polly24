@@ -4,9 +4,16 @@
         class="leave" v-on:click="confirmLeave">
         Leave game
     </button>
-    <div class="current-word">
-      shurdass
-    </div>
+    <div v-if="wordOptions.length > 0" class="word-options">
+  <p>Choose a word:</p>
+  <button v-for="word in wordOptions" :key="word" @click="selectWord(word)">
+    {{ word }}
+  </button>
+</div>
+<div v-else class="current-word">
+  {{ currentWord }}
+</div>
+
     <div class="timer-container">
       <img src="/img/clock.jpg" alt="Clock" class="clock-image">
       <div class="timer-text">{{ timer }}</div>
@@ -32,7 +39,7 @@
       <canvas ref="canvas" width="800" height="500"></canvas>
       <div class="current-color" v-bind:style="{ backgroundColor: penColor }"></div>
     
-
+      <div v-if="currentWord">
         <button class="button-container" v-on:click="changeStrokeColor('#ffffff')"><img src="/img/ffffff.png" alt="White" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#000000')"><img src="/img/Black.png" alt="Black" /></button>
         <button class="button-container" v-on:click="changeStrokeColor('#3f48cc')"><img src="/img/3f48cc.png" alt="Blue" /></button>
@@ -56,6 +63,7 @@
         <button class="button-container" v-on:click="undoLastStroke()"><img src="/img/undo.jpg" alt="White" /></button>
         <button class="button-container" v-on:click="resetCanvas()"><img src="/img/reset.png" alt="White" /></button>
     </div>
+  </div>
     <div class="chat">
         Chat
     </div>
@@ -89,7 +97,8 @@ export default {
       currentStroke: [],
       timer: 0,
       timerInterval: null,
-      currentWord: ''
+      currentWord: '',
+      wordOptions: [] // Tre slumpmässiga ord som valmöjligheter
     };
   },
 
@@ -102,12 +111,13 @@ export default {
   });
 
   socket.on('gameData', (data) => {
-    this.gameData = data;
-    this.timer = data.drawTime;
-    this.startTimer();
-    this.currentWord = this.getRandomWord(); 
-    });
+  this.gameData = data; // Spara mottagen gameData
+  this.timer = data.drawTime; // Sätt timern
+  this.startTimer(); // Starta timern
+  this.generateWordOptions(); // Hämta ett slumpmässigt ord baserat på tema och språk
+  });
     socket.emit("getGameData", { gameId: localStorage.getItem("gameId") });
+    
 },
 
   methods: {
@@ -141,20 +151,27 @@ export default {
   this.lastX = event.offsetX;
   this.lastY = event.offsetY;
 },
-  getRandomWord() {
-      let words;
-      if (this.gameData.language === "English") {
-        words = wordsEn[this.gameData.theme];
-      } else if (this.gameData.language === "Swedish") {
-        words = wordsSv[this.gameData.theme];
-      }
-      if (words && words.length > 0) {
-        const randomIndex = Math.floor(Math.random() * words.length);
-        return words[randomIndex];
-      } else {
-        return null;
-      }
-    },
+generateWordOptions() {
+    let words = [];
+    if (this.gameData.language === "English") {
+      words = wordsEn[this.gameData.theme];
+    } else if (this.gameData.language === "Swedish") {
+      words = wordsSv[this.gameData.theme];
+    }
+
+    if (words && words.length >= 3) {
+      const shuffledWords = words.sort(() => 0.5 - Math.random()); // Slumpa ordlistan
+      this.wordOptions = shuffledWords.slice(0, 3); // Ta de första tre slumpmässiga orden
+    } else {
+      console.warn("Not enough words to generate options.");
+      this.wordOptions = ["Option 1", "Option 2", "Option 3"];
+    }
+  },
+
+  selectWord(word) {
+    this.currentWord = word; // Sätt det valda ordet som currentWord
+    this.wordOptions = []; // Rensa alternativen
+  },
   
     stopDrawing() {
       if (this.currentStroke.length > 0) {
@@ -222,7 +239,7 @@ export default {
 <style scoped>
 .information-banner{
   display: grid;
-  grid-template-columns: 1fr 6fr 1fr 1fr;
+  grid-template-columns: 2fr 6fr 1fr 1fr;
   height: 80px;
 }
 
@@ -324,4 +341,27 @@ canvas {
   font-size: 20px;    
   font-weight: bold;
 }
+.word-options {
+  text-align: center;
+  margin: 10px 0;
+  z-index: 1000;
+  margin-top: 300px;
+}
+
+.word-options button {
+margin-top: 100px;
+  margin: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+}
+
+.word-options button:hover {
+  background-color: #e0e0e0;
+}
+
 </style>

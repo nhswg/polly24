@@ -1,5 +1,5 @@
 {
-    "standard": [
+    "Standard": [
      "ess",
      "myra",
      "ärm",
@@ -2005,7 +2005,7 @@
  "flygvärdinna",
  "pennvässare"
 ], 
-      "djur": [
+      "Djur": [
       "Katt",
       "Hund",
       "Fågel",
@@ -2058,7 +2058,7 @@
       "Kalkon"
     ],
   
-    "kontorsprylar": [
+    "Kontor": [
       "Penna",
       "Blyertspenna",
       "Suddgummi",
@@ -2111,7 +2111,7 @@
       "Dokumentförstörare"
     ],
   
-    "livsmedel": [
+    "Mat": [
       "Pizza",
       "Hamburgare",
       "Pommes frites",
@@ -2164,7 +2164,7 @@
       "Croissant"
     ],
   
-    "filmer": [
+    "Filmer & Karaktärer": [
       "Lord of the rings",
       "Hobbit",
       "Jurassic Park",
@@ -2192,7 +2192,7 @@
       "Transformers"
     ],
   
-    "musik": [
+    "Musik": [
         "Taylor Swift",
         "Kanye West",
         "Bruno Mars",
@@ -2245,7 +2245,7 @@
         "Djembe"
       ],
   
-    "sport": [
+    "Sporter": [
       "Fotboll",
       "Basketboll",
       "Cricket",
