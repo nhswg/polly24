@@ -66,13 +66,7 @@
   </div>
   
   <div class="create-game-button">
-    <router-link :to="'/lobby/' + gameCode">
-
-      <button @click="createGame"  >
-        {{ uiLabels.createGame }}
-      </button>
-    
-    </router-link>
+    <button @click="createGame">{{ uiLabels.createGame }}</button>
   </div>
   </template>
   
@@ -125,10 +119,14 @@
           this.uiLabels.Sports,
           this.uiLabels.Technology
         ];
-      }
+      } 
     },
     methods: {
       createGame() {
+      if (!this.adminName) {
+          alert(this.uiLabels.pleaseEnterName);
+          return;
+      }
         const gameData = {
           gameId: this.gameCode,
           language: this.selectedLanguage,
@@ -137,7 +135,7 @@
           theme: this.selectedThemes,
           adminName: this.adminName,
           participants: [this.adminName],
-        }; /* Send game data to server */
+        };
         
         socket.emit("createGame", gameData);
         socket.emit("participateInGame", { gameCode: this.gameCode, name: this.adminName });

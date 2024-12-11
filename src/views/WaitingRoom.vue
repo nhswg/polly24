@@ -44,22 +44,21 @@ export default {
     };
   },
   created() {
-    // Hämta sparad information
-    this.gameCode = localStorage.getItem('gameId');
-    this.isAdmin = localStorage.getItem('isAdmin') === 'true';
-    
-    socket.on("participantsUpdate", (participants) => {
-      this.participants = participants;
-    });
-    socket.emit("joinGame", this.gameCode);
-    
-  },
+  this.gameCode = localStorage.getItem('gameId');
+  this.isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+  socket.on("participantsUpdate", (participants) => {
+    this.participants = participants;
+  });
+  socket.on("gameStarted", () => {
+    this.$router.push(`/game/${this.gameCode}`);
+  });
+
+  socket.emit("joinGame", this.gameCode);
+},
   methods: {
     startGame() {
-      if (this.isAdmin) {
         socket.emit("startGame", this.gameCode);
-        this.$router.push(`/game/${this.gameCode}`);
-      }
     }
   }
 };
