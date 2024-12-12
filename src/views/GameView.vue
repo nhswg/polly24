@@ -15,11 +15,11 @@
 </div>
 
     <div class="timer-container">
-      <img src="/img/clock.jpg" alt="Clock" class="clock-image">
+      <img src="/img/clock1.png" alt="Clock" class="clock-image">
       <div class="timer-text">{{ timer }}</div>
     </div>
     <div class="round-container">
-      <img src="/img/round.jpg" alt="Clock" class="round-image">
+      <img src="/img/round1.png" alt="Clock" class="round-image">
       <div class="round-text">1</div>
     </div>
   </div>
