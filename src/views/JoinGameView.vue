@@ -100,8 +100,19 @@ export default {
 
 .join-game-form {
   font-size: 2rem;
+  display: flex;
+  flex-direction: column;
 }
-
+.join-game-form > div {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 10px;
+}
+.join-game-form > div {
+  justify-content: space-between;
+}
 .text-square {
   width: 200px;
   height: 30px;
