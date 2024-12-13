@@ -105,19 +105,6 @@ export default {
   
 <style scoped>
 
-.flag-container {
-  border: 0.1em solid black;
-  border-radius: 0.2em;
-  padding: 0;
-  transition: transform 0.3s ease;
-}
-
-.flag-container img {
-  display: block;
-  width: 80px;
-  height: auto;
-}
-
 .loading-dots {
   display: inline-block;
   margin-left: 10px;

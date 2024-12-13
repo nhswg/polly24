@@ -69,19 +69,6 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Schoolbell&display=swap');
 
-.flag-container {
-    border: 0.1em solid black;
-    border-radius: 0.2em;
-    padding: 0;
-    transition: transform 0.3s ease;
-}
-
-.flag-container img {
-    display: block;
-    width: 80px;
-    height: auto;
-}
-
 .game-buttons {
     display: flex;
     justify-content: center;

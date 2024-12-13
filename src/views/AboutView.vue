@@ -55,23 +55,18 @@ export default {
     socket.on( "uiLabels", labels => this.uiLabels = labels );
     socket.emit( "getUILabels", this.lang );
   },
+  methods: {
+    switchLanguage() {
+      this.lang = this.lang === "en" ? "sv" : "en";
+      localStorage.setItem("lang", this.lang);
+      socket.emit("getUILabels", this.lang);
+    }
+  }
 }
 </script>
   
 <style scoped>
 
-.flag-container {
-    border: 0.1em solid black;
-    border-radius: 0.2em;
-    padding: 0;
-    transition: transform 0.3s ease;
-}
-
-.flag-container img {
-    display: block;
-    width: 80px;
-    height: auto;
-}
 .content {
   max-width: 800px; /* Sätt önskad maximal bredd */
   margin: 0 auto; /* Centrera innehållet horisontellt */

@@ -16,12 +16,9 @@
     <div class="header-line"></div>
 
     <main>
-      <div class="create-game">
-        <h1>{{ uiLabels.createGame }}</h1>
-      </div>
-
-      <div class="game-code">
-        <h2>{{ uiLabels.gameCode }}: {{ gameCode }}</h2>
+      <div class="display-gamecode">
+        {{ uiLabels.gameCode }}
+        <span class="code-highlight">{{ gameCode }}</span>
       </div>
 
       <div class="game-rules-container">
@@ -46,7 +43,7 @@
             </select>
           </div>
 
-           <!-- Rounds -->
+          <!-- Rounds -->
           <div class="rule">
             <h3>{{ uiLabels.Rounds }}</h3>
             <select v-model="selectedRounds">
@@ -56,7 +53,7 @@
             </select>
           </div>
 
-             <!-- Theme -->
+            <!-- Theme -->
           <div class="rule">
             <h3>{{ uiLabels.Theme }}</h3>
             <select v-model="selectedThemes">
@@ -165,21 +162,18 @@ export default {
 
 <style scoped>
 
-.flag-container {
-    border: 0.1em solid black;
-    border-radius: 0.2em;
-    padding: 0;
-    transition: transform 0.3s ease;
+.display-gamecode {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  color: #333;
 }
 
-.flag-container img {
-    display: block;
-    width: 80px;
-    height: auto;
-}
-
-.create-game {
-  font-size: 2rem;
+.code-highlight {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #333;
 }
 
 .game-code {

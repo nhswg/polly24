@@ -39,6 +39,19 @@ header {
     padding: 3px;
 }
 
+.flag-container {
+  border: 0.1em solid black;
+  border-radius: 0.2em;
+  padding: 0;
+  transition: transform 0.3s ease;
+}
+
+.flag-container img {
+  display: block;
+  width: 80px;
+  height: auto;
+}
+
 .sketchdle-container {
   min-height: 100vh;
   display: flex;
