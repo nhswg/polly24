@@ -64,9 +64,16 @@
         <button class="button-container" v-on:click="resetCanvas()"><img src="/img/reset.png" alt="White" /></button>
     </div>
   </div>
-    <div class="chat">
-        Chat
-    </div>
+      <div class="chat">
+          <h3>Chat</h3>
+          <div class="messages">
+          <div v-for="(msg, index) in messages" :key="index">
+          <strong>{{ msg.username }}:</strong> {{ msg.text }}
+          </div>
+       </div>
+        <input v-model="chatMessage" @keyup.enter="sendChatMessage" placeholder="Type your guess here..." />
+          <button @click="sendChatMessage">Send</button>
+      </div>
   </div>
   <ul class="settings-list" v-if="gameData && gameData.language">
 <li><strong>Language:</strong> {{ gameData.language }}</li>
@@ -98,7 +105,9 @@ export default {
       timer: 0,
       timerInterval: null,
       currentWord: '',
-      wordOptions: [] // Tre slumpmässiga ord som valmöjligheter
+      wordOptions: [],
+      chatMessage: '',    // Texten spelaren skriver in
+      messages: []  // Tre slumpmässiga ord som valmöjligheter
     };
   },
 
@@ -117,7 +126,10 @@ export default {
   this.generateWordOptions(); // Hämta ett slumpmässigt ord baserat på tema och språk
   });
     socket.emit("getGameData", { gameId: localStorage.getItem("gameId") });
-    
+  
+    socket.on("chatMessage", (msg) => {
+    this.messages.push(msg);
+  });
 },
 
   methods: {
@@ -231,9 +243,20 @@ generateWordOptions() {
           this.timerInterval = null;
         }
       }, 1000);
+    },
+    
+    sendChatMessage() {
+    const playerName = localStorage.getItem('playerName') || 'Anonymous';
+      socket.emit("chatMessage", {
+        gameCode: this.gameCode, 
+        username: playerName,
+        text: this.chatMessage
+      });
+      this.chatMessage = '';
+      }
     }
   }
-}
+
 </script>
 
 <style scoped>

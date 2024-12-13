@@ -66,6 +66,12 @@
       // Sänd till alla i gameCode-rummet att spelet startat
       io.to(gameCode).emit('gameStarted');
     });
+
+  socket.on('chatMessage', (data) => {
+  // data kan innehålla {gameCode, username, text}
+  // Sänd tillbaka meddelandet till alla i spelets rum
+  io.to(data.gameCode).emit('chatMessage', data);
+  });
   }
 
   export { sockets };
