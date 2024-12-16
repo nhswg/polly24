@@ -20,7 +20,8 @@
   
   <style scoped>
   .leaderboard {
-    border: 1px solid #000;
+    background-color: #f0f0f0;
+    border-radius: 5px;
   }
   .participant-name {
     margin-bottom: 5px;
