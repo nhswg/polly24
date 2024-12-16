@@ -107,12 +107,15 @@ export default {
       currentWord: '',
       wordOptions: [],
       chatMessage: '',    // Texten spelaren skriver in
-      messages: []  // Tre slumpmässiga ord som valmöjligheter
+      messages: [],
+      userID: '',
+      gameCode: '',
     };
   },
 
   created() {
-  this.gameCode = localStorage.getItem('gameId'); 
+  this.gameCode = this.$route.params.id;
+  this.userID = this.$route.params.userID;
   socket.emit("joinGame", this.gameCode);
 
   socket.on("participantsUpdate", (participants) => {

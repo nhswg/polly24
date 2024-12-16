@@ -47,14 +47,14 @@
       </div>
 
       <button 
-        v-if="isAdmin && participants.length > 1" 
+        v-if="this.userID === adminID"
         @click="startGame" 
         class="start-game-button"
         :disabled="participants.length < 2"
       >
         Start Game
       </button>
-      <p v-if="isAdmin && participants.length < 2" class="player-warning">
+      <p v-if="this.userID === adminID" class="player-warning">
         Needs at least 2 players to start
       </p>
     </main>
@@ -71,22 +71,31 @@ export default {
     return {
       username: '',
       gameCode: '',
-      participants: [],
+      participants: {},
       isAdmin: false,
+      userID: "",
+      adminID: "",
+
     };
   },
   created() {
-    this.gameCode = localStorage.getItem('gameId');
+      this.gameCode = this.$route.params.id;
+      this.userID = this.$route.params.userID;
+      console.log("waitinggameCode",this.gameCode);
     this.isAdmin = localStorage.getItem('isAdmin') === 'true';
+    console.log("Initial userID:", this.userID);
+    socket.on('gameData', (data) => {
+        console.log("adminID",data.adminID);
+      });
     
     socket.on("participantsUpdate", (participants) => {
+      console.log("participants",participants);
       this.participants = participants;
     });
     
     socket.on("gameStarted", () => {
-      this.$router.push(`/game/${this.gameCode}`);
+      this.$router.push(`/game/${this.gameCode}/${this.userID}`);
     });
-    
     socket.emit("joinGame", this.gameCode);
   },
   methods: {

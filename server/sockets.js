@@ -17,14 +17,18 @@
     });
 
     socket.on('joinGame', function(gameCode) {
+      console.log('joinGame', gameCode);
       socket.join(gameCode);
-      socket.emit('participantsUpdate', data.getParticipants(gameCode));
+      const participants = data.getParticipants(gameCode);
+      console.log('participants', participants);
+      socket.emit('participantsUpdate', participants);
     });
 
     socket.on('participateInGame', function(d) {
-      data.participateInGame(d.gameCode, d.name);
+      data.participateInGame(d.gameCode, d.userID, d.name);
       io.to(d.gameCode).emit('participantsUpdate', data.getParticipants(d.gameCode));
     });
+
     socket.on('startPoll', function(pollId) {
       io.to(pollId).emit('startPoll');
     })

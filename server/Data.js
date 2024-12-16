@@ -47,8 +47,9 @@ Data.prototype.createGame = function(gameData) {
       theme: gameData.theme,
       adminName: gameData.adminName,
       participants: gameData.participants,
+      adminID: gameData.adminID,
     };
-    poll.participants = [];            
+    poll.participants = {};            
     this.polls[gameData.gameId] = poll;
     console.log("poll created", gameData.gameId, poll);
   }
@@ -62,10 +63,10 @@ Data.prototype.getPoll = function(pollId) {
   return {};
 }
 
-Data.prototype.participateInGame = function(pollId, name) {
-  console.log("participant will be added to", pollId, name);
+Data.prototype.participateInGame = function(pollId, userID, name) {
+  console.log("participant will be added to", pollId, userID, name);
   if (this.pollExists(pollId)) {
-    this.polls[pollId].participants.push({name: name})
+    this.polls[pollId].participants[userID]={name: name}
   }
 }
 

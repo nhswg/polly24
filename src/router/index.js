@@ -25,12 +25,12 @@ const router = createRouter({
       component: () => import('../views/CreateView.vue')
     },
     {
-      path: '/lobby/:id',
+      path: '/lobby/:id/:userID',
       name: 'WaitingRoom',
       component: () => import('../views/WaitingRoom.vue')
     },
     {
-      path: '/game/:id',
+      path: '/game/:id/:userID',
       name: 'Game',
       component: () => import('../views/GameView.vue')
     },

@@ -98,12 +98,14 @@ export default {
       selectedRounds: 1,
       selectedThemes: 'Standard',
       adminName:"",
+      userID: "",
       uiLabels: {},
       lang: localStorage.getItem("lang") || "en",
+
     };
   },
   created() {
-    this.gameCode = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
+    this.gameCode = "b"+Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
     socket.on("gameCreated", (data) => {
       console.log(data);
     });
@@ -129,11 +131,17 @@ export default {
     } 
   },
   methods: {
+    generateuserID() {
+      this.userID = Math.random().toString(36).substr(2, 9);
+    },
+
     createGame() {
-    if (!this.adminName) {
+    this.generateuserID();
+      if (!this.adminName) {
         alert(this.uiLabels.pleaseEnterName);
         return;
     }
+   
       const gameData = {
         gameId: this.gameCode,
         language: this.selectedLanguage,
@@ -142,15 +150,18 @@ export default {
         theme: this.selectedThemes,
         adminName: this.adminName,
         participants: [this.adminName],
+        adminID: this.userID,
       };
+
       socket.emit("createGame", gameData);
-      socket.emit("participateInGame", { gameCode: this.gameCode, name: this.adminName });
+      socket.emit("participateInGame", { gameCode: this.gameCode, userID: this.userID, name: this.adminName });
       localStorage.setItem('gameId', this.gameCode);
       localStorage.setItem('isAdmin', 'true');
       localStorage.setItem('playerName', this.adminName);
     
       this.$router.push({
-        path: `/lobby/${this.gameCode}`,
+        path: `/lobby/${this.gameCode}/${this.userID}`,
+
     });
     },
     updateParticipants(participants) {

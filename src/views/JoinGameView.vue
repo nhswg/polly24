@@ -50,6 +50,7 @@ export default {
       gameCode: "inactive game",
       uiLabels: {},
       lang: localStorage.getItem("lang") || "en",
+      userID: "",
     }
   },
   created() {
@@ -59,11 +60,15 @@ export default {
     socket.emit("getUILabels", this.lang );
   },
   methods: {
+    generateUserID() {
+      return Math.random().toString(36).substr(2, 9);
+    },
+
     participateInGame() {
+      this.userID = this.generateUserID();
       if (this.gameCode && this.userName) {
-        socket.emit("participateInGame", { gameCode: this.gameCode, name: this.userName });
-        this.$router.push(`/lobby/${this.gameCode}`);
-        localStorage.setItem('gameId', this.gameCode);
+        socket.emit("participateInGame", { gameCode: this.gameCode, userID: this.userID, name: this.userName });
+        this.$router.push(`/lobby/${this.gameCode}/${this.userID}`);
         localStorage.setItem('isAdmin', 'false');
         localStorage.setItem('playerName', this.userName);
       } 
