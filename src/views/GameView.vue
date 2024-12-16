@@ -1,7 +1,7 @@
 <template>
   <div>
     <GameInfoComponent 
-      :wordOptions="wordOptions" 
+      :wordOptions=" isDrawing ? wordOptions: []" 
       :currentWord="currentWord" 
       :timer="timer"
       :currentRound="currentRound"
@@ -11,7 +11,7 @@
 
     <div class="game-area">
       <LeaderboardComponent :participants="participants" />
-      <DrawingComponent :currentWord="currentWord" />
+      <DrawingComponent :currentWord="currentWord" :canDraw="isDrawing" />
       <ChatComponent 
         :messages="messages" 
         :chatMessage="chatMessage" 
@@ -59,7 +59,9 @@ export default {
       messages: [],
       userID: '',
       gameCode: '',
-      currentRound: 1 // Exempelvärde, uppdatera baserat på din logik
+      currentRound: 1,
+      isDrawing: false,
+      currentDrawerIndex: 0
     };
   },
 
@@ -70,8 +72,21 @@ export default {
 
     socket.on("participantsUpdate", (participants) => {
       this.participants = participants;
-    });
+      // participants är nu ett objekt: { userID: {name: "..."}, ... }
 
+      const participantIDs = Object.keys(this.participants);
+      if (participantIDs.length >= 2) {
+        // Se till att currentDrawerIndex aldrig överskrider antalet deltagare
+        if (this.currentDrawerIndex >= participantIDs.length) {
+          this.currentDrawerIndex = 0;
+        }
+        const currentDrawerID = participantIDs[this.currentDrawerIndex];
+        this.isDrawing = (currentDrawerID === this.userID);
+      } else {
+        // Mindre än 2 spelare -> ingen ritar
+        this.isDrawing = false;
+      }
+    });
     socket.on('gameData', (data) => {
       this.gameData = data;
       this.timer = data.drawTime; 
@@ -125,6 +140,32 @@ export default {
           this.timerInterval = null;
         }
       }, 1000);
+    },
+
+    rotateDrawingRole() {
+      const participantIDs = Object.keys(this.participants);
+      if (participantIDs.length > 0) {
+        this.currentDrawerIndex = (this.currentDrawerIndex + 1) % participantIDs.length;
+        const currentDrawerID = participantIDs[this.currentDrawerIndex];
+        this.isDrawing = (currentDrawerID === this.userID);
+        this.currentRound++;
+
+        // Starta om timern och ge ordalternativ till nya ritaren
+        this.timer = this.gameData.drawTime;
+        this.startTimer();
+        if (this.isDrawing) {
+          this.generateWordOptions();
+        } else {
+          this.wordOptions = [];
+        }
+
+        // Om du vill meddela servern om rotation kan du göra det här:
+        socket.emit("rotateDrawer", {
+          gameCode: this.gameCode,
+          currentDrawerID: currentDrawerID,
+          currentRound: this.currentRound
+        });
+      }
     },
       
     sendChatMessage() {

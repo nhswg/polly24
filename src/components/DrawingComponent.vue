@@ -29,6 +29,10 @@
       currentWord: {
         type: String,
         default: ''
+      },
+      canDraw: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -44,6 +48,9 @@
     },
     methods: {
       startDrawing(event) {
+        // Endast starta ritning om användaren får rita
+        if (!this.canDraw) return;
+        
         this.isDrawing = true;
         this.lastX = event.offsetX;
         this.lastY = event.offsetY;
