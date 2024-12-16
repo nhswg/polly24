@@ -105,7 +105,7 @@ export default {
     };
   },
   created() {
-    this.gameCode = "b"+Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
+    this.gameCode = ""+Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
     socket.on("gameCreated", (data) => {
       console.log(data);
     });

@@ -47,16 +47,16 @@
       </div>
 
       <button 
-        v-if="isAdmin"
+        v-if="isAdmin && Object.keys(participants).length > 1"
         @click="startGame" 
         class="start-game-button"
         :disabled="participants.length < 2"
       >
         Start Game
       </button>
-      <p v-if="isAdmin && participants.length < 2" class="player-warning">
-        Needs at least 2 players to start
-      </p>
+      <p v-if="isAdmin && Object.keys(participants).length < 2" class="player-warning">
+      {{uiLabels.minimumPlayers}}     
+     </p>
     </main>
   </div>
 </template>
@@ -104,10 +104,9 @@ export default {
   },
   methods: {
     startGame() {
-      if (this.participants.length >= 2) {
+      if (Object.keys(this.participants).length >= 2) { // Kolla antal deltagare
         socket.emit("startGame", this.gameCode);
-      }
-    },
+      }},
     switchLanguage() {
       this.lang = this.lang === "en" ? "sv" : "en";
       localStorage.setItem("lang", this.lang);
