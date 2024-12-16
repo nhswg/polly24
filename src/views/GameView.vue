@@ -144,5 +144,6 @@ export default {
 .game-area {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
+  gap: 10px;
 }
 </style>

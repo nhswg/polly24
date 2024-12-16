@@ -49,7 +49,8 @@
   
   <style scoped>
   .chat {
-    border: 1px solid #000;
+    background-color: #f0f0f0;
+    border-radius: 5px;
   }
   .messages {
     max-height: 200px;

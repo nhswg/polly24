@@ -58,6 +58,10 @@
     display: grid;
     grid-template-columns: 2fr 6fr 1fr 1fr;
     height: 80px;
+    background-color: #f0f0f0;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
   }
   
   .current-word {
