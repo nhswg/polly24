@@ -167,6 +167,11 @@ export default {
     updateParticipants(participants) {
       this.participants = participants;
     },
+    switchLanguage() {
+      this.lang = this.lang === "en" ? "sv" : "en";
+      localStorage.setItem("lang", this.lang);
+      socket.emit("getUILabels", this.lang);
+    }
   },
 };
 </script>

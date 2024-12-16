@@ -75,6 +75,11 @@ export default {
       else {
         alert("Please enter both game code and your name.");
       }
+    },
+    switchLanguage() {
+      this.lang = this.lang === "en" ? "sv" : "en";
+      localStorage.setItem("lang", this.lang);
+      socket.emit("getUILabels", this.lang);
     }
   }
 }

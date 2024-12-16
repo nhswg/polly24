@@ -16,7 +16,7 @@
     <main class="lobby-content">
       <div class="waiting-lobby">
         <p>
-          Waiting for host to start game
+          {{ uiLabels.waitingForHost }}
           <span class="loading-dots">
             <span class="dot">.</span>
             <span class="dot">.</span>
@@ -27,12 +27,12 @@
       
       <div class="game-info">
         <div class="display-gamecode">
-          Game Code: 
+          {{ uiLabels.gameCode }}: 
           <span class="code-highlight">{{ gameCode }}</span>
         </div>
         
         <div class="participants-container">
-          <h2 class="participants-title">Participants</h2>
+          <h2 class="participants-title">{{ uiLabels.participantLabel }}</h2>
           <div class="participants-grid">
             <div 
               v-for="(participant, index) in participants" 
@@ -47,14 +47,14 @@
       </div>
 
       <button 
-        v-if="this.userID === adminID"
+        v-if="isAdmin"
         @click="startGame" 
         class="start-game-button"
         :disabled="participants.length < 2"
       >
         Start Game
       </button>
-      <p v-if="this.userID === adminID" class="player-warning">
+      <p v-if="isAdmin && participants.length < 2" class="player-warning">
         Needs at least 2 players to start
       </p>
     </main>
@@ -69,6 +69,7 @@ export default {
   name: 'WaitingRoom',
   data() {
     return {
+      uiLabels: {},
       username: '',
       gameCode: '',
       participants: {},
@@ -83,6 +84,9 @@ export default {
       this.userID = this.$route.params.userID;
       console.log("waitinggameCode",this.gameCode);
     this.isAdmin = localStorage.getItem('isAdmin') === 'true';
+    socket.on("uiLabels", labels => this.uiLabels = labels );
+    socket.emit("getUILabels", this.lang );
+
     console.log("Initial userID:", this.userID);
     socket.on('gameData', (data) => {
         console.log("adminID",data.adminID);
@@ -105,8 +109,9 @@ export default {
       }
     },
     switchLanguage() {
-      // Placeholder for language switch functionality
-      console.log('Switch language');
+      this.lang = this.lang === "en" ? "sv" : "en";
+      localStorage.setItem("lang", this.lang);
+      socket.emit("getUILabels", this.lang);
     }
   }
 };
