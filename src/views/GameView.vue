@@ -19,13 +19,6 @@
         @updateChatMessage="chatMessage = $event" 
       />
     </div>
-
-    <ul class="settings-list" v-if="gameData && gameData.language">
-      <li><strong>Language:</strong> {{ gameData.language }}</li>
-      <li><strong>Drawtime:</strong> {{ gameData.drawTime }} seconds</li>
-      <li><strong>Rounds:</strong> {{ gameData.rounds }}</li>
-      <li><strong>Theme:</strong> {{ gameData.theme }}</li>
-    </ul>
   </div>
 </template>
 
@@ -171,9 +164,11 @@ export default {
    sendChatMessage() {
         if (!this.chatMessage.trim()) return; // Kontrollera att meddelandet inte är tomt
 
+        const username = this.participants[this.userID]?.name || "Unknown";
+
         socket.emit("chatMessage", {
           gameCode: this.gameCode,
-          username: this.userID, // Använd användarnamnet från userID
+          username: username, // Använd användarnamnet från userID
           text: this.chatMessage,
         });
         this.chatMessage = ''; // Rensa meddelandefältet
