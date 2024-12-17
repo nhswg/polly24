@@ -62,6 +62,7 @@ export default {
     this.gameCode = this.$route.params.id;
     this.userID = this.$route.params.userID;
     socket.emit("joinGame", this.gameCode);
+    socket.emit("getGameData", { gameCode: this.gameCode });
 
     socket.on("participantsUpdate", (participants) => {
       this.participants = participants;
@@ -83,17 +84,21 @@ export default {
     socket.on('gameData', (data) => {
       this.gameData = data;
       this.timer = data.drawTime; 
-      this.startTimer(); 
       this.generateWordOptions(); 
       // Här kan du också uppdatera currentRound om det finns i din gameData
       // this.currentRound = data.currentRound; 
     });
-    socket.emit("getGameData", { gameId: localStorage.getItem("gameId") });
+
+    socket.on('timerStarted', (time) => {
+      this.timer = time;
+      this.startTimer();
+    });
   
     socket.on("chatMessage", (msg) => {
       this.messages.push(msg);
     });
   },
+
 
   methods: {
     generateWordOptions() {
@@ -116,7 +121,20 @@ export default {
     selectWord(word) {
       this.currentWord = word;
       this.wordOptions = [];
+
+      // Skicka till servern att vi ska starta timern för alla
+      socket.emit('startTimer', {
+        gameCode: this.gameCode,
+        time: this.gameData.drawTime
+      });
+
+      // Meddela servern att ett ord har valts (valfritt)
+      socket.emit('wordSelected', {
+        gameCode: this.gameCode,
+        word: this.currentWord
+      });
     },
+
 
     handleLeaveGame() {
       this.$router.push('/');
@@ -131,6 +149,7 @@ export default {
         } else {
           clearInterval(this.timerInterval);
           this.timerInterval = null;
+          this.rotateDrawingRole();
         }
       }, 1000);
     },
@@ -138,26 +157,30 @@ export default {
     rotateDrawingRole() {
       const participantIDs = Object.keys(this.participants);
       if (participantIDs.length > 0) {
+        // Roterar till nästa tecknare
         this.currentDrawerIndex = (this.currentDrawerIndex + 1) % participantIDs.length;
         const currentDrawerID = participantIDs[this.currentDrawerIndex];
         this.isDrawing = (currentDrawerID === this.userID);
-        this.currentRound++;
 
-        // Starta om timern och ge ordalternativ till nya ritaren
-        this.timer = this.gameData.drawTime;
-        this.startTimer();
+        // Om vi har gått igenom alla deltagare, öka currentRound
+        if (this.currentDrawerIndex === 0) {
+          this.currentRound++;
+        }
+
+        // Nollställ variabler
+        this.currentWord = '';
+        this.wordOptions = [];
+
+        // Generera ordalternativ för nya tecknaren
         if (this.isDrawing) {
           this.generateWordOptions();
         } else {
           this.wordOptions = [];
         }
 
-        // Om du vill meddela servern om rotation kan du göra det här:
-        socket.emit("rotateDrawer", {
-          gameCode: this.gameCode,
-          currentDrawerID: currentDrawerID,
-          currentRound: this.currentRound
-        });
+        // Timern startas nu endast när ett ord har valts
+      } else {
+        this.isDrawing = false;
       }
     },
       
