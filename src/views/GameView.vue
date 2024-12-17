@@ -168,17 +168,18 @@ export default {
       }
     },
       
-    sendChatMessage() {
-      const playerName = localStorage.getItem('playerName') || 'Anonymous';
-      socket.emit("chatMessage", {
-        gameCode: this.gameCode, 
-        username: playerName,
-        text: this.chatMessage
-      });
-      this.chatMessage = '';
+   sendChatMessage() {
+        if (!this.chatMessage.trim()) return; // Kontrollera att meddelandet inte är tomt
+
+        socket.emit("chatMessage", {
+          gameCode: this.gameCode,
+          username: this.userID, // Använd användarnamnet från userID
+          text: this.chatMessage,
+        });
+        this.chatMessage = ''; // Rensa meddelandefältet
+      }
     }
   }
-}
 </script>
 
 <style scoped>
