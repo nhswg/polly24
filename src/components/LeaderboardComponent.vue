@@ -44,6 +44,7 @@ export default {
   padding: 10px;
   margin-bottom: 30px;
   height: 580px;
+  overflow-y: auto;
 }
 
 .participants-title {
