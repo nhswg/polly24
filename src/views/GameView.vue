@@ -1,24 +1,33 @@
 <template>
   <div>
-    <GameInfoComponent 
-      :wordOptions="isDrawing ? wordOptions : []" 
-      :currentWord="displayedWord" 
-      :timer="timer"
-      :currentRound="currentRound"
-      @select-word="selectWord"
-      @leave-game="handleLeaveGame"
-    />
-
-
-    <div class="game-area">
-      <LeaderboardComponent :participants="participants" />
-      <DrawingComponent :currentWord="currentWord" :canDraw="isDrawing" />
-      <ChatComponent 
-        :messages="messages" 
-        :chatMessage="chatMessage" 
-        @sendChatMessage="sendChatMessage" 
-        @updateChatMessage="chatMessage = $event" 
+    <!-- Om nuvarande runda ej har passerat det valda antalet rundor -->
+    <div v-if="currentRound <= gameData.rounds">
+      <GameInfoComponent 
+        :wordOptions="isDrawing ? wordOptions : []" 
+        :currentWord="displayedWord" 
+        :timer="timer"
+        :currentRound="currentRound"
+        @select-word="selectWord"
+        @leave-game="handleLeaveGame"
       />
+
+      <div class="game-area">
+        <LeaderboardComponent :participants="participants" />
+        <DrawingComponent :currentWord="currentWord" :canDraw="isDrawing" />
+        <ChatComponent 
+          :messages="messages" 
+          :chatMessage="chatMessage" x  
+          @sendChatMessage="sendChatMessage" 
+          @updateChatMessage="chatMessage = $event" 
+        />
+      </div>
+    </div>
+
+    <!-- Om currentRound överskrider chosenRounds visas endast en stor leaderboard -->
+    <div v-else class="final-leaderboard-container">
+      <h2>Spelet är slut!</h2>
+      <LeaderboardComponent :participants="participants" class="final-leaderboard" />
+      <button @click="handleLeaveGame">Till huvudsidan</button>
     </div>
   </div>
 </template>
