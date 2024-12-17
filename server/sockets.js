@@ -93,6 +93,10 @@
   socket.on('startTimer', function(data) {
     io.to(data.gameCode).emit('timerStarted', data.time);
   });
+
+  socket.on('wordSelected', function(d) {
+    io.to(d.gameCode).emit('wordSelected', { word: d.word });
+  });
   
   }
 

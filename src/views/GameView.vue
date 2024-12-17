@@ -1,13 +1,14 @@
 <template>
   <div>
     <GameInfoComponent 
-      :wordOptions=" isDrawing ? wordOptions: []" 
-      :currentWord="currentWord" 
+      :wordOptions="isDrawing ? wordOptions : []" 
+      :currentWord="displayedWord" 
       :timer="timer"
       :currentRound="currentRound"
       @select-word="selectWord"
       @leave-game="handleLeaveGame"
     />
+
 
     <div class="game-area">
       <LeaderboardComponent :participants="participants" />
@@ -54,9 +55,20 @@ export default {
       gameCode: '',
       currentRound: 1,
       isDrawing: false,
-      currentDrawerIndex: 0
+      currentDrawerIndex: 0,
     };
   },
+
+  computed: {
+  displayedWord() {
+      if (this.isDrawing) {
+        return this.currentWord; // Tecknaren ser ordet
+      } else {
+        return this.generateUnderscores(this.currentWord); // Gissarna ser understreck
+      }
+    }
+  },
+
 
   created() {
     this.gameCode = this.$route.params.id;
@@ -64,29 +76,38 @@ export default {
     socket.emit("joinGame", this.gameCode);
     socket.emit("getGameData", { gameCode: this.gameCode });
 
-    socket.on("participantsUpdate", (participants) => {
-      this.participants = participants;
-      // participants är nu ett objekt: { userID: {name: "..."}, ... }
+    socket.on('gameData', (data) => {
+    this.gameData = data;
+    this.timer = data.drawTime;
 
-      const participantIDs = Object.keys(this.participants);
-      if (participantIDs.length >= 2) {
-        // Se till att currentDrawerIndex aldrig överskrider antalet deltagare
-        if (this.currentDrawerIndex >= participantIDs.length) {
+    // Om gameData kom först eller sist spelar ingen roll,
+    // kolla igen ifall du kan generera ord nu.
+    if (this.isDrawing && !this.currentWord && this.gameData.theme && this.gameData.language) {
+      this.generateWordOptions();
+    }
+  });
+
+  socket.on("participantsUpdate", (participants) => {
+  this.participants = participants;
+  const participantIDs = Object.keys(this.participants);
+
+  if (participantIDs.length >= 2) {
+    if (this.currentDrawerIndex >= participantIDs.length) {
           this.currentDrawerIndex = 0;
         }
         const currentDrawerID = participantIDs[this.currentDrawerIndex];
         this.isDrawing = (currentDrawerID === this.userID);
+
+        // Försök generera ordalternativ om möjligt
+        if (this.isDrawing && !this.currentWord && this.gameData.theme && this.gameData.language) {
+          this.generateWordOptions();
+        } else {
+          this.wordOptions = [];
+        }
       } else {
-        // Mindre än 2 spelare -> ingen ritar
         this.isDrawing = false;
+        this.wordOptions = [];
       }
-    });
-    socket.on('gameData', (data) => {
-      this.gameData = data;
-      this.timer = data.drawTime; 
-      this.generateWordOptions(); 
-      // Här kan du också uppdatera currentRound om det finns i din gameData
-      // this.currentRound = data.currentRound; 
     });
 
     socket.on('timerStarted', (time) => {
@@ -96,6 +117,10 @@ export default {
   
     socket.on("chatMessage", (msg) => {
       this.messages.push(msg);
+    });
+
+    socket.on('wordSelected', (data) => {
+    this.currentWord = data.word;
     });
   },
 
@@ -122,18 +147,17 @@ export default {
       this.currentWord = word;
       this.wordOptions = [];
 
-      // Skicka till servern att vi ska starta timern för alla
-      socket.emit('startTimer', {
-        gameCode: this.gameCode,
-        time: this.gameData.drawTime
-      });
-
-      // Meddela servern att ett ord har valts (valfritt)
-      socket.emit('wordSelected', {
+        socket.emit('wordSelected', {
         gameCode: this.gameCode,
         word: this.currentWord
       });
+
+        socket.emit('startTimer', {
+        gameCode: this.gameCode,
+        time: this.gameData.drawTime
+      });
     },
+    
 
 
     handleLeaveGame() {
@@ -155,34 +179,32 @@ export default {
     },
 
     rotateDrawingRole() {
-      const participantIDs = Object.keys(this.participants);
-      if (participantIDs.length > 0) {
-        // Roterar till nästa tecknare
-        this.currentDrawerIndex = (this.currentDrawerIndex + 1) % participantIDs.length;
-        const currentDrawerID = participantIDs[this.currentDrawerIndex];
-        this.isDrawing = (currentDrawerID === this.userID);
+  const participantIDs = Object.keys(this.participants);
+  if (participantIDs.length > 0) {
+    this.currentDrawerIndex = (this.currentDrawerIndex + 1) % participantIDs.length;
+    const currentDrawerID = participantIDs[this.currentDrawerIndex];
+    this.isDrawing = (currentDrawerID === this.userID);
 
-        // Om vi har gått igenom alla deltagare, öka currentRound
-        if (this.currentDrawerIndex === 0) {
-          this.currentRound++;
-        }
+    // Om vi har gått igenom alla deltagare, öka currentRound
+    if (this.currentDrawerIndex === 0) {
+      this.currentRound++;
+    }
 
-        // Nollställ variabler
-        this.currentWord = '';
-        this.wordOptions = [];
+    // Nollställ variabler
+    this.currentWord = '';
+    this.wordOptions = [];
 
-        // Generera ordalternativ för nya tecknaren
-        if (this.isDrawing) {
-          this.generateWordOptions();
-        } else {
-          this.wordOptions = [];
-        }
+    // Generera ordalternativ bara om du är tecknaren
+    if (this.isDrawing) {
+      this.generateWordOptions();
+    }
 
-        // Timern startas nu endast när ett ord har valts
-      } else {
-        this.isDrawing = false;
-      }
-    },
+  } else {
+    this.isDrawing = false;
+    this.wordOptions = [];
+  }
+},
+
       
    sendChatMessage() {
         if (!this.chatMessage.trim()) return; // Kontrollera att meddelandet inte är tomt
@@ -195,7 +217,17 @@ export default {
           text: this.chatMessage,
         });
         this.chatMessage = ''; // Rensa meddelandefältet
-      }
+      },
+
+      generateUnderscores(word) {
+    if (!word) return '';
+    // Dela meningen på ord
+    return word
+      .split(' ')
+      .map(w => w.replace(/./g, '_').split('').join(' ')) // ersätt varje tecken med '_'
+      .join('   '); // separera ord med extra mellanslag
+  }
+
     }
   }
 </script>
