@@ -80,9 +80,9 @@ export default {
     };
   },
   created() {
-      this.gameCode = this.$route.params.id;
-      this.userID = this.$route.params.userID;
-      console.log("waitinggameCode",this.gameCode);
+    this.gameCode = this.$route.params.id;
+    this.userID = this.$route.params.userID;
+    console.log("waitinggameCode",this.gameCode);
     this.isAdmin = localStorage.getItem('isAdmin') === 'true';
     socket.on("uiLabels", labels => this.uiLabels = labels );
     socket.emit("getUILabels", this.lang );
