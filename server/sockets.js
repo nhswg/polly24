@@ -97,6 +97,13 @@
   socket.on('wordSelected', function(d) {
     io.to(d.gameCode).emit('wordSelected', { word: d.word });
   });
+  socket.on('correctGuess', function(data) {
+    // Skicka till alla deltagare att någon gissade rätt
+    io.to(data.gameCode).emit('correctGuessAnnouncement', {
+      username: data.username,
+      word: data.word
+    });
+  });
   
   }
 

@@ -11,7 +11,7 @@
 
 
     <div class="game-area">
-      <LeaderboardComponent :participants="participants" />
+      <LeaderboardComponent :participants="participants" :userScores="userScores" />
       <DrawingComponent :currentWord="currentWord" :canDraw="isDrawing" />
       <ChatComponent 
         :messages="messages" 
@@ -56,6 +56,7 @@ export default {
       currentRound: 1,
       isDrawing: false,
       currentDrawerIndex: 0,
+      userScores: {},
     };
   },
 
@@ -89,7 +90,18 @@ export default {
 
   socket.on("participantsUpdate", (participants) => {
   this.participants = participants;
+  for(const userID in participants)
+   { 
+    const participant = participants[userID];
+    if (!(participant.name in this.userScores)) {
+      this.userScores[participant.name] = 0;
+    }
+    }
+
+  
   const participantIDs = Object.keys(this.participants);
+
+  
 
   if (participantIDs.length >= 2) {
     if (this.currentDrawerIndex >= participantIDs.length) {
@@ -122,6 +134,19 @@ export default {
     socket.on('wordSelected', (data) => {
     this.currentWord = data.word;
     });
+    socket.on('correctGuessAnnouncement', (data) => {
+      console.log(`${data.username} gissade rätt!`);
+  
+
+  // Logga om poängen innan den uppdateras
+  console.log('Before score update:', this.userScores[data.username]);
+  
+  // Öka poängen med 1
+  this.userScores[data.username]++;
+  
+  // Logga poängen efter uppdatering
+  console.log(`${data.username} har nu ${this.userScores[data.username]} poäng`);
+});
   },
 
 
@@ -210,7 +235,14 @@ export default {
         if (!this.chatMessage.trim()) return; // Kontrollera att meddelandet inte är tomt
 
         const username = this.participants[this.userID]?.name || "Unknown";
-
+        
+        if (this.chatMessage.trim().toLowerCase() === this.currentWord.toLowerCase()) {
+    socket.emit("correctGuess", {
+      gameCode: this.gameCode,
+      username: username,
+      word: this.currentWord
+    });
+  }
         socket.emit("chatMessage", {
           gameCode: this.gameCode,
           username: username, // Använd användarnamnet från userID

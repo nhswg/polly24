@@ -3,7 +3,7 @@
     <p>Leaderboard</p>
     <div class="participant" v-for="participant in participants" :key="participant.name">
       <div class="participant-name">{{ participant.name }}</div>
-      <div class="participant-points">Points:</div>
+      <div class="participant-points">Points: {{ userScores[participant.name] }} </div>
     </div>
   </div>
 </template>
@@ -14,7 +14,12 @@
       participants: {
         type: Array,
         required: true
-      }
+      },
+      userScores: {
+      type: Object,
+      required: true
+    }
+
     }
   }
   </script>
