@@ -73,14 +73,13 @@
   
   .leave{
     width: 150px;
-    height: 50px;
+    height: 40px;
     font-size: 1.5rem;
-    background-color: #dc3545;
-    color:black;
-    border: solid 1px black;
+    background-color: #d70000;
+    color:white;
     border-radius: 5px;
-    margin-top: 15px;
     margin-left: 50px;
+    margin-top: 20px;
   }
   
   .timer-container {
