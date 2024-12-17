@@ -76,6 +76,19 @@
   // Sänd tillbaka meddelandet till alla i spelets rum
   io.to(data.gameCode).emit('chatMessage', data);
   });
+
+  socket.on('drawing', (drawingData) => {
+    socket.broadcast.emit('drawing', drawingData);
+  });
+
+  socket.on('undo', () => {
+    socket.broadcast.emit('undo');
+  });
+
+  socket.on('clearCanvas', () => {
+    socket.broadcast.emit('clearCanvas');
+  });
+
   }
 
   export { sockets };
