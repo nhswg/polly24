@@ -91,14 +91,13 @@ export default {
 
 .input-container {
   display: flex;
-  align-items: center; 
+  align-items: center;
 }
 
 .input-container input {
   flex: 1;
   padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 3px 0 0 3px;
+  border-radius: 5px;
   height: 40px; 
   font-size: 16px;
   box-sizing: border-box;
@@ -109,12 +108,9 @@ export default {
   margin: 5px;
   height: 40px; 
   font-size: 16px;
-  border: none;
   background-color: #007BFF;
   color: white;
-  cursor: pointer;
-  border-radius: 0 3px 3px 0;
-  box-sizing: border-box;
+  border-radius: 5px;
 }
 
 .input-container button:hover {

@@ -179,6 +179,9 @@ canvas {
   display: block;
   background-color: white;
   margin: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .tools-container {

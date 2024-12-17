@@ -1,11 +1,12 @@
 <template>
-    <div class="leaderboard">
-      <p>Leaderboard</p><br>
-      <div class="participant-name" v-for="participant in participants" :key="participant.name">
-        {{ participant.name }}
-      </div>
+  <div class="leaderboard">
+    <p>Leaderboard</p>
+    <div class="participant" v-for="participant in participants" :key="participant.name">
+      <div class="participant-name">{{ participant.name }}</div>
+      <div class="participant-points">Points:</div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   export default {
@@ -23,7 +24,23 @@
     background-color: #f0f0f0;
     border-radius: 5px;
   }
+  .leaderboard > p {
+    padding-bottom: 30px;
+    border-bottom: 0.5px solid gray;
+  }
+  .participant {
+    border-bottom: 0.5px solid gray;
+    padding-bottom: 10px;
+   
+  }
   .participant-name {
     margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .participant-points {
+    font-weight: bold;
+    font-size: 10px;
+    margin-bottom: 5px;
+
   }
   </style>
