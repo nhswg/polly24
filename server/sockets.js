@@ -56,10 +56,10 @@
     });
 
    socket.on('getGameData', function(payload) {
-    const gameId = payload.gameId;
-    const gameDataObj = data.getPoll(gameId); // eller data.getGameData(gameId) om du har en sådan metod
+    const gameCode = payload.gameCode;
+    const gameDataObj = data.getPoll(gameCode); // eller data.getGameData(gameId) om du har en sådan metod
     if (gameDataObj) {
-      socket.join(gameId);
+      socket.join(gameCode);
       socket.emit('gameData', gameDataObj);
     } else {
       socket.emit('error', { message: 'Spelet hittades inte' });
@@ -89,6 +89,11 @@
     socket.broadcast.emit('clearCanvas');
   });
 
+
+  socket.on('startTimer', function(data) {
+    io.to(data.gameCode).emit('timerStarted', data.time);
+  });
+  
   }
 
   export { sockets };
