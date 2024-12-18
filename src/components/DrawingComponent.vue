@@ -5,7 +5,7 @@
        @mouseup="stopDrawing"
        @mouseleave="stopDrawing">
     <canvas ref="canvas" width="780" height="500"></canvas>
-    <div v-if="currentWord" class="tools-container">
+    <div v-if="(this.canDraw)" class="tools-container">
       <div class="current-color" :style="{ backgroundColor: penColor }"></div>
       <GameButtons 
         :changeStrokeColor="changeStrokeColor"

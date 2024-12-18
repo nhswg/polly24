@@ -106,6 +106,7 @@
   .round-container {
     position: relative;
     width: 100px;  
+    height: 100px;
   }
   
   .round-image {
