@@ -15,9 +15,10 @@
       <div class="game-area">
         <LeaderboardComponent :participants="participants" :userScores="userScores" />
         <DrawingComponent :currentWord="currentWord" :canDraw="isDrawing" />
-        <ChatComponent 
+        <ChatComponent  
           :messages="messages" 
           :chatMessage="chatMessage"
+          :canDraw="isDrawing"
           @sendChatMessage="sendChatMessage" 
           @updateChatMessage="chatMessage = $event" 
         />
