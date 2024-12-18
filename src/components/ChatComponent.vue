@@ -6,7 +6,7 @@
         <strong>{{ msg.username }}:</strong> {{ msg.text }}
       </div>
     </div>
-    <div class="input-container">
+    <div class="input-container" v-if="!canDraw">
       <input 
         v-model="localChatMessage"
         @keyup.enter="emitChatMessage"
@@ -28,7 +28,11 @@ export default {
       type: String,
       required: false,
       default: ''
-    }
+    },
+    canDraw: {
+    type: Boolean,
+    required: true
+  }
   },
   data() {
     return {
