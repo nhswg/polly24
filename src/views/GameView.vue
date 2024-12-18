@@ -27,7 +27,11 @@
     <!-- Om currentRound överskrider chosenRounds visas endast en stor leaderboard -->
     <div v-else class="final-leaderboard-container">
       <h2>Spelet är slut!</h2>
-      <LeaderboardComponent :participants="participants" class="final-leaderboard" />
+      <LeaderboardComponent 
+        :participants="participants" 
+        :userScores="userScores"
+        class="final-leaderboard" 
+        />
       <button @click="handleLeaveGame">Till huvudsidan</button>
     </div>
   </div>
