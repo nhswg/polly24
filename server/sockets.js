@@ -1,19 +1,7 @@
-
-
-  function sockets(io, socket, data) {
+function sockets(io, socket, data) {
     
     socket.on('getUILabels', function(lang) {
       socket.emit('uiLabels', data.getUILabels(lang));
-    });
-
-    socket.on('createPoll', function(d) {
-      data.createPoll(d.pollId, d.lang)
-      socket.emit('pollData', data.getPoll(d.pollId));
-    });
-
-    socket.on('addQuestion', function(d) {
-      data.addQuestion(d.pollId, {q: d.q, a: d.a});
-      socket.emit('questionUpdate', data.activateQuestion(d.pollId));
     });
 
     socket.on('joinGame', function(gameCode) {
@@ -28,20 +16,6 @@
       data.participateInGame(d.gameCode, d.userID, d.name);
       io.to(d.gameCode).emit('participantsUpdate', data.getParticipants(d.gameCode));
     });
-
-    socket.on('startPoll', function(pollId) {
-      io.to(pollId).emit('startPoll');
-    })
-    socket.on('runQuestion', function(d) {
-      let question = data.activateQuestion(d.pollId, d.questionNumber);
-      io.to(d.pollId).emit('questionUpdate', question);
-      io.to(d.pollId).emit('submittedAnswersUpdate', data.getSubmittedAnswers(d.pollId));
-    });
-
-    socket.on('submitAnswer', function(d) {
-      data.submitAnswer(d.pollId, d.answer);
-      io.to(d.pollId).emit('submittedAnswersUpdate', data.getSubmittedAnswers(d.pollId));
-    }); 
 
     /*Nedan är nya sockets*/
 
