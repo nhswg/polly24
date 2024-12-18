@@ -67,6 +67,7 @@ export default {
       isDrawing: false,
       currentDrawerIndex: 0,
       userScores: {},
+      correctGuessers: [],
     };
   },
 
@@ -111,8 +112,6 @@ export default {
   
   const participantIDs = Object.keys(this.participants);
 
-  
-
   if (participantIDs.length >= 2) {
     if (this.currentDrawerIndex >= participantIDs.length) {
           this.currentDrawerIndex = 0;
@@ -145,11 +144,13 @@ export default {
     this.currentWord = data.word;
     });
     socket.on('correctGuessAnnouncement', (data) => {
-
-  // Öka poängen med 1
-  this.userScores[data.username]++;
-  
-
+      this.messages.push({
+      username: data.username,
+      text: 'guessed correctly!',
+    });
+  });
+  socket.on("scoresUpdated", (updatedScores) => {
+  this.userScores = updatedScores;
 });
   },
 
@@ -222,6 +223,7 @@ export default {
     // Nollställ variabler
     this.currentWord = '';
     this.wordOptions = [];
+    this.correctGuessers = [];
 
     // Generera ordalternativ bara om du är tecknaren
     if (this.isDrawing) {
@@ -236,24 +238,48 @@ export default {
 
       
    sendChatMessage() {
-        if (!this.chatMessage.trim()) return; // Kontrollera att meddelandet inte är tomt
+    if (!this.chatMessage.trim()) return;
 
-        const username = this.participants[this.userID]?.name || "Unknown";
-        
-        if (this.chatMessage.trim().toLowerCase() === this.currentWord.toLowerCase()) {
-    socket.emit("correctGuess", {
+    const username = this.participants[this.userID]?.name || "Unknown";
+
+    if (this.isDrawing) {
+      // Om tecknaren försöker skicka ett meddelande, rensa chatten och gör ingenting
+      this.chatMessage = '';
+      return;
+    }
+
+    if (this.correctGuessers.includes(username)) {
+    this.chatMessage = '';
+    return;
+    }
+
+    if (this.chatMessage.trim().toLowerCase() === this.currentWord.toLowerCase()) {
+      socket.emit("correctGuess", {
+        gameCode: this.gameCode,
+        username: username,
+        word: this.currentWord,
+      });
+
+      this.userScores[username]++;
+      this.correctGuessers.push(username);
+
+      socket.emit("updateScores", {
       gameCode: this.gameCode,
-      username: username,
-      word: this.currentWord
+      userScores: this.userScores,
     });
-  }
-        socket.emit("chatMessage", {
-          gameCode: this.gameCode,
-          username: username, // Använd användarnamnet från userID
-          text: this.chatMessage,
-        });
-        this.chatMessage = ''; // Rensa meddelandefältet
-      },
+    } 
+
+    else {
+      socket.emit("chatMessage", {
+        gameCode: this.gameCode,
+        username: username,
+        text: this.chatMessage,
+      });
+
+    }
+
+    this.chatMessage = '';
+},
 
       generateUnderscores(word) {
     if (!word) return '';

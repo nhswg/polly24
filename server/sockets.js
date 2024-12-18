@@ -105,6 +105,13 @@
     });
   });
   
+  socket.on("updateScores", (data) => {
+    const { gameCode, userScores } = data;
+  
+    // Skicka uppdaterade poäng till alla spelare i spelet
+    io.to(gameCode).emit("scoresUpdated", userScores);
+  });
+  
   }
 
   export { sockets };
