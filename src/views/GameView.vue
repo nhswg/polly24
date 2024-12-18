@@ -14,7 +14,7 @@
 
       <div class="game-area">
         <LeaderboardComponent :participants="participants" :userScores="userScores" />
-        <DrawingComponent :currentWord="currentWord" :canDraw="isDrawing" />
+        <DrawingComponent ref="drawingComp" :currentWord="currentWord" :canDraw="isDrawing" />
         <ChatComponent 
           :messages="messages" 
           :chatMessage="chatMessage"
@@ -204,6 +204,7 @@ export default {
           clearInterval(this.timerInterval);
           this.timerInterval = null;
           this.rotateDrawingRole();
+          this.$refs.drawingComp.resetCanvas();
         }
       }, 1000);
     },
