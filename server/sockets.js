@@ -10,6 +10,7 @@ function sockets(io, socket, data) {
       const participants = data.getParticipants(gameCode);
       console.log('participants', participants);
       socket.emit('participantsUpdate', participants);
+      socket.emit('selectedWord', data.getWordSelected(gameCode)); // in i  GET join game för att få ordet som valts av gamecoden endast
     });
 
     socket.on('participateInGame', function(d) {
@@ -69,7 +70,9 @@ function sockets(io, socket, data) {
   });
 
   socket.on('wordSelected', function(d) {
-    io.to(d.gameCode).emit('wordSelected', { word: d.word });
+    data.wordSelected(d.gameCode, d.word);
+    io.to(d.gameCode).emit('selectedWord', data.getWordSelected(d.gameCode)); //parameter 1 =  nytt ord, parameter 2 = ordet som valts från databasen
+
   });
   socket.on('correctGuess', function(data) {
     // Skicka till alla deltagare att någon gissade rätt

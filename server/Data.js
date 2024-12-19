@@ -34,6 +34,7 @@ Data.prototype.createGame = function(gameData) {
       adminName: gameData.adminName,
       participants: gameData.participants,
       adminID: gameData.adminID,
+      currentWord: "" //LA TILL DATAFÄLT
     };
     poll.participants = {};            
     this.polls[gameData.gameId] = poll;
@@ -65,7 +66,19 @@ Data.prototype.getParticipants = function(pollId) {
     
   }
   return [];
+
 }
+Data.prototype.wordSelected = function(pollId, word) {
+  if (this.pollExists(pollId)) {
+    this.polls[pollId].currentWord = word;
+
+  } //NYFUNKTION
+}
+Data.prototype.getWordSelected = function(pollId) {
+  if (this.pollExists(pollId)) {
+    return this.polls[pollId].currentWord;
+  }
+} //NYFUNKTION
 
 export { Data };
 

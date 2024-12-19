@@ -145,8 +145,8 @@ export default {
       this.messages.push(msg);
     });
 
-    socket.on('wordSelected', (data) => {
-    this.currentWord = data.word;
+    socket.on('selectedWord', (word) => {
+    this.currentWord = word; // i cretated det valda ordet i metoden välj ordets
     });
     socket.on('correctGuessAnnouncement', (data) => {
       this.messages.push({
@@ -182,7 +182,7 @@ export default {
       this.currentWord = word;
       this.wordOptions = [];
 
-        socket.emit('wordSelected', {
+        socket.emit('wordSelected', { //
         gameCode: this.gameCode,
         word: this.currentWord
       });
