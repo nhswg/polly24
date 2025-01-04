@@ -121,7 +121,19 @@ socket.on('chatMessage', (d) => {
 
 
 socket.on('drawing', (drawingData) => {
-  socket.broadcast.emit('drawing', drawingData);
+  const { gameID, ...drawData } = drawingData;
+  data.addDrawing(gameID, drawData);
+  socket.broadcast.to(gameID).emit('drawing', drawData);
+});
+
+socket.on('getDrawings', (gameID) => {
+  const drawings = data.getDrawings(gameID);
+  socket.emit('existingDrawings', drawings);
+});
+
+socket.on('clearCanvas', (gameID) => {
+  data.clearDrawings(gameID);
+  io.to(gameID).emit('clearCanvas');
 });
 
 socket.on('undo', () => {

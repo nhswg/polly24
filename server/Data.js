@@ -30,7 +30,7 @@ Data.prototype.createGame = function(gameID, lang="en") {
       currentRound: 1,
       currentWord: '',
       chatHistory: [],
-      drawingData: [],
+      drawingData: [], // Add this line to store drawings
     };
     
     console.log("game created", gameID, this.games[gameID]);
@@ -158,6 +158,25 @@ Data.prototype.updateChatHistory = function(gameID, chatMessage, username) {
 Data.prototype.getChatHistory = function(gameID) {
   if (this.gameExists(gameID)) {
     return this.games[gameID].chatHistory;
+  }
+}
+
+Data.prototype.addDrawing = function(gameID, drawingData) {
+  if (this.gameExists(gameID)) {
+    this.games[gameID].drawingData.push(drawingData);
+  }
+}
+
+Data.prototype.getDrawings = function(gameID) {
+  if (this.gameExists(gameID)) {
+    return this.games[gameID].drawingData;
+  }
+  return [];
+}
+
+Data.prototype.clearDrawings = function(gameID) {
+  if (this.gameExists(gameID)) {
+    this.games[gameID].drawingData = [];
   }
 }
 

@@ -55,6 +55,13 @@ export default {
     const canvas = this.$refs.canvas;
     this.ctx = canvas.getContext('2d');
 
+    // Add this to get existing drawings when mounted
+    this.socket.emit('getDrawings', this.$route.params.id);
+
+    this.socket.on('existingDrawings', (drawings) => {
+      drawings.forEach(data => this.drawFromSocket(data));
+    });
+
     this.socket.on('drawing', (data) => {
       this.drawFromSocket(data);
     });
@@ -102,6 +109,7 @@ export default {
       });
 
       this.socket.emit('drawing', {
+        gameID: this.$route.params.id,  // Add gameID
         x1: this.lastX,
         y1: this.lastY,
         x2: event.offsetX,
@@ -160,7 +168,7 @@ export default {
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       this.strokes = [];
-      this.socket.emit('clearCanvas');
+      this.socket.emit('clearCanvas', this.$route.params.id);  // Add gameID
     }
   }
 }
