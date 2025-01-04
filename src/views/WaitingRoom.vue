@@ -28,15 +28,15 @@
       <div class="game-info">
         <div class="display-gamecode">
           {{ uiLabels.gameCode }}: 
-          <span class="code-highlight">{{ gameCode }}</span>
+          <span class="code-highlight">{{ gameID }}</span>
         </div>
         
         <div class="participants-container">
           <h2 class="participants-title">{{ uiLabels.participantLabel }}</h2>
           <div class="participants-grid">
             <div 
-              v-for="(participant, index) in participants" 
-              :key="participant.name" 
+              v-for="(participant, index) in gameData.participants" 
+              :key="participant.name"
               class="participant-card"
             >
               <span class="participant-number">#{{ index + 1 }}</span>
@@ -47,14 +47,13 @@
       </div>
 
       <button 
-        v-if="isAdmin && Object.keys(participants).length > 1"
+        v-if="this.isAdmin && Object.keys(gameData.participants).length > 1"
         @click="startGame" 
         class="start-game-button"
-        :disabled="participants.length < 2"
       >
         Start Game
       </button>
-      <p v-if="isAdmin && Object.keys(participants).length < 2" class="player-warning">
+      <p v-if="this.isAdmin && Object.keys(gameData.participants).length < 2" class="player-warning">
       {{uiLabels.minimumPlayers}}     
      </p>
     </main>
@@ -70,49 +69,53 @@ export default {
   data() {
     return {
       uiLabels: {},
-      username: '',
-      gameCode: '',
-      participants: {},
       isAdmin: false,
-      userID: "",
-      adminID: "",
-
+      gameID: '',
+      userID: '',
+      gameData: {}, // Används för all speldata
+      lang: localStorage.getItem("lang") || "en",
     };
   },
   created() {
-    this.gameCode = this.$route.params.id;
+    this.gameID = this.$route.params.id;
     this.userID = this.$route.params.userID;
-    console.log("waitinggameCode",this.gameCode);
-    this.isAdmin = localStorage.getItem('isAdmin') === 'true';
-    socket.on("uiLabels", labels => this.uiLabels = labels );
-    socket.emit("getUILabels", this.lang );
 
-    console.log("Initial userID:", this.userID);
-    socket.on('gameData', (data) => {
-        console.log("adminID",data.adminID);
-      });
+    // Hämta UI-etiketter
+    socket.on("uiLabels", (labels) => (this.uiLabels = labels));
+    socket.emit("getUILabels", this.lang);
+
+    // Hämta speldata
+    socket.emit("getGameData", { gameID: this.gameID });
+    socket.on("getGameData", (gameData) => {
+      this.gameData = gameData;
+      this.adminID = gameData.adminID;
+      this.isAdmin = this.userID === this.adminID;
+      console.log(this.isAdmin)
+    });
     
     socket.on("participantsUpdate", (participants) => {
-      console.log("participants",participants);
-      this.participants = participants;
+      this.gameData.participants = participants; // Uppdatera deltagare i gameData
+      console.log("new player joined")
     });
-    
+
+    // Navigera till spelet vid start
     socket.on("gameStarted", () => {
-      this.$router.push(`/game/${this.gameCode}/${this.userID}`);
+      this.$router.push(`/game/${this.gameID}/${this.userID}`);
     });
-    socket.emit("joinGame", this.gameCode);
+
+    // Anslut användaren till spelet
+    socket.emit("joinGame", this.gameID);
   },
   methods: {
     startGame() {
-      if (Object.keys(this.participants).length >= 2) { // Kolla antal deltagare
-        socket.emit("startGame", this.gameCode);
-      }},
+        socket.emit("startGame", this.gameID);
+    },
     switchLanguage() {
       this.lang = this.lang === "en" ? "sv" : "en";
       localStorage.setItem("lang", this.lang);
       socket.emit("getUILabels", this.lang);
-    }
-  }
+    },
+  },
 };
 </script>
   

@@ -1,91 +1,163 @@
 function sockets(io, socket, data) {
     
-    socket.on('getUILabels', function(lang) {
-      socket.emit('uiLabels', data.getUILabels(lang));
-    });
+  socket.on('getUILabels', function(lang) {
+    socket.emit('uiLabels', data.getUILabels(lang));
+  });
 
-    socket.on('joinGame', function(gameCode) {
-      console.log('joinGame', gameCode);
-      socket.join(gameCode);
-      const participants = data.getParticipants(gameCode);
-      console.log('participants', participants);
-      socket.emit('participantsUpdate', participants);
-    });
+  socket.on('createGame', function(d) {
+    data.createGame(d.gameID, d.lang);
+    socket.join(d.gameID);
+    socket.emit('gameData', data.getGameData(d.gameID));
+  });
 
-    socket.on('participateInGame', function(d) {
-      data.participateInGame(d.gameCode, d.userID, d.name);
-      io.to(d.gameCode).emit('participantsUpdate', data.getParticipants(d.gameCode));
-    });
+  socket.on('joinGame', function(gameID) {
+    console.log('joinGame', gameID);
+    socket.join(gameID);
+    const participants = data.getParticipants(gameID);
+    console.log('participants', participants);
+    socket.emit('participantsUpdate', participants);
+    socket.emit('selectedWord', data.getWordSelected(gameID));
+    socket.emit('sendChatHistory', data.getChatHistory(gameID));
+  });
 
-    /*Nedan är nya sockets*/
+  socket.on('participateInGame', function(d) {
+    data.participateInGame(d.gameID, d.userID, d.name);
+    io.to(d.gameID).emit('participantsUpdate', data.getParticipants(d.gameID));
+  });
 
-    socket.on('createGame', function(gameData) {
-      // Lagra gameData
-      data.createGame(gameData);
-      // Låt socket ansluta till spelrummet
-      socket.join(gameData.gameId);
-      // Skicka 'gameCreated' tillbaka till skaparen
-      socket.emit('gameCreated', gameData);
-      // MåSTe fixa så man läser in gameData från databasen
-    });
-
-   socket.on('getGameData', function(payload) {
-    const gameCode = payload.gameCode;
-    const gameDataObj = data.getPoll(gameCode); // eller data.getGameData(gameId) om du har en sådan metod
-    if (gameDataObj) {
-      socket.join(gameCode);
-      socket.emit('gameData', gameDataObj);
+  socket.on('setAdmin', function (d) {
+    console.log(`Setting admin for game ${d.gameID} with ID: ${d.adminID} and Name: ${d.adminName}`);
+    const result = data.setAdmin(d.gameID, d.adminID, d.adminName);
+  
+    if (result) {
+      console.log(`Admin successfully set for game ${d.gameID}`);
     } else {
-      socket.emit('error', { message: 'Spelet hittades inte' });
+      console.log(`Failed to set admin for game ${d.gameID}`);
     }
   });
 
-    socket.on('startGame', function(gameCode) {
-      // Sänd till alla i gameCode-rummet att spelet startat
-      io.to(gameCode).emit('gameStarted');
-    });
-
-  socket.on('chatMessage', (data) => {
-  // data kan innehålla {gameCode, username, text}
-  // Sänd tillbaka meddelandet till alla i spelets rum
-  io.to(data.gameCode).emit('chatMessage', data);
+  socket.on('setWordsLanguage', function(d) {
+    console.log('Setting words language for game:', d.gameID, 'to:', d.wordsLanguage);
+    const result = data.setWordsLanguage(d.gameID, d.wordsLanguage);
+    console.log('Result of setWordsLanguage:', result);
   });
 
-  socket.on('drawing', (drawingData) => {
-    socket.broadcast.emit('drawing', drawingData);
+  socket.on('setDrawTime', function(d) {
+    console.log('Setting draw time for game:', d.gameID, 'to:', d.drawTime);
+    const result = data.setDrawTime(d.gameID, d.drawTime);
+    console.log('Result of setDrawTime:', result);
   });
 
-  socket.on('undo', () => {
-    socket.broadcast.emit('undo');
+  socket.on('getDrawTime', function(d) {
+    const drawTime = data.getDrawTime(d.gameID);
+    console.log('Returning draw time:', drawTime, 'for game:', d.gameID);
+    socket.emit('selectedDrawTimeResponse', drawTime);
   });
 
-  socket.on('clearCanvas', () => {
-    socket.broadcast.emit('clearCanvas');
+  socket.on('setGameRounds', function(d){
+    console.log('Setting rounds for game:', d.gameID, 'to:', d.gameRounds);
+    const result = data.setGameRounds(d.gameID, d.gameRounds);
+    console.log('Result of setGameRounds:', result);
+  });
+
+  socket.on('getGameRounds', function(d){
+    const gameRounds = data.getGameRounds(d.gameID);
+    console.log('Returning rounds:', gameRounds, 'for game:', d.gameID);
+    socket.emit('selectedGameRounds', gameRounds);
+  });
+
+  socket.on('setTheme', function(d){
+    console.log('Setting theme for game:', d.gameID, 'to:', d.theme);
+    const result = data.setTheme(d.gameID, d.theme);
+    console.log('Result of setTheme:', result);
+  });
+
+  socket.on('getTheme', function(d){
+    const theme = data.getTheme(d.gameID);
+    console.log('Returning theme:', theme, 'for game:', d.gameID);
+    socket.emit('selectedTheme', theme);
   });
 
 
-  socket.on('startTimer', function(data) {
-    io.to(data.gameCode).emit('timerStarted', data.time);
+  socket.on('updateRound', function(d){
+    console.log('Round updated')
+    data.updateRound(d.gameID)
   });
 
-  socket.on('wordSelected', function(d) {
-    io.to(d.gameCode).emit('wordSelected', { word: d.word });
+  socket.on('getRound', function(d){
+    socket.emit('currentRoundResponse', data.getRound(d.gameID))
   });
-  socket.on('correctGuess', function(data) {
-    // Skicka till alla deltagare att någon gissade rätt
-    io.to(data.gameCode).emit('correctGuessAnnouncement', {
-      username: data.username,
-      word: data.word
-    });
-  });
-  
-  socket.on("updateScores", (data) => {
-    const { gameCode, userScores } = data;
-  
-    // Skicka uppdaterade poäng till alla spelare i spelet
-    io.to(gameCode).emit("scoresUpdated", userScores);
-  });
-  
-  }
 
-  export { sockets };
+  socket.on('disconnect', () => {
+    console.log(`Client with socket.id ${socket.id} disconnected.`);
+  });
+
+
+  socket.on('getGameData', (payload) => {
+    const gameID = payload.gameID;
+    const gameDataObj = data.getGameData(gameID); // Hämtar speldata
+    if (gameDataObj) {
+      console.log("Sending gameData to client:", gameDataObj);
+      socket.emit('getGameData', gameDataObj); // Skickar speldata till klienten
+    } else {
+      console.error("Game data not found for gameID:", gameID);
+      socket.emit('error', { message: 'Game not found' });
+    }
+  });
+
+  socket.on('startGame', function(gameID) {
+    // Sänd till alla i gameCode-rummet att spelet startat
+    io.to(gameID).emit('gameStarted');
+  });
+
+socket.on('chatMessage', (d) => {
+  // data kan innehålla { gameID, username, text }
+  // Spara meddelandet i chatHistoriken
+  data.updateChatHistory(d.gameID, d.text, d.username);
+
+  // Skicka ut uppdaterad chathistorik till alla i spelets rum
+  io.to(d.gameID).emit('sendChatHistory', data.getChatHistory(d.gameID));
+});
+
+
+socket.on('drawing', (drawingData) => {
+  socket.broadcast.emit('drawing', drawingData);
+});
+
+socket.on('undo', () => {
+  socket.broadcast.emit('undo');
+});
+
+socket.on('clearCanvas', () => {
+  socket.broadcast.emit('clearCanvas');
+});
+
+
+socket.on('startTimer', function(data) {
+  io.to(data.gameID).emit('timerStarted', data.time);
+});
+
+socket.on('wordSelected', function(d) {
+  data.wordSelected(d.gameID, d.word);
+  io.to(d.gameID).emit('selectedWord', data.getWordSelected(d.gameID));
+});
+
+
+socket.on('correctGuess', function(data) {
+  // Skicka till alla deltagare att någon gissade rätt
+  io.to(data.gameID).emit('correctGuessAnnouncement', {
+    userID: data.userID,
+    word: data.word
+  });
+});
+
+socket.on("updateScores", (data) => {
+  const { gameID, userScores } = data;
+
+  // Skicka uppdaterade poäng till alla spelare i spelet
+  io.to(gameID).emit("scoresUpdated", userScores);
+});
+
+}
+
+export { sockets };

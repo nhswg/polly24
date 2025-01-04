@@ -20,7 +20,7 @@
         <div class="join-game-form">
           <div>
             {{ uiLabels.enterCode }}:
-            <input type="text" v-model="gameCode" class="text-square">
+            <input type="text" v-model="gameID" class="text-square">
           </div>
           
           <div>
@@ -47,15 +47,15 @@ export default {
   data() {
     return {
       userName: "",
-      gameCode: "inactive game",
+      gameID: "inactive game",
       uiLabels: {},
       lang: localStorage.getItem("lang") || "en",
       userID: "",
     }
   },
   created() {
-    this.gameCode = this.$route.params.id;
-    socket.emit("joinGame", this.gameCode);
+    this.gameID = this.$route.params.id;
+    socket.emit("joinGame", this.gameID);
     socket.on("uiLabels", labels => this.uiLabels = labels );
     socket.emit("getUILabels", this.lang );
   },
@@ -66,9 +66,9 @@ export default {
 
     participateInGame() {
       this.userID = this.generateUserID();
-      if (this.gameCode && this.userName) {
-        socket.emit("participateInGame", { gameCode: this.gameCode, userID: this.userID, name: this.userName });
-        this.$router.push(`/lobby/${this.gameCode}/${this.userID}`);
+      if (this.gameID && this.userName) {
+        socket.emit("participateInGame", { gameID: this.gameID, userID: this.userID, name: this.userName });
+        this.$router.push(`/lobby/${this.gameID}/${this.userID}`);
         localStorage.setItem('isAdmin', 'false');
         localStorage.setItem('playerName', this.userName);
       } 

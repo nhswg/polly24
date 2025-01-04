@@ -58,7 +58,12 @@ export default {
   },
   methods: {
     switchLanguage() {
-      this.lang = this.lang === "en" ? "sv" : "en";
+      if (this.lang === 'en') {
+        this.lang = 'sv'
+      }
+      else {
+        this.lang = 'en'
+      }
       localStorage.setItem("lang", this.lang);
       socket.emit("getUILabels", this.lang);
     }

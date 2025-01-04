@@ -1,26 +1,25 @@
 <template>
   <div>
     <!-- Om nuvarande runda ej har passerat det valda antalet rundor -->
-    <div v-if="currentRound <= gameData.rounds">
+    <div v-if="currentRound <= gameData.gameRounds">
       <GameInfoComponent 
-        :wordOptions="isDrawing ? wordOptions : []" 
-        :currentWord="displayedWord" 
+        :wordOptions="isDrawing ? wordOptions : []"
+        :currentWord="displayedWord"
         :timer="timer"
         :currentRound="currentRound"
         @select-word="selectWord"
         @leave-game="handleLeaveGame"
       />
 
-
       <div class="game-area">
-        <LeaderboardComponent :participants="participants" :userScores="userScores" />
-        <DrawingComponent ref="drawingComp":currentWord="currentWord" :canDraw="isDrawing" />
-        <ChatComponent  
-          :messages="messages" 
+        <LeaderboardComponent :participants="gameData.participants" :userScores="userScores" />
+        <DrawingComponent ref="drawingComp" :currentWord="currentWord" :canDraw="isDrawing" />
+        <ChatComponent
+          :messages="messages"
           :chatMessage="chatMessage"
           :canDraw="isDrawing"
-          @sendChatMessage="sendChatMessage" 
-          @updateChatMessage="chatMessage = $event" 
+          @sendChatMessage="sendChatMessage"
+          @updateChatMessage="chatMessage = $event"
         />
       </div>
     </div>
@@ -28,11 +27,12 @@
     <!-- Om currentRound överskrider chosenRounds visas endast en stor leaderboard -->
     <div v-else class="final-leaderboard-container">
       <h2>Spelet är slut!</h2>
-      <LeaderboardComponent 
-        :participants="participants" 
+      <LeaderboardComponent
+        v-if="gameData.participants"
+        :participants="gameData.participants"
         :userScores="userScores"
-        class="final-leaderboard" 
-        />
+        class="final-leaderboard"
+      />
       <button @click="handleLeaveGame">Till huvudsidan</button>
     </div>
   </div>
@@ -58,7 +58,7 @@ export default {
   },
   data() {
     return {
-      participants: [],
+      showWordOptions: true,
       gameData: {},
       timer: 0,
       timerInterval: null,
@@ -67,7 +67,7 @@ export default {
       chatMessage: '',
       messages: [],
       userID: '',
-      gameCode: '',
+      gameID: '',
       currentRound: 1,
       isDrawing: false,
       currentDrawerIndex: 0,
@@ -77,104 +77,152 @@ export default {
   },
 
   computed: {
-  displayedWord() {
+    displayedWord() {
       if (this.isDrawing) {
-        return this.currentWord; // Tecknaren ser ordet
+        return this.currentWord;
       } else {
-        return this.generateUnderscores(this.currentWord); // Gissarna ser understreck
+        return this.generateUnderscores(this.currentWord);
       }
     }
   },
 
-
   created() {
-    this.gameCode = this.$route.params.id;
+    this.gameID = this.$route.params.id;
     this.userID = this.$route.params.userID;
-    socket.emit("joinGame", this.gameCode);
-    socket.emit("getGameData", { gameCode: this.gameCode });
 
-    socket.on('gameData', (data) => {
-    this.gameData = data;
-    this.timer = data.drawTime;
+    // 1. Anslut till spelet
+    socket.emit("joinGame", this.gameID);
 
-    // Om gameData kom först eller sist spelar ingen roll,
-    // kolla igen ifall du kan generera ord nu.
-    if (this.isDrawing && !this.currentWord && this.gameData.theme && this.gameData.language) {
-      this.generateWordOptions();
-    }
-  });
+    // 2. Begär speldata
+    socket.emit('getGameData', { gameID: this.gameID });
+    
+    // 3. När servern skickar speldata
+    socket.on('getGameData', (gameData) => {
+      console.log("Game data received:", gameData);
+      this.gameData = gameData;
+      this.timer = gameData.drawTime;
 
-  socket.on("participantsUpdate", (participants) => {
-  this.participants = participants;
-  for(const userID in participants)
-   { 
-    const participant = participants[userID];
-    if (!(participant.name in this.userScores)) {
-      this.userScores[participant.name] = 0;
-    }
-    }
-
-  
-  const participantIDs = Object.keys(this.participants);
-
-  if (participantIDs.length >= 2) {
-    if (this.currentDrawerIndex >= participantIDs.length) {
-          this.currentDrawerIndex = 0;
-        }
-        const currentDrawerID = participantIDs[this.currentDrawerIndex];
-        this.isDrawing = (currentDrawerID === this.userID);
-
-        // Försök generera ordalternativ om möjligt
-        if (this.isDrawing && !this.currentWord && this.gameData.theme && this.gameData.language) {
-          this.generateWordOptions();
-        } else {
-          this.wordOptions = [];
-        }
-      } else {
-        this.isDrawing = false;
-        this.wordOptions = [];
+      // Om servern skickar vem som är tecknare 
+      if (gameData.currentDrawerIndex !== undefined) {
+        this.currentDrawerIndex = gameData.currentDrawerIndex;
       }
+
+      // Om servern har ett redan valt ord, sätt det
+      if (gameData.currentWord) {
+        this.currentWord = gameData.currentWord;
+      }
+
+      // Nu kallar vi en metod för att sätta vem som är tecknare
+      this.determineIfDrawing();
     });
 
+    // 4. När participants uppdateras
+    socket.on("participantsUpdate", (participants) => {
+      console.log("participantsUpdate", participants);
+      this.gameData.participants = participants;
+      // Se till att alla får en poäng-post
+      for(const userID in participants) {
+        const participant = participants[userID];
+        if (!(participant.name in this.userScores)) {
+          this.userScores[participant.name] = 0;
+        }
+      }
+      // Bestäm vem som är tecknare efter uppdateringen
+      this.determineIfDrawing();
+    });
+
+    // Timer från servern
     socket.on('timerStarted', (time) => {
       this.timer = time;
       this.startTimer();
     });
-  
-    socket.on("chatMessage", (msg) => {
-      this.messages.push(msg);
+
+    socket.on("sendChatHistory", (chatHistory) => {
+      this.messages = chatHistory;
     });
 
-    socket.on('wordSelected', (data) => {
-    this.currentWord = data.word;
+    // Word har valts av tecknaren
+    socket.on('selectedWord', (word) => {
+      if (word) {
+        this.gameData.currentWord = word;
+        this.currentWord = word;
+        this.showWordOptions = false;
+      }
     });
+
+    // Någon gissade rätt
     socket.on('correctGuessAnnouncement', (data) => {
       this.messages.push({
-      username: data.username,
-      text: 'guessed correctly!',
+        username: data.username,
+        text: 'guessed correctly!',
+      });
     });
-  });
-  socket.on("scoresUpdated", (updatedScores) => {
-  this.userScores = updatedScores;
-});
+
+    // Poäng har uppdaterats
+    socket.on("scoresUpdated", (updatedScores) => {
+      this.userScores = updatedScores;
+    });
   },
 
-
   methods: {
+    /**
+     * Sätter isDrawing = true om jag är currentDrawer, 
+     * och genererar ordalternativ om inget redan är valt.
+     */
+    determineIfDrawing() {
+      const participantIDs = Object.keys(this.gameData.participants || {});
+      if (!participantIDs.length) {
+        // Inga deltagare = ingen tecknare
+        this.isDrawing = false;
+        return;
+      }
+
+      // Säkerställ att currentDrawerIndex är inom arrayens längd
+      if (this.currentDrawerIndex >= participantIDs.length) {
+        this.currentDrawerIndex = 0;
+      }
+
+      const currentDrawerID = participantIDs[this.currentDrawerIndex];
+      this.isDrawing = (currentDrawerID === this.userID);
+
+      // Om jag är tecknaren men ord ej valt -> generateWordOptions
+      if (this.isDrawing) {
+        console.log("Jag är tecknaren");
+        // Endast om vi har en theme + wordsLanguage
+        if (!this.gameData.currentWord && this.gameData.theme && this.gameData.wordsLanguage) {
+          this.generateWordOptions();
+        } else {
+          // Finns redan ett ord
+          if (this.gameData.currentWord) {
+            this.currentWord = this.gameData.currentWord;
+          }
+        }
+      } else {
+        // Jag är inte tecknaren
+        if (this.gameData.currentWord) {
+          this.currentWord = this.gameData.currentWord;
+        }
+        this.wordOptions = [];
+      }
+    },
+
     generateWordOptions() {
+      console.log("Kör generateWordOptions()");
       let words = [];
-      if (this.gameData.language === "English") {
+      // Kolla språket
+      if (this.gameData.wordsLanguage === "English") {
         words = wordsEn[this.gameData.theme];
-      } else if (this.gameData.language === "Swedish") {
+      } else if (this.gameData.wordsLanguage === "Swedish") {
         words = wordsSv[this.gameData.theme];
       }
 
-      if (words && words.length >= 3) {
-        const shuffledWords = words.sort(() => 0.5 - Math.random());
-        this.wordOptions = shuffledWords.slice(0, 3);
-      } else {
+      // Om listan är för kort eller saknas
+      if (!words || words.length < 3) {
         console.warn("Not enough words to generate options.");
         this.wordOptions = ["Option 1", "Option 2", "Option 3"];
+      } else {
+        const shuffledWords = words.sort(() => 0.5 - Math.random());
+        this.wordOptions = shuffledWords.slice(0, 3);
       }
     },
 
@@ -182,18 +230,18 @@ export default {
       this.currentWord = word;
       this.wordOptions = [];
 
-        socket.emit('wordSelected', {
-        gameCode: this.gameCode,
+      // Säg till servern att ordet valts
+      socket.emit('wordSelected', {
+        gameID: this.gameID,
         word: this.currentWord
       });
 
-        socket.emit('startTimer', {
-        gameCode: this.gameCode,
+      // Starta ritar-timer
+      socket.emit('startTimer', {
+        gameID: this.gameID,
         time: this.gameData.drawTime
       });
     },
-    
-
 
     handleLeaveGame() {
       this.$router.push('/');
@@ -215,89 +263,85 @@ export default {
     },
 
     rotateDrawingRole() {
-  const participantIDs = Object.keys(this.participants);
-  if (participantIDs.length > 0) {
-    this.currentDrawerIndex = (this.currentDrawerIndex + 1) % participantIDs.length;
-    const currentDrawerID = participantIDs[this.currentDrawerIndex];
-    this.isDrawing = (currentDrawerID === this.userID);
+      const participantIDs = Object.keys(this.gameData.participants || {});
+      if (!participantIDs.length) return;
 
-    // Om vi har gått igenom alla deltagare, öka currentRound
-    if (this.currentDrawerIndex === 0) {
-      this.currentRound++;
-    }
+      // Nästa index
+      this.currentDrawerIndex = (this.currentDrawerIndex + 1) % participantIDs.length;
+      const currentDrawerID = participantIDs[this.currentDrawerIndex];
+      this.isDrawing = (currentDrawerID === this.userID);
 
-    // Nollställ variabler
-    this.currentWord = '';
-    this.wordOptions = [];
-    this.correctGuessers = [];
+      // Om vi har gått igenom alla deltagare, öka rundan
+      if (this.currentDrawerIndex === 0) {
+        this.currentRound++;
+      }
 
-    // Generera ordalternativ bara om du är tecknaren
-    if (this.isDrawing) {
-      this.generateWordOptions();
-    }
+      // Nollställ
+      this.currentWord = '';
+      this.gameData.currentWord = '';
+      this.wordOptions = [];
+      this.correctGuessers = [];
 
-  } else {
-    this.isDrawing = false;
-    this.wordOptions = [];
-  }
-},
-
+      // Generera ordalternativ bara om jag är tecknaren
+      if (this.isDrawing) {
+        this.generateWordOptions();
+      }
+    },
       
-   sendChatMessage() {
-    if (!this.chatMessage.trim()) return;
+    sendChatMessage() {
+      if (!this.chatMessage.trim()) return;
 
-    const username = this.participants[this.userID]?.name || "Unknown";
+      const username = this.gameData.participants[this.userID]?.name || "Unknown";
 
-    if (this.isDrawing) {
-      // Om tecknaren försöker skicka ett meddelande, rensa chatten och gör ingenting
+      // Om tecknaren försöker chatta = ignorera
+      if (this.isDrawing) {
+        this.chatMessage = '';
+        return;
+      }
+
+      // Om jag redan gissat rätt = ignorera
+      if (this.correctGuessers.includes(username)) {
+        this.chatMessage = '';
+        return;
+      }
+
+      // Kolla om jag gissar ordet
+      if (this.chatMessage.trim().toLowerCase() === this.currentWord.toLowerCase()) {
+        socket.emit("correctGuess", {
+          gameID: this.gameID,
+          username: username,
+          word: this.currentWord,
+        });
+
+        this.userScores[username]++;
+        this.correctGuessers.push(username);
+
+        socket.emit("updateScores", {
+          gameID: this.gameID,
+          userScores: this.userScores,
+        });
+      } else {
+        // Annars skicka normal chat
+        socket.emit("chatMessage", {
+          gameID: this.gameID,
+          username: username,
+          text: this.chatMessage,
+        });
+      }
+
       this.chatMessage = '';
-      return;
-    }
+    },
 
-    if (this.correctGuessers.includes(username)) {
-    this.chatMessage = '';
-    return;
-    }
-
-    if (this.chatMessage.trim().toLowerCase() === this.currentWord.toLowerCase()) {
-      socket.emit("correctGuess", {
-        gameCode: this.gameCode,
-        username: username,
-        word: this.currentWord,
-      });
-
-      this.userScores[username]++;
-      this.correctGuessers.push(username);
-
-      socket.emit("updateScores", {
-      gameCode: this.gameCode,
-      userScores: this.userScores,
-    });
-    } 
-
-    else {
-      socket.emit("chatMessage", {
-        gameCode: this.gameCode,
-        username: username,
-        text: this.chatMessage,
-      });
-
-    }
-
-    this.chatMessage = '';
-},
-
-      generateUnderscores(word) {
-    if (!word) return '';
-    // Dela meningen på ord
-    return word
-      .split(' ')
-      .map(w => w.replace(/./g, '_').split('').join(' ')) // ersätt varje tecken med '_'
-      .join('   '); // separera ord med extra mellanslag
-  }
-
+    generateUnderscores(word) {
+      if (!word) return '';
+      // Bygger underscores
+      return word
+        .split(' ')
+        .map(w => w.replace(/./g, '_').split('').join(' '))
+        .join('   ');
     }
   }
+};
 </script>
 
 <style scoped>
@@ -305,5 +349,12 @@ export default {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 10px;
+}
+.final-leaderboard-container {
+  text-align: center;
+}
+.final-leaderboard {
+  margin: 0 auto;
+  max-width: 400px;
 }
 </style>
