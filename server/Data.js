@@ -31,6 +31,7 @@ Data.prototype.createGame = function(gameID, lang="en") {
       currentWord: '',
       chatHistory: [],
       drawingData: [],
+      userScores: {}  
     };
     
     console.log("game created", gameID, this.games[gameID]);
@@ -110,7 +111,11 @@ Data.prototype.getGameRounds = function(gameID){
 Data.prototype.participateInGame = function(gameID, userID, name) {
   console.log("participant will be added to", gameID, userID, name);
   if (this.gameExists(gameID)) {
-    this.games[gameID].participants[userID] = {name: name};
+    this.games[gameID].participants[userID] = {
+      name: name,
+      guessedCorrectly: false
+    };
+
   }
 }
 
@@ -158,6 +163,63 @@ Data.prototype.updateChatHistory = function(gameID, chatMessage, username) {
 Data.prototype.getChatHistory = function(gameID) {
   if (this.gameExists(gameID)) {
     return this.games[gameID].chatHistory;
+  }
+}
+
+// Hämtar alla poäng för ett visst spel
+Data.prototype.getScores = function(gameID) {
+  if (!this.gameExists(gameID)) return {};
+  return this.games[gameID].userScores;
+}
+
+// Ökar en specifik användares poäng
+Data.prototype.increaseScore = function(gameID, userID, increment) {
+  if (!this.gameExists(gameID)) return false;
+  
+  // Om användaren saknar poäng så initiera med 0
+  if (typeof this.games[gameID].userScores[userID] === 'undefined') {
+    this.games[gameID].userScores[userID] = 0;
+  }
+  
+  this.games[gameID].userScores[userID] += increment;
+  return true;
+}
+
+Data.prototype.resetGuesses = function(gameID) {
+  // Kolla först om spelet finns
+  if (!this.gameExists(gameID)) return;
+
+  // Nollställ guessedCorrectly = false för alla deltagare
+  const participants = this.games[gameID].participants;
+  for (const userID in participants) {
+    participants[userID].guessedCorrectly = false;
+  }
+  console.log(`All guesses have been reset for game: ${gameID}`);
+
+}
+
+Data.prototype.clearChatHistory = function(gameID) {
+  if (!this.gameExists(gameID)) return;
+  this.games[gameID].chatHistory = []; 
+  console.log(`Chat history cleared for game: ${gameID}`);
+}
+
+Data.prototype.addDrawing = function(gameID, drawingData) {
+  if (this.gameExists(gameID)) {
+    this.games[gameID].drawingData.push(drawingData);
+  }
+}
+
+Data.prototype.getDrawings = function(gameID) {
+  if (this.gameExists(gameID)) {
+    return this.games[gameID].drawingData;
+  }
+  return [];
+}
+
+Data.prototype.clearDrawings = function(gameID) {
+  if (this.gameExists(gameID)) {
+    this.games[gameID].drawingData = [];
   }
 }
 

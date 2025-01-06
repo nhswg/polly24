@@ -1,5 +1,8 @@
+import io from 'socket.io-client';
+export const socket = io('http://localhost:3000');
+
 function sockets(io, socket, data) {
-    
+  // Övriga socket.on-lyssnare
   socket.on('getUILabels', function(lang) {
     socket.emit('uiLabels', data.getUILabels(lang));
   });
@@ -13,11 +16,16 @@ function sockets(io, socket, data) {
   socket.on('joinGame', function(gameID) {
     console.log('joinGame', gameID);
     socket.join(gameID);
+
     const participants = data.getParticipants(gameID);
     console.log('participants', participants);
     socket.emit('participantsUpdate', participants);
     socket.emit('selectedWord', data.getWordSelected(gameID));
     socket.emit('sendChatHistory', data.getChatHistory(gameID));
+
+    // Skicka även nuvarande poäng direkt vid join
+    const scores = data.getScores(gameID);
+    socket.emit('scoresUpdated', scores);
   });
 
   socket.on('participateInGame', function(d) {
@@ -78,20 +86,18 @@ function sockets(io, socket, data) {
     socket.emit('selectedTheme', theme);
   });
 
-
   socket.on('updateRound', function(d){
-    console.log('Round updated')
-    data.updateRound(d.gameID)
+    console.log('Round updated');
+    data.updateRound(d.gameID);
   });
 
   socket.on('getRound', function(d){
-    socket.emit('currentRoundResponse', data.getRound(d.gameID))
+    socket.emit('currentRoundResponse', data.getRound(d.gameID));
   });
 
   socket.on('disconnect', () => {
     console.log(`Client with socket.id ${socket.id} disconnected.`);
   });
-
 
   socket.on('getGameData', (payload) => {
     const gameID = payload.gameID;
@@ -106,58 +112,135 @@ function sockets(io, socket, data) {
   });
 
   socket.on('startGame', function(gameID) {
-    // Sänd till alla i gameCode-rummet att spelet startat
     io.to(gameID).emit('gameStarted');
   });
 
-socket.on('chatMessage', (d) => {
-  // data kan innehålla { gameID, username, text }
-  // Spara meddelandet i chatHistoriken
-  data.updateChatHistory(d.gameID, d.text, d.username);
+  //
+  // CHATTEN: Om användaren redan gissat rätt, ignorera meddelandet
+  //
+  socket.on('chatMessage', (d) => {
+    // d kan innehålla { gameID, userID, username, text }
+    const game = data.getGameData(d.gameID);
+    if (!game) return;
 
-  // Skicka ut uppdaterad chathistorik till alla i spelets rum
-  io.to(d.gameID).emit('sendChatHistory', data.getChatHistory(d.gameID));
-});
+    // Kolla om användaren redan är markerad som "guessedCorrectly"
+    if (game.participants[d.userID] && game.participants[d.userID].guessedCorrectly) {
+      console.log(`${d.userID} har redan gissat rätt, ingen mer chatt...`);
+      return;
+    }
+
+    // Spara meddelandet i chatHistoriken
+    data.updateChatHistory(d.gameID, d.text, d.username);
+
+    // Skicka ut uppdaterad chathistorik till alla i spelets rum
+    io.to(d.gameID).emit('sendChatHistory', data.getChatHistory(d.gameID));
+  });
 
 
 socket.on('drawing', (drawingData) => {
-  socket.broadcast.emit('drawing', drawingData);
+  const { gameID, ...drawData } = drawingData;
+  data.addDrawing(gameID, drawData);
+  socket.to(gameID).emit('drawing', drawData);
+});
+
+socket.on('getDrawings', (gameID) => {
+  const drawings = data.getDrawings(gameID);
+  socket.emit('existingDrawings', drawings);
+});
+
+socket.on('clearCanvas', (gameID) => {
+  data.clearDrawings(gameID);
+  io.to(gameID).emit('clearCanvas');
 });
 
 socket.on('undo', () => {
   socket.broadcast.emit('undo');
 });
 
-socket.on('clearCanvas', () => {
-  socket.broadcast.emit('clearCanvas');
-});
 
-
-socket.on('startTimer', function(data) {
-  io.to(data.gameID).emit('timerStarted', data.time);
-});
-
-socket.on('wordSelected', function(d) {
-  data.wordSelected(d.gameID, d.word);
-  io.to(d.gameID).emit('selectedWord', data.getWordSelected(d.gameID));
-});
-
-
-socket.on('correctGuess', function(data) {
-  // Skicka till alla deltagare att någon gissade rätt
-  io.to(data.gameID).emit('correctGuessAnnouncement', {
-    userID: data.userID,
-    word: data.word
+  socket.on('startTimer', function(data) {
+    io.to(data.gameID).emit('timerStarted', data.time);
   });
-});
 
-socket.on("updateScores", (data) => {
-  const { gameID, userScores } = data;
+  socket.on('wordSelected', function(d) {
+    data.wordSelected(d.gameID, d.word);
+    io.to(d.gameID).emit('selectedWord', data.getWordSelected(d.gameID));
+  });
 
-  // Skicka uppdaterade poäng till alla spelare i spelet
-  io.to(gameID).emit("scoresUpdated", userScores);
-});
+  socket.on("updateScores", (data) => {
+    const { gameID, userScores } = data;
+    io.to(gameID).emit("scoresUpdated", userScores);
+  });
 
+  //
+  // GISSNINGSLOGIK
+  //
+  socket.on('guessAttempt', (payload) => {
+    const gameID = payload.gameID;
+    const userID = payload.userID;
+    const guess = payload.guess.trim().toLowerCase();
+    
+    const game = data.getGameData(gameID);
+    if (!game) {
+      console.error("Game not found");
+      return;
+    }
+
+    // Om användaren redan markerats guessedCorrectly => ignorera
+    if (game.participants[userID]?.guessedCorrectly) {
+      console.log(`${payload.username} har redan gissat rätt tidigare.`);
+      return;
+    }
+
+    // Jämför gissning med currentWord
+    const currentWord = game.currentWord.trim().toLowerCase();
+    if (guess === currentWord) {
+      console.log(`Korrekt gissning av ${payload.username}`);
+
+      // Markera användaren som "har gissat rätt" i participants
+      if (!game.participants[userID]) {
+        game.participants[userID] = { name: payload.username };
+      }
+      game.participants[userID].guessedCorrectly = true;
+    
+      // Öka poäng på serversidan
+      data.increaseScore(gameID, userID, 1);
+
+      // Hämta uppdaterad poängtabell och skicka till alla i spelet
+      const updatedScores = data.getScores(gameID);
+      io.to(gameID).emit("scoresUpdated", updatedScores);
+
+      // Skicka "rätt gissning"-notis
+      io.to(gameID).emit('correctGuessAnnouncement', {
+        userID,
+        username: payload.username,
+        word: game.currentWord
+      });
+
+      // Lägg till systemmeddelande i chatten
+      const systemMessage = `${payload.username} guessed correctly!`;
+      data.updateChatHistory(gameID, systemMessage, '');
+
+      // Skicka ut hela chatHistoriken
+      io.to(gameID).emit('sendChatHistory', data.getChatHistory(gameID));
+    } else {
+      // Fel gissning => behandla som "chatMessage"
+      data.updateChatHistory(gameID, payload.guess, payload.username);
+      io.to(gameID).emit('sendChatHistory', data.getChatHistory(gameID));
+    }
+  });
+
+  socket.on("resetGuesses", (gameID) => {
+    data.resetGuesses(gameID);  // <-- Anropa vår nya metod
+  });
+
+  socket.on("clearChat", (gameID) => {
+    data.clearChatHistory(gameID);
+  
+    // Skicka tom chat till alla
+    io.to(gameID).emit("sendChatHistory", data.getChatHistory(gameID));
+  });
 }
 
+// Exportera funktionen
 export { sockets };

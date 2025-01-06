@@ -3,10 +3,20 @@
     <h3>{{ uiLabels.Guesses }}</h3>
     <div class="messages" ref="messagesContainer">
       <div v-for="(msg, index) in messages" :key="index">
-        <strong>{{ msg.username }}:</strong> {{ msg.text }}
+        <!-- Om det är ett systemmeddelande -->
+          <div 
+          v-if="!msg.username || msg.username.trim() === ''" 
+          class="system-message">
+            {{ msg.text }}
+          </div>
+  
+        <!-- Om det är ett vanligt meddelande -->
+          <div v-else>
+            <strong>{{ msg.username }}</strong>: {{ msg.text }}
+          </div>
       </div>
     </div>
-    <div class="input-container" v-if="!canDraw">
+    <div class="input-container" v-if="!canDraw && canGuess">
       <input 
         v-model="localChatMessage"
         @keyup.enter="emitChatMessage"
@@ -35,7 +45,11 @@ export default {
     canDraw: {
     type: Boolean,
     required: true
-  }
+  },
+  canGuess: {
+      type: Boolean,      
+      required: true
+    }
   },
   data() {
     return {
@@ -128,6 +142,11 @@ export default {
 
 .input-container button:hover {
   background-color: #0056b3;
+}
+
+.system-message {
+  font-weight: bold;
+  color: green;
 }
 
 </style>
