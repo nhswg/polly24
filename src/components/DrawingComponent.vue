@@ -18,8 +18,10 @@
 </template>
 
 <script>
-import GameButtons from '@/components/GameButtons.vue';
 import io from 'socket.io-client';
+import GameButtons from '@/components/GameButtons.vue';
+
+const socket = io('http://localhost:3000');
 
 export default {
   name: 'DrawingComponent',
@@ -45,30 +47,34 @@ export default {
       lineWidth: 7,
       strokes: [],
       currentStroke: [],
-      socket: null,
       ctx: null,
     }
   },
   mounted() {
-    this.socket = io('http://localhost:3000');
-
     const canvas = this.$refs.canvas;
     this.ctx = canvas.getContext('2d');
 
-    this.socket.on('drawing', (data) => {
+    // Get existing drawings when mounted
+    socket.emit('getDrawings', this.$route.params.id);
+
+    socket.on('drawing', (data) => {
       this.drawFromSocket(data);
     });
 
-    this.socket.on('undo', () => {
-    if (this.strokes.length > 0) {
-      this.strokes.pop();
-      this.redrawCanvas();
+    socket.on('existingDrawings', (drawings) => {
+      drawings.forEach(data => this.drawFromSocket(data));
+    });
+
+    socket.on('undo', () => {
+      if (this.strokes.length > 0) {
+        this.strokes.pop();
+        this.redrawCanvas();
       }
     });
 
-    this.socket.on('clearCanvas', () => {
-    this.strokes = [];
-    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    socket.on('clearCanvas', () => {
+      this.strokes = [];
+      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
   },
   methods: {
@@ -81,37 +87,46 @@ export default {
       this.currentStroke = [];
     },
     draw(event) {
-      if (!this.isDrawing) return;
+      if (!this.isDrawing || !this.canDraw) return;
 
-      const canvas = this.$refs.canvas;
-      const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = this.penColor;
-      ctx.lineWidth = this.lineWidth;
-      ctx.beginPath();
-      ctx.moveTo(this.lastX, this.lastY);
-      ctx.lineTo(event.offsetX, event.offsetY);
-      ctx.stroke();
+      const currentX = event.offsetX;
+      const currentY = event.offsetY;
 
+      // Rita lokalt först
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.lastX, this.lastY);
+      this.ctx.lineTo(currentX, currentY);
+      this.ctx.strokeStyle = this.penColor;
+      this.ctx.lineWidth = this.lineWidth;
+      this.ctx.stroke();
+      this.ctx.closePath();
+
+      // Skicka ritdata till andra spelare DIREKT
+      const drawData = {
+        gameID: this.$route.params.id,
+        x1: this.lastX,
+        y1: this.lastY,
+        x2: currentX,
+        y2: currentY,
+        color: this.penColor,
+        lineWidth: this.lineWidth
+      };
+
+      // Emittera till servern
+      socket.emit('drawing', drawData);
+
+      // Spara till currentStroke
       this.currentStroke.push({
         x1: this.lastX,
         y1: this.lastY,
-        x2: event.offsetX,
-        y2: event.offsetY,
+        x2: currentX,
+        y2: currentY,
         color: this.penColor,
-        lineWidth: this.lineWidth,
+        lineWidth: this.lineWidth
       });
 
-      this.socket.emit('drawing', {
-        x1: this.lastX,
-        y1: this.lastY,
-        x2: event.offsetX,
-        y2: event.offsetY,
-        color: this.penColor,
-        lineWidth: this.lineWidth,
-      });
-
-      this.lastX = event.offsetX;
-      this.lastY = event.offsetY;
+      this.lastX = currentX;
+      this.lastY = currentY;
     },
     stopDrawing() {
       if (this.currentStroke.length > 0) {
@@ -121,12 +136,14 @@ export default {
       this.isDrawing = false;
     },
     drawFromSocket(data) {
-      this.ctx.strokeStyle = data.color;
-      this.ctx.lineWidth = data.lineWidth;
-      this.ctx.beginPath();
-      this.ctx.moveTo(data.x1, data.y1);
-      this.ctx.lineTo(data.x2, data.y2);
-      this.ctx.stroke();
+      const ctx = this.ctx;
+      ctx.beginPath();
+      ctx.strokeStyle = data.color;
+      ctx.lineWidth = data.lineWidth;
+      ctx.moveTo(data.x1, data.y1);
+      ctx.lineTo(data.x2, data.y2);
+      ctx.stroke();
+      ctx.closePath();
     },
     changeStrokeColor(color) {
       this.penColor = color;
@@ -134,33 +151,31 @@ export default {
     changeLineWidth(width) {
       this.lineWidth = width;
     },
-    
     undoLastStroke() {
       if (this.strokes.length === 0) return;
 
       const canvas = this.$refs.canvas;
       const ctx = canvas.getContext('2d');
       this.strokes.pop();
-
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      this.strokes.forEach(stroke => {
-        stroke.forEach(segment => {
-          ctx.strokeStyle = segment.color;
-          ctx.lineWidth = segment.width;
-          ctx.beginPath();
-          ctx.moveTo(segment.x1, segment.y1);
-          ctx.lineTo(segment.x2, segment.y2);
-          ctx.stroke();
-        });
-      });
-      this.socket.emit('undo');
+      this.redrawCanvas();
+      socket.emit('undo');
     },
     resetCanvas() {
       const canvas = this.$refs.canvas;
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       this.strokes = [];
-      this.socket.emit('clearCanvas');
+      socket.emit('clearCanvas', this.$route.params.id);
+    },
+    redrawCanvas() {
+      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+      this.strokes.forEach(stroke => {
+        stroke.forEach(segment => {
+          this.drawFromSocket(segment);
+        });
+      });
     }
   }
 }

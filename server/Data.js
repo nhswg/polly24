@@ -204,4 +204,23 @@ Data.prototype.clearChatHistory = function(gameID) {
   console.log(`Chat history cleared for game: ${gameID}`);
 }
 
+Data.prototype.addDrawing = function(gameID, drawingData) {
+  if (this.gameExists(gameID)) {
+    this.games[gameID].drawingData.push(drawingData);
+  }
+}
+
+Data.prototype.getDrawings = function(gameID) {
+  if (this.gameExists(gameID)) {
+    return this.games[gameID].drawingData;
+  }
+  return [];
+}
+
+Data.prototype.clearDrawings = function(gameID) {
+  if (this.gameExists(gameID)) {
+    this.games[gameID].drawingData = [];
+  }
+}
+
 export { Data };

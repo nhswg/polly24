@@ -1,3 +1,6 @@
+import io from 'socket.io-client';
+export const socket = io('http://localhost:3000');
+
 function sockets(io, socket, data) {
   // Övriga socket.on-lyssnare
   socket.on('getUILabels', function(lang) {
@@ -133,18 +136,27 @@ function sockets(io, socket, data) {
     io.to(d.gameID).emit('sendChatHistory', data.getChatHistory(d.gameID));
   });
 
-  // Ritteckning relaterat
-  socket.on('drawing', (drawingData) => {
-    socket.broadcast.emit('drawing', drawingData);
-  });
 
-  socket.on('undo', () => {
-    socket.broadcast.emit('undo');
-  });
+socket.on('drawing', (drawingData) => {
+  const { gameID, ...drawData } = drawingData;
+  data.addDrawing(gameID, drawData);
+  socket.to(gameID).emit('drawing', drawData);
+});
 
-  socket.on('clearCanvas', () => {
-    socket.broadcast.emit('clearCanvas');
-  });
+socket.on('getDrawings', (gameID) => {
+  const drawings = data.getDrawings(gameID);
+  socket.emit('existingDrawings', drawings);
+});
+
+socket.on('clearCanvas', (gameID) => {
+  data.clearDrawings(gameID);
+  io.to(gameID).emit('clearCanvas');
+});
+
+socket.on('undo', () => {
+  socket.broadcast.emit('undo');
+});
+
 
   socket.on('startTimer', function(data) {
     io.to(data.gameID).emit('timerStarted', data.time);
