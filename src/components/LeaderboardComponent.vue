@@ -2,33 +2,43 @@
   <div class="leaderboard-container">
     <h2 class="leaderboard-title">Leaderboard</h2>
     <div class="participants-grid">
+      <!-- 
+        Loopar över participants-objektet och använder userID som key,
+        t.ex. participants = { "djV51_xxx": { name: "Kalle" }, ... }
+      -->
       <div 
-        v-for="(participant, index) in participants"
-        :key="participant.name"
+        v-for="(participant, userID) in participants"
+        :key="userID"
         class="participant-card"
       >
         <div class="participant-name">{{ participant.name }}</div>
-        <div class="participant-points">Points: {{ userScores[participant.name] }}</div>
+        <!-- 
+          userScores hämtas nu med userID som nyckel.
+          Om userScores[userID] inte finns (0/undefined), visas 0.
+        -->
+        <div class="participant-points">Points: {{ userScores[userID] || 0 }}</div>
       </div>
     </div>
   </div>
 </template>
-  
-  <script>
-  export default {
-    props: {
-      participants: {
-        type: [Array, Object],
-        required: true
-      },
-      userScores: {
+
+<script>
+export default {
+  props: {
+    // participants är ett objekt { userID: { name: "..." }, ... }
+    participants: {
+      type: Object,
+      required: true
+    },
+    // userScores är ett objekt { userID: number, ... }
+    userScores: {
       type: Object,
       required: true
     }
-    }
   }
-  </script>
-  
+}
+</script>
+
 <style scoped>
 
 .leaderboard-container {
@@ -71,10 +81,12 @@
   font-size: 0.8rem;
   color: #888;
 }
+
 .participant-name {
   margin-bottom: 5px;
   font-weight: bold;
 }
+
 .participant-points {
   font-size: 10px;
   margin-bottom: 5px;
