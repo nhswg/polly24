@@ -1,3 +1,6 @@
+import io from 'socket.io-client';
+export const socket = io('http://localhost:3000');
+
 function sockets(io, socket, data) {
     
   socket.on('getUILabels', function(lang) {
@@ -123,7 +126,7 @@ socket.on('chatMessage', (d) => {
 socket.on('drawing', (drawingData) => {
   const { gameID, ...drawData } = drawingData;
   data.addDrawing(gameID, drawData);
-  socket.broadcast.to(gameID).emit('drawing', drawData);
+  socket.to(gameID).emit('drawing', drawData);
 });
 
 socket.on('getDrawings', (gameID) => {
@@ -138,10 +141,6 @@ socket.on('clearCanvas', (gameID) => {
 
 socket.on('undo', () => {
   socket.broadcast.emit('undo');
-});
-
-socket.on('clearCanvas', () => {
-  socket.broadcast.emit('clearCanvas');
 });
 
 

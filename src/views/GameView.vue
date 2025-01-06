@@ -162,6 +162,10 @@ export default {
     socket.on("scoresUpdated", (updatedScores) => {
       this.userScores = updatedScores;
     });
+
+    socket.on('drawing', (data) => {
+      this.$refs.drawingComp.drawFromSocket(data);
+    });
   },
 
   methods: {
@@ -244,7 +248,8 @@ export default {
     },
 
     handleLeaveGame() {
-      this.$router.push('/');
+      socket.disconnect();
+      window.location.href = '/';
     },
 
     startTimer() {
