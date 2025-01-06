@@ -1,9 +1,9 @@
 <template>
     <div class="information-banner">
-      <button class="leave" @click="confirmLeave">Leave game</button>
+      <button class="leave" @click="confirmLeave">{{ uiLabels.leaveGame }}</button>
   
       <div v-if="wordOptions.length > 0" class="word-options">
-        <p>Choose a word:</p>
+        <p>{{ uiLabels.chooseWord }}:</p>
         <button v-for="word in wordOptions" :key="word" @click="$emit('select-word', word)">
           {{ word }}
         </button>
@@ -24,7 +24,16 @@
   </template>
   
   <script>
+  import io from 'socket.io-client';
+  const socket = io("http://localhost:3000");
+
   export default {
+    data () {
+      return {
+      uiLabels: {},
+      lang: localStorage.getItem("lang") || "en",
+      }
+    },
     props: {
       wordOptions: {
         type: Array,
@@ -49,6 +58,10 @@
           this.$emit('leave-game');
         }
       }
+    },
+    created() {
+      socket.on("uiLabels", labels => this.uiLabels = labels );
+      socket.emit("getUILabels", this.lang );
     }
   }
   </script>

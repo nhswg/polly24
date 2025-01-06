@@ -58,7 +58,7 @@
             <h3>{{ uiLabels.Theme }}</h3>
             <select v-model="this.gameData.theme" @change="chooseTheme">
               <option v-for="theme in themes" :key="theme" :value="theme">
-                {{ theme }}
+                {{ theme }} {{ uiLabels.theme }}
               </option>
             </select>
           </div>
@@ -115,15 +115,13 @@ export default {
   computed: {
     themes() {
       return [
-        this.uiLabels.Standard,
+        this.uiLabels.Mixed,
         this.uiLabels.Office,
         this.uiLabels.Animals,
         this.uiLabels.Food,
         this.uiLabels.Movies,
         this.uiLabels.Music,
-        this.uiLabels.Nature,
         this.uiLabels.Sports,
-        this.uiLabels.Technology
       ];
     } 
   },

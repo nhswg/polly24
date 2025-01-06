@@ -1,6 +1,6 @@
 <template>
   <div class="chat">
-    <h3>Guesses</h3>
+    <h3>{{ uiLabels.Guesses }}</h3>
     <div class="messages" ref="messagesContainer">
       <div v-for="(msg, index) in messages" :key="index">
         <strong>{{ msg.username }}:</strong> {{ msg.text }}
@@ -10,14 +10,17 @@
       <input 
         v-model="localChatMessage"
         @keyup.enter="emitChatMessage"
-        placeholder="Type your guess here..." 
+        v-bind:placeholder="uiLabels.typeGuess"
       />
-      <button @click="emitChatMessage">Send</button>
+      <button @click="emitChatMessage">{{ uiLabels.Send}}</button>
     </div>
   </div>
 </template>
 
 <script>
+import io from 'socket.io-client';
+const socket = io("http://localhost:3000");
+
 export default {
   props: {
     messages: {
@@ -36,7 +39,9 @@ export default {
   },
   data() {
     return {
-      localChatMessage: this.chatMessage
+      localChatMessage: this.chatMessage,
+      uiLabels: {},
+      lang: localStorage.getItem("lang") || "en",
     };
   },
   watch: {
@@ -68,7 +73,11 @@ export default {
         }
       });
     }
-  }
+  },
+  created() {
+      socket.on("uiLabels", labels => this.uiLabels = labels );
+      socket.emit("getUILabels", this.lang );
+    }
 };
 </script>
 

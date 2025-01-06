@@ -1,5 +1,5 @@
 {
-"Standard": [
+"mixed": [
   "ace",
   "ant",
   "arm",
@@ -2005,7 +2005,7 @@
   "flight attendant",
   "pencil sharpener"
 ],
-    "Animals": [
+    "animals": [
       "Cat",
       "Dog",
       "Bird",
@@ -2058,7 +2058,7 @@
       "Turkey"
     ],
   
-    "Office": [
+    "office": [
       "Pen",
       "Pencil",
       "Eraser",
@@ -2111,7 +2111,7 @@
       "Paper shredder"
     ],
   
-    "Food": [
+    "food": [
       "Pizza",
       "Burger",
       "Fries",
@@ -2164,7 +2164,7 @@
       "Croissant"
     ],
   
-    "Movies & Characters": [
+    "movies & characters": [
       "Lord of the rings",
       "Hobbit",
       "Jurassic Park",
@@ -2192,7 +2192,7 @@
       "Transformers"
     ],
   
-    "Music": 
+    "music": 
        [
         "Taylor Swift",
         "Kanye West",
@@ -2246,7 +2246,7 @@
         "Djembe"
       ],
   
-    "Sports": [
+    "sports": [
       "Soccer (Football)",
       "Basketball",
       "Cricket",

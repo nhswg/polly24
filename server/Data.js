@@ -20,9 +20,9 @@ Data.prototype.createGame = function(gameID, lang="en") {
   if (!this.gameExists(gameID)) {
     this.games[gameID] = {
       lang: lang,
-      drawTime: 30,
-      gameRounds: 1,
-      theme: 'Standard',
+      drawTime: 90,
+      gameRounds: 3,
+      theme: 'Mixed',
       wordsLanguage: 'English',
       adminName: null,
       participants: {},

@@ -49,6 +49,21 @@ import GameInfoComponent from '@/components/GameInfoComponent.vue';
 
 const socket = io("http://localhost:3000");
 
+const themeMapping = {
+  'animals': 'djur',
+  'food': 'mat',
+  'sports': 'sporter',
+  'mixed' : 'blandat',
+  'movies & characters' : 'filmer & karaktärer',
+  'music' : 'musik',
+  'office' : 'kontor',
+};
+
+const reverseThemeMapping = Object.entries(themeMapping).reduce((acc, [eng, swe]) => {
+  acc[swe] = eng;
+  return acc;
+}, {});
+
 export default {
   components: {
     DrawingComponent,
@@ -207,18 +222,36 @@ export default {
     },
 
     generateWordOptions() {
-      console.log("Kör generateWordOptions()");
+      console.log('Starting generateWordOptions');
       let words = [];
-      // Kolla språket
-      if (this.gameData.wordsLanguage === "English") {
-        words = wordsEn[this.gameData.theme];
-      } else if (this.gameData.wordsLanguage === "Swedish") {
-        words = wordsSv[this.gameData.theme];
+      const theme = this.gameData.theme;
+      
+      if (!theme || typeof theme !== 'string') {
+        console.warn('Invalid theme:', theme);
+        this.wordOptions = ["Option 1", "Option 2", "Option 3"];
+        return;
       }
 
-      // Om listan är för kort eller saknas
+      let themeKey = theme.toLowerCase();
+      
+      if (this.gameData.wordsLanguage === "Swedish" && themeMapping[themeKey]) {
+        // UI på engelska, ord på svenska
+        themeKey = themeMapping[themeKey];
+        words = wordsSv[themeKey];
+      } else if (this.gameData.wordsLanguage === "English" && reverseThemeMapping[themeKey]) {
+        // UI på svenska, ord på engelska
+        themeKey = reverseThemeMapping[themeKey];
+        words = wordsEn[themeKey];
+      } else if (this.gameData.wordsLanguage === "English") {
+        // UI på engelska, ord på engelska
+        words = wordsEn[themeKey];
+      } else {
+        // UI på svenska, ord på svenska
+        words = wordsSv[themeKey];
+      }
+
       if (!words || words.length < 3) {
-        console.warn("Not enough words to generate options.");
+        console.warn(`Not enough words for theme: ${themeKey} in ${this.gameData.wordsLanguage}`);
         this.wordOptions = ["Option 1", "Option 2", "Option 3"];
       } else {
         const shuffledWords = words.sort(() => 0.5 - Math.random());

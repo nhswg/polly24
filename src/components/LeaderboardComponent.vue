@@ -1,6 +1,6 @@
 <template>
   <div class="leaderboard-container">
-    <h2 class="leaderboard-title">Leaderboard</h2>
+    <h2 class="leaderboard-title">{{ uiLabels.Leaderboard}}</h2>
     <div class="participants-grid">
       <div 
         v-for="(participant, index) in participants"
@@ -8,14 +8,23 @@
         class="participant-card"
       >
         <div class="participant-name">{{ participant.name }}</div>
-        <div class="participant-points">Points: {{ userScores[participant.name] }}</div>
+        <div class="participant-points"> {{ uiLabels.Points }}: {{ userScores[participant.name] }}</div>
       </div>
     </div>
   </div>
 </template>
   
   <script>
+  import io from 'socket.io-client';
+  const socket = io("http://localhost:3000");
+  
   export default {
+    data () {
+      return {
+      uiLabels: {},
+      lang: localStorage.getItem("lang") || "en",
+      }
+    },
     props: {
       participants: {
         type: [Array, Object],
@@ -25,6 +34,10 @@
       type: Object,
       required: true
     }
+    },
+    created() {
+      socket.on("uiLabels", labels => this.uiLabels = labels );
+      socket.emit("getUILabels", this.lang );
     }
   }
   </script>
