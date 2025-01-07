@@ -240,6 +240,11 @@ socket.on('undo', () => {
     // Skicka tom chat till alla
     io.to(gameID).emit("sendChatHistory", data.getChatHistory(gameID));
   });
+
+  socket.on('leaveGame', function(d) {
+    data.removeParticipant(d.gameID, d.userID);
+    io.to(d.gameID).emit('participantsUpdate', data.getParticipants(d.gameID));
+  });
 }
 
 // Exportera funktionen

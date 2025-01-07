@@ -223,4 +223,11 @@ Data.prototype.clearDrawings = function(gameID) {
   }
 }
 
+Data.prototype.removeParticipant = function(gameID, userID) {
+  if (this.gameExists(gameID)) {
+    delete this.games[gameID].participants[userID];
+    console.log(`Participant ${userID} removed from game ${gameID}`);
+  }
+}
+
 export { Data };
