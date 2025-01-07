@@ -237,8 +237,8 @@ export default {
 .rule select{
   text-align: right;
   width: 35%;
-  font-size: 1.2rem;  /* Increase font size */
-  border: 1px solid #ccc;  /* Border around the select input */
+  font-size: 1.2rem;  
+  border: 1px solid #ccc;  
   border-radius: 5px;
 }
 
@@ -270,6 +270,54 @@ export default {
 
 .create-game-button:hover {
   background-color: #218838;
+}
+
+/* Existing styles remain unchanged */
+
+@media (max-width: 600px) {
+  .game-rules-container {
+    width: 90%; /* Increase width on mobile to use more screen space */
+    padding: 5px;
+  }
+
+  .display-gamecode {
+    font-size: 1.8rem; /* Smaller game code text */
+    margin: 15px 0;
+  }
+
+  .rule {
+    flex-direction: column; /* Stack label and select vertically */
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .rule h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    width: 100%;
+  }
+
+  .rule select {
+    width: 100%; /* Full width select on mobile */
+    font-size: 1rem;
+  }
+
+  .create-div {
+    flex-direction: column;
+    margin: 20px;
+  }
+
+  .adminName {
+    font-size: 1.5rem;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .create-game-button {
+    width: 100%; /* Full width button */
+    height: 45px;
+    font-size: 1.3rem;
+  }
 }
 
 </style>

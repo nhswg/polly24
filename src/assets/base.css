@@ -81,3 +81,24 @@ button:hover {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 2.5rem; /* Smaller title on mobile */
+  }
+
+  .title-button {
+    font-size: 1.5rem;
+    width: 35px;
+    height: 35px;
+  }
+
+  .flag-container img {
+    width: 50px; /* Smaller flag on mobile */
+  }
+
+  header {
+    padding: 0.5rem 1rem; /* Reduce padding on mobile */
+    height: 70px; /* Reduce header height on mobile */
+  }
+}

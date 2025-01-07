@@ -419,4 +419,6 @@ export default {
   margin: 0 auto;
   max-width: 400px;
 }
+
+
 </style>
