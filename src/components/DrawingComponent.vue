@@ -81,58 +81,72 @@ export default {
   },
   methods: {
     startDrawing(event) {
-      if (!this.canDraw) return;
+  if (!this.canDraw) return;
 
-      this.isDrawing = true;
-      const point = [event.offsetX, event.offsetY];
-      this.currentPath = [point];
-      this.lastX = event.offsetX;
-      this.lastY = event.offsetY;
-      this.currentStroke = [];
-    },
-    draw(event) {
-      if (!this.isDrawing || !this.canDraw) return;
+  this.isDrawing = true;
 
-      const point = [event.offsetX, event.offsetY];
-      this.currentPath.push(point);
+  // Nytt: Hämta canvasens position relativt till viewport
+  const rect = this.$refs.canvas.getBoundingClientRect();
 
-      // Clear the canvas and redraw the current stroke
-      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
-      this.redrawCanvas();
-      
-      // Draw the current stroke
-      const stroke = getStroke(this.currentPath, {
-        size: this.lineWidth,
-        thinning: 0.5,
-        smoothing: 0.5,
-        streamline: 0.5,
-      });
+  // Nytt: Beräkna musens position relativt till canvasen
+  const point = [event.clientX - rect.left, event.clientY - rect.top];
 
-      if (stroke.length > 0) {
-        this.ctx.beginPath();
-        this.ctx.fillStyle = this.penColor;
-        
-        const [first, ...rest] = stroke;
-        this.ctx.moveTo(first[0], first[1]);
-        
-        for (const point of rest) {
-          this.ctx.lineTo(point[0], point[1]);
-        }
-        
-        this.ctx.closePath();
-        this.ctx.fill();
-      }
+  this.currentPath = [point];
+  this.lastX = event.clientX - rect.left; // Nytt: Uppdatera med beräknade koordinater
+  this.lastY = event.clientY - rect.top; // Nytt: Uppdatera med beräknade koordinater
+  this.currentStroke = [];
+},
 
-      // Emit the drawing data
-      const drawData = {
-        gameID: this.$route.params.id,
-        points: this.currentPath,
-        color: this.penColor,
-        lineWidth: this.lineWidth
-      };
+draw(event) {
+  if (!this.isDrawing || !this.canDraw) return;
 
-      socket.emit('drawing', drawData);
-    },
+  // Nytt: Hämta canvasens position relativt till viewport
+  const rect = this.$refs.canvas.getBoundingClientRect();
+
+  // Nytt: Beräkna musens position relativt till canvasen
+  const point = [event.clientX - rect.left, event.clientY - rect.top];
+
+  this.currentPath.push(point);
+
+  // Rensa canvasen och rita om allt
+  this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+  this.redrawCanvas();
+
+  // Rita den aktuella stroke
+  const stroke = getStroke(this.currentPath, {
+    size: this.lineWidth,
+    thinning: 0.5,
+    smoothing: 0.5,
+    streamline: 0.5,
+  });
+
+  if (stroke.length > 0) {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = this.penColor;
+
+    const [first, ...rest] = stroke;
+    this.ctx.moveTo(first[0], first[1]);
+
+    for (const point of rest) {
+      this.ctx.lineTo(point[0], point[1]);
+    }
+
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+
+  // Skicka ritdata via socket
+  const drawData = {
+    gameID: this.$route.params.id,
+    points: this.currentPath,
+    color: this.penColor,
+    lineWidth: this.lineWidth,
+  };
+
+  socket.emit('drawing', drawData);
+},
+
+
     stopDrawing() {
       if (this.currentPath.length > 0) {
         this.strokes.push({

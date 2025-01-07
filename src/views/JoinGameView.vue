@@ -25,7 +25,7 @@
           
           <div>
             {{ uiLabels.enterName }}:
-            <input type="text" v-model="userName" class="text-square">
+            <input type="text" v-model="userName" class="text-square" @keyup.enter="participateInGame">
           </div>
         </div>
 

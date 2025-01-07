@@ -66,7 +66,7 @@
 
       <div class="create-div">
         <div>
-          <input type="text" class="adminName" v-model="this.gameData.adminName" :placeholder= "uiLabels.enterName">
+          <input type="text" class="adminName" v-model="this.gameData.adminName" :placeholder= "uiLabels.enterName" @keyup.enter="createGame">
         </div>
 
         <button v-on:click="createGame" class="create-game-button">
