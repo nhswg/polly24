@@ -162,12 +162,16 @@ export default {
       console.log("participantsUpdate", participants);
       this.gameData.participants = participants;
 
-      // Se till att alla får en poängpost: userScores[userID] = 0 om den inte finns
+      // Uppdatera userScores för att ta bort poäng för deltagare som lämnat
+      const updatedScores = {};
       for (const userID in participants) {
-        if (!(userID in this.userScores)) {
-          this.userScores[userID] = 0;
+        if (userID in this.userScores) {
+          updatedScores[userID] = this.userScores[userID];
+        } else {
+          updatedScores[userID] = 0;
         }
       }
+      this.userScores = updatedScores;
 
       // Bestäm vem som är tecknare
       this.determineIfDrawing();
@@ -327,6 +331,7 @@ export default {
     },
 
     handleLeaveGame() {
+      socket.emit('leaveGame', { gameID: this.gameID, userID: this.userID });
       socket.disconnect();
       window.location.href = '/';
     },

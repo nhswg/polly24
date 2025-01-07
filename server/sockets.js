@@ -241,6 +241,11 @@ socket.on('undo', () => {
     io.to(gameID).emit("sendChatHistory", data.getChatHistory(gameID));
   });
 
+  socket.on('leaveGame', function(d) {
+    data.removeParticipant(d.gameID, d.userID);
+    io.to(d.gameID).emit('participantsUpdate', data.getParticipants(d.gameID));
+  });
+
   const gameTimers = {};
   
   socket.on('startGameTimer', ({ gameID, duration }) => {
@@ -285,7 +290,7 @@ socket.on('undo', () => {
       socket.emit('timerUpdate', {remainingTime: 0});
     }
   });
-  }
+}
 
 // Exportera funktionen
 export { sockets };
