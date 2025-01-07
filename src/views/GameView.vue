@@ -59,7 +59,7 @@ import LeaderboardComponent from '@/components/LeaderboardComponent.vue';
 import ChatComponent from '@/components/ChatComponent.vue';
 import GameInfoComponent from '@/components/GameInfoComponent.vue';
 
-const socket = io("http://localhost:3000");
+const socket = io(sessionStorage.getItem("dataServer"));
 
 const themeMapping = {
   'animals': 'djur',

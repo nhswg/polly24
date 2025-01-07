@@ -38,7 +38,14 @@
 <script>
 import ResponsiveNav from '@/components/ResponsiveNav.vue';
 import io from 'socket.io-client';
-const socket = io("localhost:3000");
+
+//Om du vill hosta spelet avkommentera rad 45 och kommentera rad 46, när du vill pröva kör npm run host istället. 
+//VIKTIGT ändra IPADRESS till ipadress på lokala nätverket som datorn och mobil är på. 
+
+//sessionStorage.setItem("dataServer", "IPADRESS:3000");
+sessionStorage.setItem("dataServer", "localhost:3000");
+
+const socket = io(sessionStorage.getItem("dataServer"));
 
 export default {
   name: 'StartView',
