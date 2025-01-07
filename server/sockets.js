@@ -240,7 +240,52 @@ socket.on('undo', () => {
     // Skicka tom chat till alla
     io.to(gameID).emit("sendChatHistory", data.getChatHistory(gameID));
   });
-}
+
+  const gameTimers = {};
+  
+  socket.on('startGameTimer', ({ gameID, duration }) => {
+    console.log('Starting game timer for game:', {gameID}, 'with duration:',  {duration});
+
+    if (gameTimers[gameID]) {
+      console.log('Timer already running for game:', gameID);
+      return;
+    }
+
+    let remainingTime = duration;
+
+    gameTimers[gameID] = setInterval(() => {
+      if (remainingTime > 0) {
+        remainingTime--;
+
+        io.to(gameID).emit('timerUpdate', {remainingTime});
+        //console.log('Timer update:', remainingTime);
+      } else { 
+        clearInterval(gameTimers[gameID]);
+        delete gameTimers[gameID];
+        io.to(gameID).emit('timerFinished', { gameID });
+        //console.log('Timer finished for game:', gameID);
+      }
+    }, 1000);
+  });
+
+  socket.on('stopGameTimer', (gameID) => {
+   if (gameTimers[gameID]) {
+      clearInterval(gameTimers[gameID]);
+      delete gameTimers[gameID];
+      //console.log('Timer stopped for game:', gameID);
+      io.to(gameID).emit('timerStopped', {gameID});
+    }
+  });
+
+  socket.on('getRemainingTime', (gameID) => {
+    if (gameTimers[gameID]) {
+      const remainingTime = gameTimers[gameID].remainingTime;
+      socket.emit('timerUpdate', {remainingTime});
+    } else {
+      socket.emit('timerUpdate', {remainingTime: 0});
+    }
+  });
+  }
 
 // Exportera funktionen
 export { sockets };

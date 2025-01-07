@@ -88,7 +88,6 @@ export default {
       showWordOptions: true,
       gameData: {},
       timer: 0,
-      timerInterval: null,
       currentWord: '',
       wordOptions: [],
       chatMessage: '',
@@ -135,7 +134,7 @@ export default {
     socket.on("getGameData", (gameData) => {
       console.log("Game data received:", gameData);
       this.gameData = gameData;
-      this.timer = gameData.drawTime;
+      this.timer = gameData.drawTime; //Denna visar 90 när man laddar om 
 
       // Om servern skickar vem som är tecknare
       if (gameData.currentDrawerIndex !== undefined) {
@@ -174,11 +173,11 @@ export default {
       this.determineIfDrawing();
     });
 
-    // Timer från servern
-    socket.on("timerStarted", (time) => {
+    //timer från servern
+    socket.on('timerStarted', ({ time }) => {
       this.timer = time;
       this.startTimer();
-    });
+   });
 
     // När servern skickar ny chathistorik
     socket.on("sendChatHistory", (chatHistory) => {
@@ -218,7 +217,19 @@ export default {
     socket.on('drawing', (data) => {
       this.$refs.drawingComp.drawFromSocket(data);
     });
+
+    socket.on('timerUpdate', ({ remainingTime }) => {
+      this.timer = remainingTime;
+    });
+
+    socket.on("timerFinished", ({ gameID }) => {
+      this.timer = 0;
+      this.rotateDrawingRole();
+    });
+
   },
+
+
 
   methods: {
     /**
@@ -307,31 +318,17 @@ export default {
         word: this.currentWord
       });
 
-      // Starta ritar-timer
-      socket.emit("startTimer", {
+      socket.emit('startGameTimer', { 
         gameID: this.gameID,
-        time: this.gameData.drawTime
-      });
+        duration: this.gameData.drawTime
+       });
+
+    
     },
 
     handleLeaveGame() {
       socket.disconnect();
       window.location.href = '/';
-    },
-
-    startTimer() {
-      if (this.timerInterval) clearInterval(this.timerInterval);
-
-      this.timerInterval = setInterval(() => {
-        if (this.timer > 0) {
-          this.timer--;
-        } else {
-          clearInterval(this.timerInterval);
-          this.timerInterval = null;
-          this.rotateDrawingRole();
-          this.$refs.drawingComp.resetCanvas();
-        }
-      }, 1000);
     },
 
     rotateDrawingRole() {
