@@ -49,6 +49,7 @@
       <button 
         v-if="this.isAdmin && Object.keys(gameData.participants).length > 1"
         @click="startGame" 
+        @keyup.enter="startGame"
         class="start-game-button"
       >
         Start Game
@@ -105,7 +106,14 @@ export default {
 
     // Anslut användaren till spelet
     socket.emit("joinGame", this.gameID);
+
+    window.addEventListener("keydown", this.handleEnterKey);
   },
+
+  beforeDestroy() {
+    window.removeEventListener("keydown", this.handleEnterKey);
+  },
+  
   methods: {
     startGame() {
         socket.emit("startGame", this.gameID);
@@ -115,6 +123,16 @@ export default {
       localStorage.setItem("lang", this.lang);
       socket.emit("getUILabels", this.lang);
     },
+
+    handleEnterKey(event) {
+    if (
+      event.key === "Enter" &&
+      this.isAdmin &&
+      Object.keys(this.gameData.participants).length > 1
+    ) {
+      this.startGame();
+    }
+  },
   },
 };
 </script>
