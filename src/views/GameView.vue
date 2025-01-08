@@ -43,14 +43,14 @@
 
     <!-- Om currentRound överskrider chosenRounds visas endast en stor leaderboard -->
     <div v-else class="final-leaderboard-container">
-      <h2>Spelet är slut!</h2>
+      <h2>{{uiLabels.gameOver}}</h2>
       <LeaderboardComponent
         v-if="gameData.participants"
         :participants="gameData.participants"
         :userScores="userScores"
         class="final-leaderboard"
       />
-      <button @click="handleLeaveGame">Till huvudsidan</button>
+      <button @click="handleLeaveGame">{{uiLabels.toHome}}</button>
     </div>
   </div>
 </template>

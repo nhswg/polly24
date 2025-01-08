@@ -82,6 +82,7 @@
     text-align: center;
     font-size: 24px;
     font-weight: bold;
+    margin-top: 25px;
   }
   
   .leave{
