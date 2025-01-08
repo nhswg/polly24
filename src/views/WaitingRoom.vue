@@ -52,7 +52,7 @@
         @keyup.enter="startGame"
         class="start-game-button"
       >
-        Start Game
+        {{uiLabels.startGame}}
       </button>
       <p v-if="this.isAdmin && Object.keys(gameData.participants).length < 2" class="player-warning">
       {{uiLabels.minimumPlayers}}     
