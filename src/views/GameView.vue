@@ -11,10 +11,10 @@
         @leave-game="handleLeaveGame"
       />
       <!-- Ny text under ordvisningen -->
-      <p v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
-      <p v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} ritar</p>
-      <p v-else-if="drawerName && !isDrawing && currentWord">{{ drawerName }} ritar</p>
-      <p v-else-if="drawerName && !isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
+      <p v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} {{uiLabels.choosingWord}}</p>
+      <p v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} {{uiLabels.isDrawing}}</p>
+      <p v-else-if="drawerName && !isDrawing && currentWord">{{ drawerName }} {{uiLabels.isDrawing}}</p>
+      <p v-else-if="drawerName && !isDrawing && !currentWord">{{ drawerName }} {{uiLabels.choosingWord}}</p>
 
       <div class="game-area">
         <!-- 
@@ -113,6 +113,8 @@ export default {
       */
       userScores: {},
       correctGuessers: [],
+      uiLabels: {},
+      lang: localStorage.getItem("lang") || "en",
     };
   },
 
@@ -133,6 +135,8 @@ export default {
   },
 
   created() {
+    socket.on("uiLabels", labels => this.uiLabels = labels );
+    socket.emit("getUILabels", this.lang );
     // Hämta gameID och userID från routen
     this.gameID = this.$route.params.id;
     this.userID = this.$route.params.userID;
