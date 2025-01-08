@@ -91,8 +91,8 @@ export default {
     uiLabels: {},
     lang: localStorage.getItem("lang") || "en",
     wordsLanguages: [
-      { value: 'English', label: 'English' },
-      { value: 'Swedish', label: 'Swedish' }
+      { value: 'English', label: 'EN' },
+      { value: 'Swedish', label: 'SWE' }
     ],
     drawTimes: [5,10,30, 60, 90, 120, 150, 180],
     gameRoundsList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],

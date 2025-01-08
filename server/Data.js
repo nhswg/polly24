@@ -18,12 +18,14 @@ Data.prototype.getUILabels = function (lang) {
 
 Data.prototype.createGame = function(gameID, lang="en") {
   if (!this.gameExists(gameID)) {
+    const defaultTheme = lang === "sv" ? "Blandat" : "Mixed";
+    const defaultWordsLanguage = lang === "sv" ? "Swedish" : "English";
     this.games[gameID] = {
       lang: lang,
       drawTime: 90,
       gameRounds: 3,
-      theme: 'Mixed',
-      wordsLanguage: 'English',
+      theme: defaultTheme,
+      wordsLanguage: defaultWordsLanguage,
       adminName: null,
       participants: {},
       adminID: null,
