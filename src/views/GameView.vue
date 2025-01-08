@@ -44,8 +44,7 @@
 
     <!-- Om currentRound överskrider chosenRounds visas endast en stor leaderboard -->
     <div v-else class="final-leaderboard-container">
-      <h2>{{uiLabels.gameOver}}</h2>
-      <LeaderboardComponent
+      <FinalLeaderboardComponent
         v-if="gameData.participants"
         :participants="gameData.participants"
         :userScores="userScores"
@@ -64,6 +63,7 @@ import DrawingComponent from '@/components/DrawingComponent.vue';
 import LeaderboardComponent from '@/components/LeaderboardComponent.vue';
 import ChatComponent from '@/components/ChatComponent.vue';
 import GameInfoComponent from '@/components/GameInfoComponent.vue';
+import FinalLeaderboardComponent from '@/components/FinalLeaderboardComponent.vue';
 
 const socket = io(sessionStorage.getItem("dataServer"));
 
@@ -87,7 +87,8 @@ export default {
     DrawingComponent,
     LeaderboardComponent,
     ChatComponent,
-    GameInfoComponent
+    GameInfoComponent,
+    FinalLeaderboardComponent
   },
   data() {
     return {
