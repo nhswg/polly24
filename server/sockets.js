@@ -268,7 +268,31 @@ socket.on('undo', () => {
         clearInterval(gameTimers[gameID]);
         delete gameTimers[gameID];
         io.to(gameID).emit('timerFinished', { gameID });
-        //console.log('Timer finished for game:', gameID);
+
+        const game = data.getGameData(gameID);
+        if (!game) return;
+        const participantIDs = Object.keys(game.participants || {});
+        if (!participantIDs.length) return;
+
+        const currentDrawer = participantIDs[game.currentDrawerIndex];
+
+        if (!game.playersDrawnThisRound.includes(currentDrawer)) {
+          game.playersDrawnThisRound.push(currentDrawer);
+        }
+
+        // Move to next drawer
+        game.currentDrawerIndex = (game.currentDrawerIndex + 1) % participantIDs.length;
+
+        // If all have drawn => increment round, reset array
+        if (game.playersDrawnThisRound.length === participantIDs.length) {
+          game.currentRound++;
+          data.resetPlayersDrawn(gameID);
+        }
+
+        data.resetGuesses(gameID);
+        data.clearChatHistory(gameID);
+        game.currentWord = "";
+        io.to(gameID).emit('getGameData', game);
       }
     }, 1000);
   });

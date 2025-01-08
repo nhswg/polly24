@@ -10,6 +10,11 @@
         @select-word="selectWord"
         @leave-game="handleLeaveGame"
       />
+      <!-- Ny text under ordvisningen -->
+      <p v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
+      <p v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} ritar</p>
+      <p v-else-if="drawerName && !isDrawing && currentWord">{{ drawerName }} ritar</p>
+      <p v-else-if="drawerName && !isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
 
       <div class="game-area">
         <!-- 
@@ -116,7 +121,15 @@ export default {
       return this.isDrawing
         ? this.currentWord
         : this.generateUnderscores(this.currentWord);
-    }
+    },
+    drawerName() {
+      const participants = this.gameData.participants || {};
+      const participantIDs = Object.keys(participants);
+      if (!participantIDs.length) return '';
+      // Hämta aktuell tecknare
+      const drawerID = participantIDs[this.currentDrawerIndex] || '';
+      return participants[drawerID]?.name || '';
+    },
   },
 
   created() {
@@ -135,6 +148,7 @@ export default {
       console.log("Game data received:", gameData);
       this.gameData = gameData;
       this.timer = gameData.drawTime; //Denna visar 90 när man laddar om 
+      this.currentRound = gameData.currentRound; // Sync local currentRound
 
       // Om servern skickar vem som är tecknare
       if (gameData.currentDrawerIndex !== undefined) {
@@ -151,6 +165,8 @@ export default {
       // Om servern har ett redan valt ord, sätt det
       if (gameData.currentWord) {
         this.currentWord = gameData.currentWord;
+      } else {
+        this.currentWord = ''; // Ensure currentWord is reset
       }
 
       // Bestäm vem som tecknar nu
@@ -228,7 +244,6 @@ export default {
 
     socket.on("timerFinished", ({ gameID }) => {
       this.timer = 0;
-      this.rotateDrawingRole();
     });
 
   },
@@ -334,37 +349,6 @@ export default {
       socket.emit('leaveGame', { gameID: this.gameID, userID: this.userID });
       socket.disconnect();
       window.location.href = '/';
-    },
-
-    rotateDrawingRole() {
-      
-      const participantIDs = Object.keys(this.gameData.participants || {});
-      if (!participantIDs.length) return;
-
-      this.currentDrawerIndex = (this.currentDrawerIndex + 1) % participantIDs.length;
-      const currentDrawerID = participantIDs[this.currentDrawerIndex];
-      this.isDrawing = (currentDrawerID === this.userID);
-
-      // Om vi har gått igenom alla deltagare, öka rundan
-      if (this.currentDrawerIndex === 0) {
-        this.currentRound++;
-      }
-
-      // Nollställ
-      this.currentWord = "";
-      this.gameData.currentWord = "";
-      this.wordOptions = [];
-      this.correctGuessers = [];
-      this.hasGuessedRight = false;
-
-      socket.emit("resetGuesses", this.gameID); 
-      socket.emit("clearChat", this.gameID);
-
-
-      // Generera nya ordalternativ om jag nu är tecknaren
-      if (this.isDrawing) {
-        this.generateWordOptions();
-      }
     },
       
     sendChatMessage() {

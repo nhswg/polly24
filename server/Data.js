@@ -31,7 +31,9 @@ Data.prototype.createGame = function(gameID, lang="en") {
       currentWord: '',
       chatHistory: [],
       drawingData: [],
-      userScores: {}  
+      userScores: {},
+      currentDrawerIndex: 0,
+      playersDrawnThisRound: []
     };
     
     console.log("game created", gameID, this.games[gameID]);
@@ -99,7 +101,7 @@ Data.prototype.setTheme = function(gameID, theme){
   return true;
 }
 
-Data.prototype.getGameRounds = function(gameID){
+Data.prototype.getTheme = function(gameID){
   if (!this.gameExists(gameID)) {
     return null;
   }
@@ -229,5 +231,10 @@ Data.prototype.removeParticipant = function(gameID, userID) {
     console.log(`Participant ${userID} removed from game ${gameID}`);
   }
 }
+
+Data.prototype.resetPlayersDrawn = function(gameID) {
+  if (!this.gameExists(gameID)) return;
+  this.games[gameID].playersDrawnThisRound = [];
+};
 
 export { Data };

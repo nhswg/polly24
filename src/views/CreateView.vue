@@ -94,7 +94,7 @@ export default {
       { value: 'English', label: 'English' },
       { value: 'Swedish', label: 'Swedish' }
     ],
-    drawTimes: [30, 60, 90, 120, 150, 180],
+    drawTimes: [5,10,30, 60, 90, 120, 150, 180],
     gameRoundsList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   };
 },
