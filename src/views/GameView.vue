@@ -10,12 +10,13 @@
         @select-word="selectWord"
         @leave-game="handleLeaveGame"
       />
-      <!-- Ny text under ordvisningen -->
-      <p v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} {{uiLabels.choosingWord}}</p>
-      <p v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} {{uiLabels.isDrawing}}</p>
-      <p v-else-if="drawerName && !isDrawing && currentWord">{{ drawerName }} {{uiLabels.isDrawing}}</p>
-      <p v-else-if="drawerName && !isDrawing && !currentWord">{{ drawerName }} {{uiLabels.choosingWord}}</p>
-
+      
+      <div class="status-message">
+        <p  v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} {{uiLabels.choosingWord}}</p>
+        <p  v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} {{uiLabels.isDrawing}}</p>
+        <p v-else-if="drawerName && !isDrawing && currentWord">{{ drawerName }} {{uiLabels.isDrawing}}</p>
+        <p v-else-if="drawerName && !isDrawing && !currentWord">{{ drawerName }} {{uiLabels.choosingWord}}</p>
+      </div>
       <div class="game-area">
         <!-- 
             Leaderboard tar emot participants som ett objekt { userID: { name: ... } }
@@ -415,6 +416,22 @@ export default {
 .final-leaderboard {
   margin: 0 auto;
   max-width: 400px;
+}
+
+.status-message {
+  height: 50px; /* Increased height to accommodate text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.5em;
+  padding: 5px 10px;
+  margin: 10px 0;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #333;
+
 }
 
 
