@@ -11,10 +11,10 @@
         @leave-game="handleLeaveGame"
       />
       <!-- Ny text under ordvisningen -->
-      <p v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
-      <p v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} ritar</p>
-      <p v-else-if="drawerName && !isDrawing && currentWord">{{ drawerName }} ritar</p>
-      <p v-else-if="drawerName && !isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
+      <p class="status-message" v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
+      <p class="status-message" v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} ritar</p>
+      <p class="status-message" v-else-if="drawerName && !isDrawing && currentWord">{{ drawerName }} ritar</p>
+      <p class="status-message" v-else-if="drawerName && !isDrawing && !currentWord">{{ drawerName }} väljer ord</p>
 
       <div class="game-area">
         <!-- 
@@ -411,6 +411,19 @@ export default {
 .final-leaderboard {
   margin: 0 auto;
   max-width: 400px;
+}
+
+.status-message {
+  text-align: center;
+  font-size: 1.5em;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in;
 }
 
 
