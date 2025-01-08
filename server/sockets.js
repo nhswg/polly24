@@ -267,6 +267,10 @@ socket.on('undo', () => {
       } else { 
         clearInterval(gameTimers[gameID]);
         delete gameTimers[gameID];
+        
+        // Rensa chatten och meddela alla klienter
+        data.clearChatHistory(gameID);
+        io.to(gameID).emit('clearChat');
         io.to(gameID).emit('timerFinished', { gameID });
 
         const game = data.getGameData(gameID);

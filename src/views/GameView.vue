@@ -244,6 +244,13 @@ export default {
 
     socket.on("timerFinished", ({ gameID }) => {
       this.timer = 0;
+      this.messages = []; // Rensa chatten när tiden är slut
+      this.currentWord = '';
+      this.hasGuessedRight = false;
+    });
+
+    socket.on("clearChat", () => {
+      this.messages = []; // Rensa chatten när clearChat event tas emot
     });
 
   },
