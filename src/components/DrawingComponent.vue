@@ -78,12 +78,14 @@ export default {
       drawings.forEach(data => this.drawFromSocket(data));
     });
 
-    socket.on('undo', () => {
-      if (this.strokes.length > 0) {
-        this.strokes.pop();
-        this.redrawCanvas();
-      }
+    socket.on('undoStroke', (updatedStrokes) => {
+    this.strokes = updatedStrokes;
+    this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+    // Redraw all remaining strokes
+    updatedStrokes.forEach(stroke => {
+      this.drawFromSocket(stroke);
     });
+  });
 
     socket.on('canvasCleared', () => {
         console.log('DrawingComponent: Received canvasCleared event');
@@ -206,15 +208,9 @@ draw(event) {
       this.lineWidth = width;
     },
     undoLastStroke() {
-      if (this.strokes.length === 0) return;
-
-      const canvas = this.$refs.canvas;
-      const ctx = canvas.getContext('2d');
-      this.strokes.pop();
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      this.redrawCanvas();
-      socket.emit('undo');
+    if (this.strokes.length === 0) return;
+    const gameID = this.$route.params.id;
+    socket.emit('undo', gameID);
     },
     resetCanvas() {
         const gameID = this.$route.params.id;

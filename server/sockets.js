@@ -157,8 +157,9 @@ function sockets(io, socket, data) {
     }
 });
 
-  socket.on('undo', () => {
-    socket.broadcast.emit('undo');
+  socket.on('undo', (gameID) => {
+    const updatedStrokes = data.undoLastStroke(gameID);
+    io.to(gameID).emit('undoStroke', updatedStrokes);
   });
 
   socket.on('startTimer', function(data) {

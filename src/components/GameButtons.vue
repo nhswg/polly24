@@ -25,7 +25,13 @@
     <!-- Verktyg (Eraser, Undo, Reset) med extra mellanrum -->
     <div class="utility-buttons">
       <button class="button-container" @click="changeStrokeColor('#FFFFFF')"><img src="/img/sudd.png" alt="Eraser" /></button>
-      <button class="button-container" @click="undoLastStroke"><img src="/img/undo.jpg" alt="Undo" /></button>
+      <button class="button-container" 
+              @mousedown="startUndo" 
+              @mouseup="stopUndo"
+              @mouseleave="stopUndo"
+              @click="singleUndo">
+        <img src="/img/undo.jpg" alt="Undo" />
+      </button>
       <button class="button-container" @click="resetCanvas"><img src="/img/reset.png" alt="Reset" /></button>
     </div>
   </div>
@@ -50,6 +56,23 @@ export default {
     resetCanvas: {
       type: Function,
       required: true
+    }
+  },
+  data() {
+    return {
+      undoInterval: null,
+    }
+  },
+  methods: {
+    startUndo() {
+      this.undoInterval = setInterval(this.undoLastStroke, 100);
+    },
+    stopUndo() {
+      clearInterval(this.undoInterval);
+      this.undoInterval = null;
+    },
+    singleUndo() {
+      this.undoLastStroke();
     }
   }
 }

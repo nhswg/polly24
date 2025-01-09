@@ -37,12 +37,29 @@ Data.prototype.createGame = function(gameID, lang="en") {
       currentDrawerIndex: 0,
       isCanvasCleared: false,
       playersDrawnThisRound: [],
-      currentDrawing: null
+      currentDrawing: null,
+      strokes: []
     };
     
     console.log("game created", gameID, this.games[gameID]);
   }
   return this.games[gameID];
+}
+
+Data.prototype.addStroke = function(gameID, stroke) {
+  if (this.gameExists(gameID)) {
+    this.games[gameID].strokes.push(stroke);
+    return true;
+  }
+  return false;
+}
+
+Data.prototype.undoLastStroke = function(gameID) {
+  if (this.gameExists(gameID) && this.games[gameID].drawingData.length > 0) {
+    this.games[gameID].drawingData.pop(); // Remove only last stroke
+    return this.games[gameID].drawingData;
+  }
+  return [];
 }
 
 Data.prototype.getGameData = function(gameID) {
