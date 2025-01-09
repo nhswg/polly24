@@ -36,7 +36,7 @@ function sockets(io, socket, data) {
   socket.on('setAdmin', function (d) {
     console.log(`Setting admin for game ${d.gameID} with ID: ${d.adminID} and Name: ${d.adminName}`);
     const result = data.setAdmin(d.gameID, d.adminID, d.adminName);
-  
+ 
     if (result) {
       console.log(`Admin successfully set for game ${d.gameID}`);
     } else {
@@ -136,27 +136,25 @@ function sockets(io, socket, data) {
     io.to(d.gameID).emit('sendChatHistory', data.getChatHistory(d.gameID));
   });
 
+  socket.on('drawing', (drawingData) => {
+    const { gameID, ...drawData } = drawingData;
+    data.addDrawing(gameID, drawData);
+    socket.to(gameID).emit('drawing', drawData);
+  });
 
-socket.on('drawing', (drawingData) => {
-  const { gameID, ...drawData } = drawingData;
-  data.addDrawing(gameID, drawData);
-  socket.to(gameID).emit('drawing', drawData);
-});
+  socket.on('getDrawings', (gameID) => {
+    const drawings = data.getDrawings(gameID);
+    socket.emit('existingDrawings', drawings);
+  });
 
-socket.on('getDrawings', (gameID) => {
-  const drawings = data.getDrawings(gameID);
-  socket.emit('existingDrawings', drawings);
-});
+  socket.on('clearCanvas', (gameID) => {
+    data.clearDrawings(gameID);
+    io.to(gameID).emit('clearCanvas');
+  });
 
-socket.on('clearCanvas', (gameID) => {
-  data.clearDrawings(gameID);
-  io.to(gameID).emit('clearCanvas');
-});
-
-socket.on('undo', () => {
-  socket.broadcast.emit('undo');
-});
-
+  socket.on('undo', () => {
+    socket.broadcast.emit('undo');
+  });
 
   socket.on('startTimer', function(data) {
     io.to(data.gameID).emit('timerStarted', data.time);
@@ -179,7 +177,7 @@ socket.on('undo', () => {
     const gameID = payload.gameID;
     const userID = payload.userID;
     const guess = payload.guess.trim().toLowerCase();
-    
+   
     const game = data.getGameData(gameID);
     if (!game) {
       console.error("Game not found");
@@ -202,7 +200,7 @@ socket.on('undo', () => {
         game.participants[userID] = { name: payload.username };
       }
       game.participants[userID].guessedCorrectly = true;
-    
+   
       // Öka poäng på serversidan
       data.increaseScore(gameID, userID, 1);
 
@@ -236,7 +234,7 @@ socket.on('undo', () => {
 
   socket.on("clearChat", (gameID) => {
     data.clearChatHistory(gameID);
-  
+ 
     // Skicka tom chat till alla
     io.to(gameID).emit("sendChatHistory", data.getChatHistory(gameID));
   });
@@ -247,9 +245,9 @@ socket.on('undo', () => {
   });
 
   const gameTimers = {};
-  
+ 
   socket.on('startGameTimer', ({ gameID, duration }) => {
-    console.log('Starting game timer for game:', {gameID}, 'with duration:',  {duration});
+    console.log('Starting game timer for game:', {gameID}, 'with duration:', {duration});
 
     if (gameTimers[gameID]) {
       console.log('Timer already running for game:', gameID);
@@ -257,37 +255,62 @@ socket.on('undo', () => {
     }
 
     let remainingTime = duration;
+    let hasTriggeredEarly = false; // Flagga för tidigt avslut
 
     gameTimers[gameID] = setInterval(() => {
-      if (remainingTime > 0) {
-        remainingTime--;
-
-        io.to(gameID).emit('timerUpdate', {remainingTime});
-        //console.log('Timer update:', remainingTime);
-      } else { 
+      const game = data.getGameData(gameID);
+      if (!game) {
         clearInterval(gameTimers[gameID]);
         delete gameTimers[gameID];
-        
-        // Rensa chatten och meddela alla klienter
+        return;
+      }
+
+      const participants = Object.entries(game.participants);
+      const drawer = participants[game.currentDrawerIndex]?.[0];
+
+      if (remainingTime > 0) {
+        // Kolla ifall alla spelare har gissat rätt
+        const nonDrawingPlayers = participants.filter(([userID]) => userID !== drawer);
+        const allGuessedCorrectly = nonDrawingPlayers.length > 0 && 
+          nonDrawingPlayers.every(([_, p]) => p.guessedCorrectly);
+
+        // Om alla har gissat rätt och tiden är över 1 sekund
+        if (allGuessedCorrectly && remainingTime > 1 && !hasTriggeredEarlyEnd) {
+          console.log('All players guessed correctly, reducing time to 1');
+          remainingTime = 1;
+          hasTriggeredEarly = true; // Tidigt avslut flagg
+        }
+
+        remainingTime--;
+        io.to(gameID).emit('timerUpdate', { remainingTime });
+      } else {
+        // Rensa aktuell timer
+        clearInterval(gameTimers[gameID]);
+        delete gameTimers[gameID];
+
+        // Återställning inför nästa runda
         data.clearChatHistory(gameID);
         io.to(gameID).emit('clearChat');
         io.to(gameID).emit('timerFinished', { gameID });
 
+  
         const game = data.getGameData(gameID);
         if (!game) return;
+
         const participantIDs = Object.keys(game.participants || {});
         if (!participantIDs.length) return;
 
         const currentDrawer = participantIDs[game.currentDrawerIndex];
 
+        // Ha koll på vilka som har ritat denna runda
         if (!game.playersDrawnThisRound.includes(currentDrawer)) {
           game.playersDrawnThisRound.push(currentDrawer);
         }
 
-        // Move to next drawer
+        // Rotera till nästa ritare
         game.currentDrawerIndex = (game.currentDrawerIndex + 1) % participantIDs.length;
 
-        // If all have drawn => increment round, reset array
+        // Om alla har ritat denna runda, öka runda
         if (game.playersDrawnThisRound.length === participantIDs.length) {
           game.currentRound++;
           data.resetPlayersDrawn(gameID);
@@ -302,10 +325,9 @@ socket.on('undo', () => {
   });
 
   socket.on('stopGameTimer', (gameID) => {
-   if (gameTimers[gameID]) {
+    if (gameTimers[gameID]) {
       clearInterval(gameTimers[gameID]);
       delete gameTimers[gameID];
-      //console.log('Timer stopped for game:', gameID);
       io.to(gameID).emit('timerStopped', {gameID});
     }
   });

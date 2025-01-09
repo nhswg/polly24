@@ -393,11 +393,11 @@ export default {
     },
 
     generateUnderscores(word) {
-      if (!word) return "";
       return word
-        .split(" ")
-        .map(w => w.replace(/./g, "_").split("").join(" "))
-        .join("   ");
+        .split('')
+        .map(char => char === ' ' ? '   ' : '_ ')
+        .join('')
+        .trimEnd();
     }
   }
 };
