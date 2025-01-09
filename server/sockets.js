@@ -275,7 +275,7 @@ function sockets(io, socket, data) {
           nonDrawingPlayers.every(([_, p]) => p.guessedCorrectly);
 
         // Om alla har gissat rätt och tiden är över 1 sekund
-        if (allGuessedCorrectly && remainingTime > 1 && !hasTriggeredEarlyEnd) {
+        if (allGuessedCorrectly && remainingTime > 1 && !hasTriggeredEarly) {
           console.log('All players guessed correctly, reducing time to 1');
           remainingTime = 1;
           hasTriggeredEarly = true; // Tidigt avslut flagg
