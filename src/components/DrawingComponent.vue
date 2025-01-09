@@ -51,10 +51,21 @@ export default {
       ctx: null,
       currentPath: [], // Add this for storing the current drawing points
     }
-  },
+  },  
   mounted() {
     const canvas = this.$refs.canvas;
     this.ctx = canvas.getContext('2d');
+    
+    // Ensure we join the room first
+    const gameID = this.$route.params.id;
+    socket.emit('joinGame', gameID);
+
+    socket.on('canvasCleared', () => {
+        console.log('DrawingComponent: Received canvasCleared event');
+        this.strokes = [];
+        this.currentPath = [];
+        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
 
     // Get existing drawings when mounted
     socket.emit('getDrawings', this.$route.params.id);
@@ -74,11 +85,16 @@ export default {
       }
     });
 
-    socket.on('clearCanvas', () => {
-      this.strokes = [];
-      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    socket.on('canvasCleared', () => {
+        console.log('DrawingComponent: Received canvasCleared event');
+        this.strokes = [];
+        this.currentPath = [];
+        if (this.ctx) {
+            this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+            console.log('DrawingComponent: Canvas cleared locally');
+        }
     });
-  },
+},
   methods: {
     startDrawing(event) {
   if (!this.canDraw) return;
@@ -201,11 +217,9 @@ draw(event) {
       socket.emit('undo');
     },
     resetCanvas() {
-      const canvas = this.$refs.canvas;
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      this.strokes = [];
-      socket.emit('clearCanvas', this.$route.params.id);
+        const gameID = this.$route.params.id;
+        console.log('DrawingComponent: Emitting clearCanvas for game:', gameID);
+        socket.emit('clearCanvas', gameID);
     },
     redrawCanvas() {
       this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);

@@ -1,6 +1,3 @@
-import io from 'socket.io-client';
-export const socket = io('http://localhost:3000');
-
 function sockets(io, socket, data) {
   // Övriga socket.on-lyssnare
   socket.on('getUILabels', function(lang) {
@@ -147,10 +144,18 @@ function sockets(io, socket, data) {
     socket.emit('existingDrawings', drawings);
   });
 
-  socket.on('clearCanvas', (gameID) => {
-    data.clearDrawings(gameID);
-    io.to(gameID).emit('clearCanvas');
-  });
+  socket.on('clearCanvas', function(gameID) {
+    console.log('Socket.js: Received clearCanvas for game:', gameID);
+    
+    const cleared = data.clearCanvas(gameID);
+    console.log('Socket.js: Canvas clear result:', cleared);
+    
+    if (cleared) {
+        // Use io.to() instead of socket.broadcast.to()
+        io.to(gameID).emit('canvasCleared');
+        console.log('Socket.js: Emitted canvasCleared to room:', gameID);
+    }
+});
 
   socket.on('undo', () => {
     socket.broadcast.emit('undo');
@@ -284,9 +289,20 @@ function sockets(io, socket, data) {
         remainingTime--;
         io.to(gameID).emit('timerUpdate', { remainingTime });
       } else {
-        // Rensa aktuell timer
+        // Clear current timer
         clearInterval(gameTimers[gameID]);
         delete gameTimers[gameID];
+
+        // Clear canvas when timer ends
+        const cleared = data.clearCanvas(gameID);
+        if (cleared) {
+            io.to(gameID).emit('canvasCleared');
+        }
+
+        // Reset chat and other game data
+        data.clearChatHistory(gameID);
+        io.to(gameID).emit('clearChat');
+        io.to(gameID).emit('timerFinished', { gameID });
 
         // Återställning inför nästa runda
         data.clearChatHistory(gameID);

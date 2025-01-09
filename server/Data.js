@@ -35,7 +35,9 @@ Data.prototype.createGame = function(gameID, lang="en") {
       drawingData: [],
       userScores: {},
       currentDrawerIndex: 0,
-      playersDrawnThisRound: []
+      isCanvasCleared: false,
+      playersDrawnThisRound: [],
+      currentDrawing: null
     };
     
     console.log("game created", gameID, this.games[gameID]);
@@ -221,10 +223,19 @@ Data.prototype.getDrawings = function(gameID) {
   return [];
 }
 
-Data.prototype.clearDrawings = function(gameID) {
-  if (this.gameExists(gameID)) {
-    this.games[gameID].drawingData = [];
-  }
+Data.prototype.clearCanvas = function(gameID) {
+    console.log('Data.js: Clearing canvas for game:', gameID);
+    if (this.gameExists(gameID)) {
+        if (!this.games[gameID].drawingData) {
+            this.games[gameID].drawingData = [];
+        }
+        this.games[gameID].drawingData = [];
+        this.games[gameID].currentDrawing = null;
+        console.log('Data.js: Canvas cleared successfully');
+        return true;
+    }
+    console.log('Data.js: Game not found');
+    return false;
 }
 
 Data.prototype.removeParticipant = function(gameID, userID) {
