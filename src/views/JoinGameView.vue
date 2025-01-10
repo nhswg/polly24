@@ -133,4 +133,32 @@ export default {
 .join-game-button:hover {
   background-color: #218838;
 }
+
+@media (max-width: 600px) {
+  .join-game {
+    height: auto; 
+    padding: 20px; 
+  }
+
+  .join-game-form {
+    align-items: center;
+    font-size: 1rem; 
+    width: 100%; 
+    max-width: 100%; 
+  }
+
+  .text-square {
+    width: 60%; /* Full width input */
+    height: 20px; /* Adjust height for mobile */
+    font-size: 1.2rem; /* Smaller font size for mobile */
+    margin: 5px 0; /* Adjust margin for mobile */
+  }
+
+  .join-game-button {
+    width: 50%; /* Full width button */
+    height: 45px; /* Adjust height for mobile */
+    font-size: 1.3rem; /* Smaller font size for mobile */
+    margin-top: 15px; /* Adjust margin for mobile */
+  }
+}
 </style>

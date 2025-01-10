@@ -246,4 +246,51 @@ export default {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-5px); }
 }
+
+@media (max-width: 600px) {
+  .game-info {
+    margin-top: 20px;
+  }
+
+  .display-gamecode {
+    font-size: 1.8rem; /* Smaller game code text */
+    margin-bottom: 20px;
+  }
+
+  .participants-container {
+    width: 90%; /* Adjust width for mobile */
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .participants-title {
+    font-size: 1.5rem; /* Smaller title text */
+    margin-bottom: 10px;
+  }
+
+  .participants-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjust grid columns */
+    gap: 10px; /* Adjust gap between cards */
+  }
+
+  .participant-card {
+    padding: 5px; /* Adjust padding for mobile */
+  }
+
+  .participant-number {
+    font-size: 0.7rem; /* Smaller number text */
+  }
+
+  .start-game-button {
+    width: 50%; /* Full width button */
+    height: 45px;
+    font-size: 1.3rem;
+    margin-top: 15px;
+  }
+
+  .player-warning {
+    font-size: 1rem; /* Smaller warning text */
+    margin-top: 10px;
+  }
+}
 </style>

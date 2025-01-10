@@ -272,7 +272,6 @@ export default {
   background-color: #218838;
 }
 
-/* Existing styles remain unchanged */
 
 @media (max-width: 600px) {
   .game-rules-container {
@@ -287,26 +286,26 @@ export default {
   text-align: left;
 }
   .display-gamecode {
-    font-size: 1.8rem; /* Smaller game code text */
+    font-size: 1.8rem; 
     margin: 15px 0;
   }
 
   .rule {
-    flex-direction: row; /* Ensure label and select are in a row */
+    flex-direction: row; 
     align-items: center;
-    justify-content: space-between; /* Space between label and select */
+    justify-content: space-between; 
     margin-bottom: 15px;
     width: 100%;
   }
 
   .rule h3 {
     font-size: 1rem;
-    margin-bottom: 0; /* Remove bottom margin */
-    width: 60%; /* Adjust width to fit select next to it */
+    margin-bottom: 0; 
+    width: 60%; 
   }
 
   .rule select {
-    width: 35%; /* Adjust width to fit next to label */
+    width: 35%; 
     font-size: 1rem;
   }
 
@@ -322,7 +321,7 @@ export default {
   }
 
   .create-game-button {
-    width: 50%; /* Full width button */
+    width: 50%; 
     height: 45px;
     font-size: 1.3rem;
   }
