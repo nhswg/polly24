@@ -276,29 +276,37 @@ export default {
 
 @media (max-width: 600px) {
   .game-rules-container {
-    width: 90%; /* Increase width on mobile to use more screen space */
+    width: 80%;
     padding: 5px;
   }
 
+  .game-rules-container h2 {
+  font-size: 1.5rem;
+  margin-top: 0px;
+  margin-bottom: 20px;
+  text-align: left;
+}
   .display-gamecode {
     font-size: 1.8rem; /* Smaller game code text */
     margin: 15px 0;
   }
 
   .rule {
-    flex-direction: column; /* Stack label and select vertically */
-    align-items: flex-start;
+    flex-direction: row; /* Ensure label and select are in a row */
+    align-items: center;
+    justify-content: space-between; /* Space between label and select */
     margin-bottom: 15px;
-  }
-
-  .rule h3 {
-    font-size: 1.2rem;
-    margin-bottom: 5px;
     width: 100%;
   }
 
+  .rule h3 {
+    font-size: 1rem;
+    margin-bottom: 0; /* Remove bottom margin */
+    width: 60%; /* Adjust width to fit select next to it */
+  }
+
   .rule select {
-    width: 100%; /* Full width select on mobile */
+    width: 35%; /* Adjust width to fit next to label */
     font-size: 1rem;
   }
 
@@ -314,7 +322,7 @@ export default {
   }
 
   .create-game-button {
-    width: 100%; /* Full width button */
+    width: 50%; /* Full width button */
     height: 45px;
     font-size: 1.3rem;
   }
