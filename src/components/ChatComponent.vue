@@ -3,14 +3,12 @@
     <h3>{{ uiLabels.Guesses }}</h3>
     <div class="messages" ref="messagesContainer">
       <div v-for="(msg, index) in messages" :key="index">
-        <!-- Om det är ett systemmeddelande -->
           <div 
           v-if="!msg.username || msg.username.trim() === ''" 
           class="system-message">
             {{ msg.text }}
           </div>
-  
-        <!-- Om det är ett vanligt meddelande -->
+
           <div v-else>
             <strong>{{ msg.username }}</strong>: {{ msg.text }}
           </div>
@@ -29,7 +27,7 @@
 
 <script>
 import io from 'socket.io-client';
-const socket = io("http://localhost:3000");
+const socket = io(sessionStorage.getItem("dataServer"));
 
 export default {
   props: {

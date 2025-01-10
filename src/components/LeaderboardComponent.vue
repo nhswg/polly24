@@ -2,20 +2,12 @@
   <div class="leaderboard-container">
     <h2 class="leaderboard-title">{{ uiLabels.Leaderboard}}</h2>
     <div class="participants-grid">
-      <!-- 
-        Loopar över participants-objektet och använder userID som key,
-        t.ex. participants = { "djV51_xxx": { name: "Kalle" }, ... }
-      -->
       <div 
         v-for="(participant, userID) in participants"
         :key="userID"
         class="participant-card"
       >
         <div class="participant-name">{{ participant.name }}</div>
-        <!-- 
-          userScores hämtas nu med userID som nyckel.
-          Om userScores[userID] inte finns (0/undefined), visas 0.
-        -->
         <div class="participant-points">{{ uiLabels.Points }}: {{ userScores[userID] || 0 }}</div>
       </div>
     </div>
@@ -26,7 +18,7 @@
 
 <script>
 import io from 'socket.io-client';
-const socket = io("http://localhost:3000");
+const socket = io(sessionStorage.getItem("dataServer"));
 
 export default {
   data () {
@@ -36,12 +28,10 @@ export default {
       }
     },
   props: {
-    // participants är ett objekt { userID: { name: "..." }, ... }
     participants: {
       type: Object,
       required: true
     },
-    // userScores är ett objekt { userID: number, ... }
     userScores: {
       type: Object,
       required: true

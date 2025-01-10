@@ -23,7 +23,6 @@
 
       <div class="game-rules-container">
         <h2>{{ uiLabels.gameRules }}:</h2>
-          <!-- Language -->
           <div class="rule">
             <h3>{{ uiLabels.Language }}</h3>
             <select v-model="this.gameData.wordsLanguage" @change="chooseWordsLanguage">
@@ -33,7 +32,6 @@
             </select>
           </div>
 
-          <!-- Drawtime -->
           <div class="rule">
             <h3>{{ uiLabels.Drawtime }}</h3>
             <select v-model="this.gameData.drawTime" @change="chooseDrawTime">
@@ -43,7 +41,6 @@
             </select>
           </div>
 
-          <!-- Rounds -->
           <div class="rule">
             <h3>{{ uiLabels.Rounds }}</h3>
             <select v-model="this.gameData.gameRounds" @change="chooseRounds">
@@ -53,7 +50,7 @@
             </select>
           </div>
 
-            <!-- Theme -->
+    
           <div class="rule">
             <h3>{{ uiLabels.Theme }}</h3>
             <select v-model="this.gameData.theme" @change="chooseTheme">
@@ -227,11 +224,11 @@ export default {
 }
 
 .rule h3 {
-  flex: 1;  /* Make the label take available space on the left */
+  flex: 1; 
   color: solid #0b3866;
-  text-align: left;  /* Align label to the left */
+  text-align: left; 
   font-size: 1.4rem;
-  border-bottom: 2px solid #ddd; /* Line between each rule */
+  border-bottom: 2px solid #ddd;
 }
 
 .rule select{
@@ -275,7 +272,11 @@ export default {
 
 @media (max-width: 600px) {
   .game-rules-container {
+<<<<<<< HEAD
     width: 80%;
+=======
+    width: 90%;
+>>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     padding: 5px;
   }
 
@@ -286,14 +287,23 @@ export default {
   text-align: left;
 }
   .display-gamecode {
+<<<<<<< HEAD
     font-size: 1.8rem; 
+=======
+    font-size: 1.8rem;
+>>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     margin: 15px 0;
   }
 
   .rule {
+<<<<<<< HEAD
     flex-direction: row; 
     align-items: center;
     justify-content: space-between; 
+=======
+    flex-direction: column;
+    align-items: flex-start;
+>>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     margin-bottom: 15px;
     width: 100%;
   }
@@ -305,7 +315,11 @@ export default {
   }
 
   .rule select {
+<<<<<<< HEAD
     width: 35%; 
+=======
+    width: 100%; 
+>>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     font-size: 1rem;
   }
 
@@ -321,7 +335,11 @@ export default {
   }
 
   .create-game-button {
+<<<<<<< HEAD
     width: 50%; 
+=======
+    width: 100%; 
+>>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     height: 45px;
     font-size: 1.3rem;
   }
