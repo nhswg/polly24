@@ -203,34 +203,34 @@
   }
   
   .round-text {
-    font-size: 14px; /* Adjusted font size for mobile */
+    font-size: 14px; 
   }
   
   .word-options {
     text-align: center;
     margin: 10px 0;
     z-index: 100;
-    margin-top: 300px;
+    margin-top: 90px; /* Adjusted margin for mobile */
   }
   
   .word-options button {
-    margin-top: 100px;
     margin: 5px;
-    padding: 10px 15px;
-    font-size: 16px;
+    padding: 2px 5px;
+    font-size: 14px; /* Adjusted font size for mobile */
     cursor: pointer;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    width: 80%; /* Full width button on mobile */
   }
 
   .leave {
-    font-size: 0.7rem; /* Reduced font size */
-    padding: 3px 5px; /* Reduced padding */
-    margin-left: 5px; /* Reduced margin */
-    margin-top: 5px; /* Reduced margin */
-    width: auto; /* Adjust width */
-    height: 40px; /* Adjust height */
+    font-size: 0.7rem; 
+    padding: 3px 5px;
+    margin-left: 5px; 
+    margin-top: 5px;
+    width: auto; 
+    height: 40px; 
     }
 
   
