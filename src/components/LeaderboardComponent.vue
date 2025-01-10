@@ -109,15 +109,15 @@ export default {
 
 @media (max-width: 768px) { 
   .participants-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 5 px;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 2px; /* Reduced gap for tighter spacing between cards on mobile */
   }
   .leaderboard-container {
     height: auto;
   }
   .participant-card {
   border-radius: 5px;
-  padding: 5px;
+  padding: 3px;
   text-align: center;
   position: relative;
   transition: transform 0.3s ease;

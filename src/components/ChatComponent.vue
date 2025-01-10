@@ -151,7 +151,7 @@ export default {
 
 @media (max-width: 414px) {
   .chat {
-    height: 150px;
+    height: 100px;
     padding-top: 0px;
     font-size: 12px;
     padding: 0px;

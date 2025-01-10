@@ -100,15 +100,17 @@ export default {
 
 @media (max-width: 600px) {
   .game-buttons {
-    flex-direction: column; 
     gap: 1rem;
   }
 
   .game-button {
-    font-size: 3.5rem;
+    font-size: 1.5rem;
+    width: 150px;
+    height: 100px;
     padding: 0.5rem 1rem;
     margin-bottom: 30px;
     align-items: center;
+    border: 2px solid #0b3866;   
   }
 }
 </style>
