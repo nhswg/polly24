@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Om nuvarande runda ej har passerat det valda antalet rundor -->
-    <div v-if="currentRound <= gameData.gameRounds">
+    <div class="info-bar">
       <GameInfoComponent 
         :wordOptions="isDrawing ? wordOptions : []"
         :currentWord="displayedWord"
@@ -10,7 +10,8 @@
         @select-word="selectWord"
         @leave-game="handleLeaveGame"
       />
-      
+    </div>
+    <div v-if="currentRound <= gameData.gameRounds">
       <div class="status-message">
         <p  v-if="drawerName && isDrawing && !currentWord">{{ drawerName }} {{uiLabels.choosingWord}}</p>
         <p  v-else-if="drawerName && isDrawing && currentWord">{{ drawerName }} {{uiLabels.isDrawing}}</p>
@@ -25,11 +26,13 @@
         <LeaderboardComponent
           :participants="gameData.participants"
           :userScores="userScores"
+          class="leaderboardComp"
         />
         <DrawingComponent
           ref="drawingComp"
           :currentWord="currentWord"
           :canDraw="isDrawing"
+          class="drawingComp"
         />
         <ChatComponent
           :messages="messages"
@@ -38,6 +41,7 @@
           :canGuess="!hasGuessedRight"
           @sendChatMessage="sendChatMessage"
           @updateChatMessage="chatMessage = $event"
+          class="chatComp"
         />
       </div>
     </div>
@@ -410,6 +414,7 @@ export default {
   gap: 10px;
 }
 
+
 .final-leaderboard-container {
   text-align: center;
 }
@@ -435,5 +440,43 @@ export default {
 
 }
 
+@media (max-width: 768px) {
+  .game-area {
+    width: 100%; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+    padding:0px;   }
 
+  .status-message {
+  height: 10px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.7em;
+  border-radius: 5px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+  .drawingComp {
+    order: 1;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .chatComp {
+    order: 2;
+    width: 100%; 
+    max-width: 100%;
+  }
+
+  .leaderboardComp {
+    order: 3;
+    width: 100;
+    max-width: 100%;
+  }
+ 
+}
 </style>

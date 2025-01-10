@@ -149,4 +149,37 @@ export default {
   color: green;
 }
 
+@media (max-width: 414px) {
+  .chat {
+    height: 150px;
+    padding-top: 0px;
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+  }
+ 
+  .messages {
+    font-size: 12px;
+    padding: 5px;
+    margin:0px;
+  }
+
+  h3 {
+    font-size: 0.8rem; /* Reduced font size for mobile */
+    margin: 0; /* Remove margin */
+    padding: 2px ; /* Add padding to control space */
+  }
+
+  .input-container input {
+    height: 25px;
+    font-size: 12px;
+    padding: 5px 5px;
+    margin: 5px;
+  }
+
+  .input-container button {
+    height: 25px;
+    font-size: 14px;
+    padding: 2px 10px;  }
+}
 </style>

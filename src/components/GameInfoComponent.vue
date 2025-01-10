@@ -109,7 +109,7 @@
   
   .timer-text {
     position: absolute;
-    top: 43%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 20px;    
@@ -159,4 +159,80 @@
     background-color: #e0e0e0;
   } 
 
+  @media (max-width: 768px) {
+    .information-banner{
+    height: 50px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 0px;
+  }
+  
+  .current-word {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .timer-container {
+    padding-top: 5px;
+    width: 40px;
+    height: 40px; 
+  }
+  
+  .clock-image {
+    width: 100%;
+    height: auto;
+  }
+  
+  .timer-text {
+    padding-top: 7px;
+    font-size: 14px; /* Adjusted font size for mobile */
+  }
+  
+  .round-container {
+    padding-top: 0px;
+    width: 50px;  
+    height: 60px;
+  }
+  
+  .round-image {
+    width: 100%;
+    height: auto;
+  }
+  
+  .round-text {
+    font-size: 14px; /* Adjusted font size for mobile */
+  }
+  
+  .word-options {
+    text-align: center;
+    margin: 10px 0;
+    z-index: 100;
+    margin-top: 300px;
+  }
+  
+  .word-options button {
+    margin-top: 100px;
+    margin: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .leave {
+    font-size: 0.7rem; /* Reduced font size */
+    padding: 3px 5px; /* Reduced padding */
+    margin-left: 5px; /* Reduced margin */
+    margin-top: 5px; /* Reduced margin */
+    width: auto; /* Adjust width */
+    height: 40px; /* Adjust height */
+    }
+
+  
+  }
   </style>

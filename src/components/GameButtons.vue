@@ -104,4 +104,10 @@ export default {
   height: auto;
   background-color: white;
 }
+
+@media (max-width: 768px) {
+  .game-buttons {
+    justify-content: center;
+  }
+}
 </style>

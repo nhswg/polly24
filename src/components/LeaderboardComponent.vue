@@ -107,5 +107,39 @@ export default {
   margin-bottom: 5px;
 }
 
+@media (max-width: 768px) { 
+  .participants-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 5 px;
+  }
+  .leaderboard-container {
+    height: auto;
+  }
+  .participant-card {
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.participant-name {
+  font-size: 12px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.participant-points {
+  font-size: 7px ;
+  margin-bottom: 5px;
+}
+.leaderboard-title {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  margin-top: -5px;
+  text-align: center;
+  }
+
+}
 
 </style>

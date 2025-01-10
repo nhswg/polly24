@@ -260,5 +260,36 @@ canvas {
   border-radius: 5px;
 }
 
+@media (max-width: 768px) {
+  .drawing-area {
+  position: relative;
+  width: 100%;
+  height: auto;
 
+  border-radius: 5px;
+  background-color: #f0f0f0;
+}
+
+canvas {
+  position: center;
+  margin: 6px;
+  width: 95%;
+}
+
+.tools-container {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.current-color {
+  margin-right: 30px;
+  margin-top: 10px;
+  width: 50px;
+  height: 50px;
+  border: 2px solid #000;
+  border-radius: 5px;
+}
+
+}
 </style>

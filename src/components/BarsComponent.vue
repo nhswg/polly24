@@ -63,4 +63,10 @@ span {
 .wrapper {
   padding:3em;
 }
+
+@media (max-width: 768px) {
+  .bar {
+    width: 100%;
+  }
+}
 </style>
