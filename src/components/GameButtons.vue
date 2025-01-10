@@ -108,6 +108,24 @@ export default {
 @media (max-width: 768px) {
   .game-buttons {
     justify-content: center;
+    flex-direction: row; /* Stack buttons vertically on mobile */
+    align-items: center;
+  }
+
+  .utility-buttons {
+    justify-content: center;
+    margin-left: 0; /* Remove left margin */
+    position: static; /* Reset position for mobile */
+    transform: none; /* Reset transform for mobile */
+    flex-direction: row; /* Stack utility buttons horizontally on mobile */
+  }
+
+  .button-container {
+    margin: 3px; /* Adjust margin for mobile */
+  }
+
+  .button-container img {
+    width: 25px; /* Adjust button size for mobile */
   }
 }
 </style>

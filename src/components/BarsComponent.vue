@@ -65,8 +65,25 @@ span {
 }
 
 @media (max-width: 768px) {
+  .wrapper {
+    padding: 1em; /* Adjust padding for mobile */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .bar {
-    width: 100%;
+    width: 50%; /* Full width bar on mobile */
+    margin-bottom: 10px; /* Space between bars */
+  }
+
+  .bar div {
+    height: 100px; /* Adjust height for mobile */
+  }
+
+  .bar .label {
+    text-align: center; /* Center label text */
+    font-size: 0.8rem; /* Adjust font size for mobile */
   }
 }
 </style>
