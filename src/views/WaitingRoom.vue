@@ -73,7 +73,7 @@ export default {
       isAdmin: false,
       gameID: '',
       userID: '',
-      gameData: {}, // Används för all speldata
+      gameData: {},
       lang: localStorage.getItem("lang") || "en",
     };
   },
@@ -95,16 +95,14 @@ export default {
     });
     
     socket.on("participantsUpdate", (participants) => {
-      this.gameData.participants = participants; // Uppdatera deltagare i gameData
+      this.gameData.participants = participants; 
       console.log("new player joined")
     });
 
-    // Navigera till spelet vid start
     socket.on("gameStarted", () => {
       this.$router.push(`/game/${this.gameID}/${this.userID}`);
     });
 
-    // Anslut användaren till spelet
     socket.emit("joinGame", this.gameID);
 
     window.addEventListener("keydown", this.handleEnterKey);

@@ -23,7 +23,6 @@
 
       <div class="game-rules-container">
         <h2>{{ uiLabels.gameRules }}:</h2>
-          <!-- Language -->
           <div class="rule">
             <h3>{{ uiLabels.Language }}</h3>
             <select v-model="this.gameData.wordsLanguage" @change="chooseWordsLanguage">
@@ -33,7 +32,6 @@
             </select>
           </div>
 
-          <!-- Drawtime -->
           <div class="rule">
             <h3>{{ uiLabels.Drawtime }}</h3>
             <select v-model="this.gameData.drawTime" @change="chooseDrawTime">
@@ -43,7 +41,6 @@
             </select>
           </div>
 
-          <!-- Rounds -->
           <div class="rule">
             <h3>{{ uiLabels.Rounds }}</h3>
             <select v-model="this.gameData.gameRounds" @change="chooseRounds">
@@ -53,7 +50,7 @@
             </select>
           </div>
 
-            <!-- Theme -->
+    
           <div class="rule">
             <h3>{{ uiLabels.Theme }}</h3>
             <select v-model="this.gameData.theme" @change="chooseTheme">
@@ -227,11 +224,11 @@ export default {
 }
 
 .rule h3 {
-  flex: 1;  /* Make the label take available space on the left */
+  flex: 1; 
   color: solid #0b3866;
-  text-align: left;  /* Align label to the left */
+  text-align: left; 
   font-size: 1.4rem;
-  border-bottom: 2px solid #ddd; /* Line between each rule */
+  border-bottom: 2px solid #ddd;
 }
 
 .rule select{
@@ -272,21 +269,20 @@ export default {
   background-color: #218838;
 }
 
-/* Existing styles remain unchanged */
 
 @media (max-width: 600px) {
   .game-rules-container {
-    width: 90%; /* Increase width on mobile to use more screen space */
+    width: 90%;
     padding: 5px;
   }
 
   .display-gamecode {
-    font-size: 1.8rem; /* Smaller game code text */
+    font-size: 1.8rem;
     margin: 15px 0;
   }
 
   .rule {
-    flex-direction: column; /* Stack label and select vertically */
+    flex-direction: column;
     align-items: flex-start;
     margin-bottom: 15px;
   }
@@ -298,7 +294,7 @@ export default {
   }
 
   .rule select {
-    width: 100%; /* Full width select on mobile */
+    width: 100%; 
     font-size: 1rem;
   }
 
@@ -314,7 +310,7 @@ export default {
   }
 
   .create-game-button {
-    width: 100%; /* Full width button */
+    width: 100%; 
     height: 45px;
     font-size: 1.3rem;
   }

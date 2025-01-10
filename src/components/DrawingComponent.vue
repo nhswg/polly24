@@ -49,14 +49,12 @@ export default {
       strokes: [],
       currentStroke: [],
       ctx: null,
-      currentPath: [], // Add this for storing the current drawing points
+      currentPath: [],
     }
   },  
   mounted() {
     const canvas = this.$refs.canvas;
     this.ctx = canvas.getContext('2d');
-    
-    // Ensure we join the room first
     const gameID = this.$route.params.id;
     socket.emit('joinGame', gameID);
 
@@ -67,7 +65,6 @@ export default {
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
 
-    // Get existing drawings when mounted
     socket.emit('getDrawings', this.$route.params.id);
 
     socket.on('drawing', (data) => {
@@ -81,7 +78,6 @@ export default {
     socket.on('undoStroke', (updatedStrokes) => {
     this.strokes = updatedStrokes;
     this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
-    // Redraw all remaining strokes
     updatedStrokes.forEach(stroke => {
       this.drawFromSocket(stroke);
     });
@@ -102,35 +98,25 @@ export default {
   if (!this.canDraw) return;
 
   this.isDrawing = true;
-
-  // Nytt: Hämta canvasens position relativt till viewport
   const rect = this.$refs.canvas.getBoundingClientRect();
-
-  // Nytt: Beräkna musens position relativt till canvasen
   const point = [event.clientX - rect.left, event.clientY - rect.top];
 
   this.currentPath = [point];
-  this.lastX = event.clientX - rect.left; // Nytt: Uppdatera med beräknade koordinater
-  this.lastY = event.clientY - rect.top; // Nytt: Uppdatera med beräknade koordinater
+  this.lastX = event.clientX - rect.left; 
+  this.lastY = event.clientY - rect.top; 
   this.currentStroke = [];
 },
 
 draw(event) {
   if (!this.isDrawing || !this.canDraw) return;
 
-  // Nytt: Hämta canvasens position relativt till viewport
   const rect = this.$refs.canvas.getBoundingClientRect();
-
-  // Nytt: Beräkna musens position relativt till canvasen
   const point = [event.clientX - rect.left, event.clientY - rect.top];
 
   this.currentPath.push(point);
-
-  // Rensa canvasen och rita om allt
   this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
   this.redrawCanvas();
 
-  // Rita den aktuella stroke
   const stroke = getStroke(this.currentPath, {
     size: this.lineWidth,
     thinning: 0.5,
@@ -153,7 +139,6 @@ draw(event) {
     this.ctx.fill();
   }
 
-  // Skicka ritdata via socket
   const drawData = {
     gameID: this.$route.params.id,
     points: this.currentPath,

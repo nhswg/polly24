@@ -68,11 +68,11 @@ export default {
 <style scoped>
 
 .content {
-  max-width: 800px; /* Sätt önskad maximal bredd */
-  margin: 0 auto; /* Centrera innehållet horisontellt */
+  max-width: 800px;
+  margin: 0 auto; 
   margin-top: 20px;
   margin-bottom: 20px;
-  padding: 20px; /* Valfri padding för att ge lite utrymme */
+  padding: 20px; 
   background-color: rgb(247, 247, 247);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
@@ -86,7 +86,7 @@ export default {
 
 .text {
   font-size: 20px;
-  text-align: justify; /* Eller 'left' om du föredrar vänsterjusterad text */
+  text-align: justify; 
   margin-bottom: 20px;
 }
 </style>

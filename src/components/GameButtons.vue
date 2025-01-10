@@ -1,6 +1,6 @@
 <template>
   <div class="game-buttons">
-    <!-- Färger -->
+    
     <button class="button-container" @click="changeStrokeColor('#ffffff')"><img src="/img/ffffff.png" alt="White" /></button>
     <button class="button-container" @click="changeStrokeColor('#888888')"><img src="/img/888888.png" alt="Grey" /></button>
     <button class="button-container" @click="changeStrokeColor('#000000')"><img src="/img/Black.png" alt="Black" /></button>
@@ -14,7 +14,6 @@
     <button class="button-container" @click="changeStrokeColor('#88238a')"><img src="/img/88238a.png" alt="Purple" /></button>
     <button class="button-container" @click="changeStrokeColor('#ff3d7b')"><img src="/img/ff3d7b.png" alt="Pink" /></button>
 
-    <!-- Linjebredder -->
     <button class="button-container" @click="changeLineWidth('2')"><img src="/img/1.jpg" alt="linewidth 2" /></button>
     <button class="button-container" @click="changeLineWidth('7')"><img src="/img/2.jpg" alt="linewidth 7" /></button>
     <button class="button-container" @click="changeLineWidth('15')"><img src="/img/3.jpg" alt="linewidth 15" /></button>
@@ -22,7 +21,6 @@
     <button class="button-container" @click="changeLineWidth('50')"><img src="/img/5.jpg" alt="linewidth 50" /></button>
     <button class="button-container" @click="changeLineWidth('100')"><img src="/img/6.jpg" alt="linewidth 100" /></button>
 
-    <!-- Verktyg (Eraser, Undo, Reset) med extra mellanrum -->
     <div class="utility-buttons">
       <button class="button-container" @click="changeStrokeColor('#FFFFFF')"><img src="/img/sudd.png" alt="Eraser" /></button>
       <button class="button-container" 
