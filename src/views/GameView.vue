@@ -442,14 +442,15 @@ export default {
 
 @media (max-width: 768px) {
   .game-area {
-    width: 100%; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 5px; 
-    padding:0px;   }
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+  }
 
   .status-message {
-  height: 10px; 
+  height: 10px; /* Increased height to accommodate text */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -459,23 +460,19 @@ export default {
   margin-top: 3px;
   margin-bottom: 3px;
 }
+  
+  /* Reorder so Drawing component is first, Chat second, Leaderboard last. */
+  /* Give each component a class to target below if needed. */
 
   .drawingComp {
     order: 1;
-    width: 100%;
-    max-width: 100%;
   }
-  
   .chatComp {
     order: 2;
-    width: 100%; 
-    max-width: 100%;
   }
 
   .leaderboardComp {
     order: 3;
-    width: 100;
-    max-width: 100%;
   }
  
 }

@@ -159,27 +159,28 @@ export default {
   }
  
   .messages {
-    font-size: 12px;
-    padding: 5px;
-    margin:0px;
+    width: 95%;
+    font-size: 10px;
+    padding: 2px;
+    margin: 4px;
   }
 
   h3 {
-    font-size: 0.8rem; /* Reduced font size for mobile */
+    font-size: 0.6rem; /* Reduced font size for mobile */
     margin: 0; /* Remove margin */
     padding: 2px ; /* Add padding to control space */
   }
 
   .input-container input {
-    height: 25px;
-    font-size: 12px;
-    padding: 5px 5px;
-    margin: 5px;
+    height: 20px;
+    font-size: 10px;
+    padding: 2px;
+    margin: 2px;
   }
 
   .input-container button {
-    height: 25px;
-    font-size: 14px;
-    padding: 2px 10px;  }
+    height: 20px;
+    font-size: 10px;
+    padding: 0px 5px;  }
 }
 </style>
