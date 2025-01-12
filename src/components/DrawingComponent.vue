@@ -3,8 +3,11 @@
        @mousedown="startDrawing"
        @mousemove="draw"
        @mouseup="stopDrawing"
-       @mouseleave="stopDrawing">
-    <canvas ref="canvas" width="780" height="500"></canvas>
+       @mouseleave="stopDrawing"
+       @touchstart.prevent="handleTouch($event, startDrawing)"
+       @touchmove.prevent="handleTouch($event, draw)"
+       @touchend.prevent="stopDrawing">
+    <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight"></canvas>
     <div v-if="(this.canDraw)" class="tools-container">
       <div class="current-color" :style="{ backgroundColor: penColor }"></div>
       <GameButtons 
@@ -50,6 +53,8 @@ export default {
       currentStroke: [],
       ctx: null,
       currentPath: [],
+      canvasWidth: 780,
+      canvasHeight: 500,
     }
   },  
   mounted() {
@@ -92,63 +97,82 @@ export default {
             console.log('DrawingComponent: Canvas cleared locally');
         }
     });
+
+    this.adjustCanvasSize();
+    window.addEventListener('resize', this.adjustCanvasSize);
 },
   methods: {
+    normalizePoint(x, y, rect) {
+      // Konvertera till relativa koordinater (0-1)
+      const normalizedX = x / rect.width;
+      const normalizedY = y / rect.height;
+      
+      // Konvertera till canvas-koordinater
+      return [
+        normalizedX * this.canvasWidth,
+        normalizedY * this.canvasHeight
+      ];
+    },
+
     startDrawing(event) {
-  if (!this.canDraw) return;
+      if (!this.canDraw) return;
+      
+      this.isDrawing = true;
+      const rect = this.$refs.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      const point = this.normalizePoint(x, y, rect);
+      this.currentPath = [point];
+      this.lastX = point[0];
+      this.lastY = point[1];
+      this.currentStroke = [];
+    },
 
-  this.isDrawing = true;
-  const rect = this.$refs.canvas.getBoundingClientRect();
-  const point = [event.clientX - rect.left, event.clientY - rect.top];
+    draw(event) {
+      if (!this.isDrawing || !this.canDraw) return;
 
-  this.currentPath = [point];
-  this.lastX = event.clientX - rect.left; 
-  this.lastY = event.clientY - rect.top; 
-  this.currentStroke = [];
-},
+      const rect = this.$refs.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      const point = this.normalizePoint(x, y, rect);
+      this.currentPath.push(point);
+      
+      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
+      this.redrawCanvas();
 
-draw(event) {
-  if (!this.isDrawing || !this.canDraw) return;
+      const stroke = getStroke(this.currentPath, {
+        size: this.lineWidth,
+        thinning: 0.5,
+        smoothing: 0.5,
+        streamline: 0.5,
+      });
 
-  const rect = this.$refs.canvas.getBoundingClientRect();
-  const point = [event.clientX - rect.left, event.clientY - rect.top];
+      if (stroke.length > 0) {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = this.penColor;
 
-  this.currentPath.push(point);
-  this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
-  this.redrawCanvas();
+        const [first, ...rest] = stroke;
+        this.ctx.moveTo(first[0], first[1]);
 
-  const stroke = getStroke(this.currentPath, {
-    size: this.lineWidth,
-    thinning: 0.5,
-    smoothing: 0.5,
-    streamline: 0.5,
-  });
+        for (const point of rest) {
+          this.ctx.lineTo(point[0], point[1]);
+        }
 
-  if (stroke.length > 0) {
-    this.ctx.beginPath();
-    this.ctx.fillStyle = this.penColor;
+        this.ctx.closePath();
+        this.ctx.fill();
+      }
 
-    const [first, ...rest] = stroke;
-    this.ctx.moveTo(first[0], first[1]);
+      const drawData = {
+        gameID: this.$route.params.id,
+        points: this.currentPath,
+        color: this.penColor,
+        lineWidth: this.lineWidth,
+      };
 
-    for (const point of rest) {
-      this.ctx.lineTo(point[0], point[1]);
-    }
-
-    this.ctx.closePath();
-    this.ctx.fill();
-  }
-
-  const drawData = {
-    gameID: this.$route.params.id,
-    points: this.currentPath,
-    color: this.penColor,
-    lineWidth: this.lineWidth,
-  };
-
-  socket.emit('drawing', drawData);
-},
-
+      socket.emit('drawing', drawData);
+    },
 
     stopDrawing() {
       if (this.currentPath.length > 0) {
@@ -207,7 +231,33 @@ draw(event) {
       this.strokes.forEach(stroke => {
         this.drawFromSocket(stroke);
       });
-    }
+    },
+    handleTouch(touchEvent, handler) {
+      const touch = touchEvent.touches[0];
+      const rect = this.$refs.canvas.getBoundingClientRect();
+      
+      const mouseEvent = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        preventDefault: () => {}
+      };
+      
+      handler(mouseEvent);
+    },
+    adjustCanvasSize() {
+      if (window.innerWidth <= 768) {
+        // Behåll samma proportioner som desktop-versionen
+        const aspectRatio = 780/500;
+        const width = Math.min(window.innerWidth * 0.95, 780);
+        const height = width / aspectRatio;
+        this.canvasWidth = 780; // Använd fast bredd
+        this.canvasHeight = 500; // Använd fast höjd
+      } else {
+        this.canvasWidth = 780;
+        this.canvasHeight = 500;
+      }
+      this.redrawCanvas();
+    },
   }
 }
 </script>
@@ -219,6 +269,7 @@ draw(event) {
   height: 600px;
   border-radius: 5px;
   background-color: #f0f0f0;
+  touch-action: none; /* Prevent scrolling while drawing */
 }
 
 canvas {
@@ -250,26 +301,35 @@ canvas {
   position: relative;
   width: 100%;
   height: auto;
-
+  max-width: 95vw;
+  margin: 0 auto;
   border-radius: 5px;
   background-color: #f0f0f0;
+  aspect-ratio: 780/500; /* Behåll samma proportioner som desktop */
 }
 
 canvas {
   position: center;
   margin: 6px;
-  width: 95%;
+  width: 96%;
+  height: 100%;
+  aspect-ratio: 780/500;
+  object-fit: contain;
+  touch-action: none;
 }
 
 .tools-container {
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  margin-left: 5px;
+  padding: 5px;
+  gap: 5px;
+  justify-content: center;
 }
 
 .current-color {
   margin-right: 30px;
-  margin-top: 10px;
+  margin-top: 35px;
   width: 50px;
   height: 50px;
   border: 2px solid #000;

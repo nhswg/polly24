@@ -272,11 +272,7 @@ export default {
 
 @media (max-width: 600px) {
   .game-rules-container {
-<<<<<<< HEAD
-    width: 80%;
-=======
     width: 90%;
->>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     padding: 5px;
   }
 
@@ -287,23 +283,13 @@ export default {
   text-align: left;
 }
   .display-gamecode {
-<<<<<<< HEAD
-    font-size: 1.8rem; 
-=======
     font-size: 1.8rem;
->>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     margin: 15px 0;
   }
 
   .rule {
-<<<<<<< HEAD
-    flex-direction: row; 
-    align-items: center;
-    justify-content: space-between; 
-=======
     flex-direction: column;
     align-items: flex-start;
->>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     margin-bottom: 15px;
     width: 100%;
   }
@@ -315,11 +301,7 @@ export default {
   }
 
   .rule select {
-<<<<<<< HEAD
-    width: 35%; 
-=======
     width: 100%; 
->>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     font-size: 1rem;
   }
 
@@ -335,11 +317,7 @@ export default {
   }
 
   .create-game-button {
-<<<<<<< HEAD
-    width: 50%; 
-=======
     width: 100%; 
->>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
     height: 45px;
     font-size: 1.3rem;
   }

@@ -109,7 +109,7 @@
   
   .timer-text {
     position: absolute;
-    top: 50%;
+    top: 44%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 20px;    

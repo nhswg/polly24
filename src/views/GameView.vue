@@ -1,11 +1,6 @@
 <template>
   <div>
-<<<<<<< HEAD
-    <!-- Om nuvarande runda ej har passerat det valda antalet rundor -->
-    <div class="info-bar">
-=======
     <div v-if="currentRound <= gameData.gameRounds">
->>>>>>> 990181e8e2d81a29158d05c6133b51341ef2cf1f
       <GameInfoComponent 
         :wordOptions="isDrawing ? wordOptions : []"
         :currentWord="displayedWord"
