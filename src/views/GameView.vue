@@ -328,16 +328,15 @@ export default {
         username: username,
         guess: this.chatMessage
       });
-
       this.chatMessage = "";
     },
 
-    generateUnderscores(word) {
-      return word
+      generateUnderscores(word) {
+    return word
         .split('')
-        .map(char => char === ' ' ? '   ' : '_ ')
+        .map(char => char === ' ' ? '\u00A0\u00A0\u00A0' : '_ ')
         .join('')
-        .trimEnd();
+        .trim();
     }
   }
 };

@@ -37,7 +37,7 @@
               :key="participant.name"
               class="participant-card"
             >
-              <span class="participant-number">#{{ index + 1 }}</span>
+              <span class="participant-number"></span>
               {{ participant.name }}
             </div>
           </div>
