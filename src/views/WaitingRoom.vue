@@ -1,11 +1,9 @@
 <template>
   <div class="sketchdle-container">
     <header>
-      <router-link to="/" class="back-link">
-        <button class="title-button">
+        <button class="title-button" @click="handleLeaveGame">
           ← 
         </button>
-      </router-link>
       <h1 class="title">Sketchdle</h1>
       <button class="flag-container" @click="switchLanguage">
         <img src="/img/flag.png" alt="Change Language">
@@ -141,6 +139,11 @@ export default {
       this.startGame();
     }
   },
+  handleLeaveGame() {
+      socket.emit('leaveGame', { gameID: this.gameID, userID: this.userID });
+      socket.disconnect();
+      window.location.href = '/';
+    },
   },
 };
 </script>
