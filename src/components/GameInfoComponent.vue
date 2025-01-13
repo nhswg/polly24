@@ -187,8 +187,8 @@
   }
   
   .timer-text {
-    padding-top: 7px;
     font-size: 14px;
+    padding-top: 13px;
   }
   
   .round-container {
