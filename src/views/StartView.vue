@@ -16,7 +16,7 @@
     <div class="header-line"></div>
 
     <main>
-      <ResponsiveNav v-bind:hideNav="hideNav">
+      <div v-bind:hideNav="hideNav">
         <div class="game-buttons">
           <router-link to="/join/">
             <button class="game-button">
@@ -30,13 +30,12 @@
             </button>
           </router-link>
         </div>
-      </ResponsiveNav>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
-import ResponsiveNav from '@/components/ResponsiveNav.vue';
 import io from 'socket.io-client';
 
 //Om du vill hosta spelet avkommentera rad 45 och kommentera rad 46, när du vill pröva kör npm run host istället. 
@@ -49,9 +48,6 @@ const socket = io(sessionStorage.getItem("dataServer"));
 
 export default {
   name: 'StartView',
-  components: {
-    ResponsiveNav
-  },
   data() {
     return {
       uiLabels: {},
