@@ -54,7 +54,7 @@
     },
     methods: {
       confirmLeave() {
-        if (confirm("Är du säker på att du vill lämna spelet?")) {
+        if (confirm(this.uiLabels.leaveAlert)) {
           this.$emit('leave-game');
         }
       }
@@ -188,7 +188,7 @@
   
   .timer-text {
     padding-top: 7px;
-    font-size: 14px; /* Adjusted font size for mobile */
+    font-size: 14px;
   }
   
   .round-container {
@@ -210,18 +210,18 @@
     text-align: center;
     margin: 10px 0;
     z-index: 100;
-    margin-top: 90px; /* Adjusted margin for mobile */
+    margin-top: 90px;
   }
   
   .word-options button {
     margin: 5px;
     padding: 2px 5px;
-    font-size: 14px; /* Adjusted font size for mobile */
+    font-size: 14px; 
     cursor: pointer;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 5px;
-    width: 80%; /* Full width button on mobile */
+    width: 80%; 
   }
 
   .leave {

@@ -44,6 +44,16 @@
             </div>
           </div>
         </div>
+
+        <div class="game-rules-container" v-if="gameData">
+          <h2>{{ uiLabels.gameRules }}:</h2>
+          <div class="simple-rules">
+            <div class="rule-row">{{ uiLabels.Language }}: {{ gameData.wordsLanguage }}</div>
+            <div class="rule-row">{{ uiLabels.Drawtime }}: {{ gameData.drawTime }} {{ uiLabels.Seconds }}</div>
+            <div class="rule-row">{{ uiLabels.Rounds }}: {{ gameData.gameRounds }}</div>
+            <div class="rule-row">{{ uiLabels.Theme }}: {{ gameData.theme }}</div>
+          </div>
+        </div>
       </div>
 
       <button 
@@ -251,44 +261,123 @@ export default {
   }
 
   .display-gamecode {
-    font-size: 1.8rem; /* Smaller game code text */
+    font-size: 1.8rem; 
     margin-bottom: 20px;
   }
 
   .participants-container {
-    width: 90%; /* Adjust width for mobile */
+    width: 90%; 
     padding: 10px;
     margin-bottom: 20px;
   }
 
   .participants-title {
-    font-size: 1.5rem; /* Smaller title text */
+    font-size: 1.5rem; 
     margin-bottom: 10px;
   }
 
   .participants-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjust grid columns */
-    gap: 10px; /* Adjust gap between cards */
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+    gap: 10px; 
   }
 
   .participant-card {
-    padding: 5px; /* Adjust padding for mobile */
+    padding: 5px;
   }
 
   .participant-number {
-    font-size: 0.7rem; /* Smaller number text */
+    font-size: 0.7rem; 
   }
 
   .start-game-button {
-    width: 50%; /* Full width button */
+    width: 50%; 
     height: 45px;
     font-size: 1.3rem;
     margin-top: 15px;
   }
 
   .player-warning {
-    font-size: 1rem; /* Smaller warning text */
+    font-size: 1rem;
     margin-top: 10px;
+  }
+}
+
+.game-rules-container {
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.game-rules-container h2 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.rule {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.rule h3 {
+  flex: 1;
+  color: #0b3866;
+  text-align: left;
+  font-size: 1.4rem;
+  border-bottom: 2px solid #ddd;
+}
+
+.rule span {
+  text-align: right;
+  width: 35%;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 600px) {
+  .game-rules-container {
+    max-width: 250px;
+    margin: 15px auto;
+  }
+
+  .game-rules-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .rule {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .rule h3 {
+    font-size: 1rem;
+    width: 60%;
+  }
+
+  .rule span {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+.simple-rules {
+  text-align: left;
+}
+
+.rule-row {
+  padding: 5px 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .rule-row {
+    font-size: 0.9rem;
   }
 }
 </style>

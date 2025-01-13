@@ -8,7 +8,6 @@
           class="system-message">
             {{ msg.text }}
           </div>
-
           <div v-else>
             <strong>{{ msg.username }}</strong>: {{ msg.text }}
           </div>
@@ -164,9 +163,9 @@ export default {
   }
 
   h3 {
-    font-size: 0.6rem; /* Reduced font size for mobile */
-    margin: 0; /* Remove margin */
-    padding: 2px ; /* Add padding to control space */
+    font-size: 0.6rem; 
+    margin: 0; 
+    padding: 2px ; 
   }
 
   .input-container input {

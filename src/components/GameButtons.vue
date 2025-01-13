@@ -94,7 +94,7 @@ export default {
   border: 0.1em solid black;
   padding: 0;
   background-color: white;
-  touch-action: manipulation; /* Förbättra touch-händelser */
+  touch-action: manipulation; 
 }
 
 .button-container img {
@@ -107,7 +107,7 @@ export default {
 @media (max-width: 768px) {
   .game-buttons {
     justify-content: center;
-    flex-direction: row; /* Stack buttons vertically on mobile */
+    flex-direction: row; 
     align-items: center;
     margin-top: 30px;
     margin-right: 20px;
@@ -117,17 +117,17 @@ export default {
   .utility-buttons {
     justify-content: center;
     margin-left: 0;
-    position: static; /* Reset position for mobile */
-    transform: none; /* Reset transform for mobile */
-    flex-direction: row; /* Stack utility buttons horizontally on mobile */
+    position: static; 
+    transform: none;
+    flex-direction: row; 
   }
 
   .button-container {
-    margin: 3px; /* Adjust margin for mobile */
+    margin: 3px;
   }
 
   .button-container img {
-    width: 15px; /* Adjust button size for mobile */
+    width: 15px; 
   }
 }
 </style>

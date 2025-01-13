@@ -63,13 +63,6 @@ export default {
     const gameID = this.$route.params.id;
     socket.emit('joinGame', gameID);
 
-    socket.on('canvasCleared', () => {
-        console.log('DrawingComponent: Received canvasCleared event');
-        this.strokes = [];
-        this.currentPath = [];
-        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-    });
-
     socket.emit('getDrawings', this.$route.params.id);
 
     socket.on('drawing', (data) => {
@@ -94,7 +87,6 @@ export default {
         this.currentPath = [];
         if (this.ctx) {
             this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-            console.log('DrawingComponent: Canvas cleared locally');
         }
     });
 
@@ -103,11 +95,9 @@ export default {
 },
   methods: {
     normalizePoint(x, y, rect) {
-      // Konvertera till relativa koordinater (0-1)
       const normalizedX = x / rect.width;
       const normalizedY = y / rect.height;
       
-      // Konvertera till canvas-koordinater
       return [
         normalizedX * this.canvasWidth,
         normalizedY * this.canvasHeight
@@ -139,9 +129,6 @@ export default {
       const point = this.normalizePoint(x, y, rect);
       this.currentPath.push(point);
       
-      this.ctx.clearRect(0, 0, this.$refs.canvas.width, this.$refs.canvas.height);
-      this.redrawCanvas();
-
       const stroke = getStroke(this.currentPath, {
         size: this.lineWidth,
         thinning: 0.5,
@@ -246,12 +233,11 @@ export default {
     },
     adjustCanvasSize() {
       if (window.innerWidth <= 768) {
-        // Behåll samma proportioner som desktop-versionen
         const aspectRatio = 780/500;
         const width = Math.min(window.innerWidth * 0.95, 780);
         const height = width / aspectRatio;
-        this.canvasWidth = 780; // Använd fast bredd
-        this.canvasHeight = 500; // Använd fast höjd
+        this.canvasWidth = 780; 
+        this.canvasHeight = 500; 
       } else {
         this.canvasWidth = 780;
         this.canvasHeight = 500;
@@ -269,7 +255,7 @@ export default {
   height: 600px;
   border-radius: 5px;
   background-color: #f0f0f0;
-  touch-action: none; /* Prevent scrolling while drawing */
+  touch-action: none; 
 }
 
 canvas {
@@ -305,7 +291,7 @@ canvas {
   margin: 0 auto;
   border-radius: 5px;
   background-color: #f0f0f0;
-  aspect-ratio: 780/500; /* Behåll samma proportioner som desktop */
+  aspect-ratio: 780/500; 
 }
 
 canvas {

@@ -186,7 +186,10 @@ function sockets(io, socket, data) {
         game.participants[userID] = { name: payload.username };
       }
       game.participants[userID].guessedCorrectly = true;
-      data.increaseScore(gameID, userID, 1);
+
+      const points = 5 * game.remainingTime;
+      data.increaseScore(gameID, userID, points);
+      game.participants[userID].pointsThisRound = points; 
 
       const updatedScores = data.getScores(gameID);
       io.to(gameID).emit("scoresUpdated", updatedScores);
@@ -252,6 +255,7 @@ function sockets(io, socket, data) {
           hasTriggeredEarly = true;
         }
         remainingTime--;
+        game.remainingTime = remainingTime;
         io.to(gameID).emit('timerUpdate', { remainingTime });
 
       } else {
@@ -276,6 +280,16 @@ function sockets(io, socket, data) {
         if (!participantIDs.length) return;
 
         const currentDrawer = participantIDs[game.currentDrawerIndex];
+
+        const guessers = participantIDs.filter(uid => game.participants[uid].guessedCorrectly);
+        const totalPoints = guessers.reduce((sum, uid) => sum + (game.participants[uid].pointsThisRound || 0), 0);
+        const averagePoints = guessers.length ? Math.floor(totalPoints / guessers.length) : 0;
+        data.increaseScore(gameID, currentDrawer, averagePoints);
+
+        game.participants[currentDrawer].pointsThisRound = averagePoints;
+        io.to(gameID).emit('scoresUpdated', data.getScores(gameID));
+        guessers.forEach(uid => { game.participants[uid].pointsThisRound = 0; });
+
 
         if (!game.playersDrawnThisRound.includes(currentDrawer)) {
           game.playersDrawnThisRound.push(currentDrawer);

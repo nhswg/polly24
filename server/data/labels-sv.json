@@ -38,6 +38,7 @@
 	"gameOver": "Spelet är slut!",
 	"winnerIs": "Vinnaren är:",
 	"toHome": "Tillbaka till huvudsidan",
+	"leaveAlert": "Är du säker på att du vill lämna spelet?",
 	"aboutPart1": "Sketchdle är ett rit- och gissningsspel där spelarna turas om att illustrera och gissa ord baserat på ett specifikt tema. Målet är att få flest poäng genom att antingen gissa rätt ord snabbt eller genom att skapa tydliga teckningar som hjälper andra att gissa ditt ord.",
 	"aboutPart2": "Innan spelet börjar skapar en spelare ett privat rum, delar länken med gruppen och anpassar inställningarna. Spelarna kan välja antal omgångar, tidsgräns för varje tur och ett tema för spelet, såsom 'Djur', 'Kontorsartiklar' eller någon annan kategori. Anpassade ord kan också läggas till för att passa det valda temat.",
 	"aboutPart3": "Under spelet turas spelarna om att rita ord som slumpmässigt valts från den temabaserade ordpoolen. När det är din tur att rita måste du endast använda de tillhandahållna ritverktygen för att illustrera ordet. Att skriva bokstäver, siffror eller symboler som direkt avslöjar svaret är inte tillåtet. Teckningarna måste följa det valda temat och vara relevanta för det valda ordet.",

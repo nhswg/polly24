@@ -225,8 +225,6 @@ export default {
     });
   },
 
-
-
   methods: {
     determineIfDrawing() {
       const participantIDs = Object.keys(this.gameData.participants || {});
@@ -242,7 +240,6 @@ export default {
       this.isDrawing = (currentDrawerID === this.userID);
 
       if (this.isDrawing) {
-        console.log("Jag är tecknaren");
         if (!this.gameData.currentWord && this.gameData.theme && this.gameData.wordsLanguage) {
           this.generateWordOptions();
         } else if (this.gameData.currentWord) {
@@ -389,7 +386,7 @@ export default {
   }
 
   .status-message {
-  height: 10px; /* Increased height to accommodate text */
+  height: 10px; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -400,16 +397,12 @@ export default {
   margin-bottom: 3px;
 }
   
-  /* Reorder so Drawing component is first, Chat second, Leaderboard last. */
-  /* Give each component a class to target below if needed. */
-
   .drawingComp {
     order: 1;
   }
   .chatComp {
     order: 2;
   }
-
   .leaderboardComp {
     order: 3;
   }

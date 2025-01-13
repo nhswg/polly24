@@ -14,8 +14,6 @@
   </div>
 </template>
 
-
-
 <script>
 import io from 'socket.io-client';
 const socket = io(sessionStorage.getItem("dataServer"));
@@ -100,7 +98,7 @@ export default {
 @media (max-width: 768px) { 
   .participants-grid {
     grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    gap: 2px; /* Reduced gap for tighter spacing between cards on mobile */
+    gap: 2px; 
   }
   .leaderboard-container {
     height: auto;
@@ -131,5 +129,4 @@ export default {
   }
 
 }
-
 </style>
